@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.skm.exa.persistence.dao.UserDao">
+    <sql id="dtoColumns">
+        u.`id`,
+        u.`username`,
+        u.`password`,
+        u.`realname`,
+        u.`avatar`,
+        u.`entry_dt`,
+        u.`update_dt`
+    </sql>
+
+    <resultMap id="DTORM" type="com.skm.exa.persistence.dto.UserDto" extends="RM">
+        <result property="loginCount" column="login_count"/>
+    </resultMap>
+
+    <select id="getDtoPage" resultMap="DTORM">
+        SELECT
+        <include refid="dtoColumns"/>,
+        IFNULL(COUNT(ulr.id), 0) AS login_count
+        FROM `user` u
+        LEFT JOIN `user_login_record` ulr ON u.`id` = ulr.`user_id`
+        <where>
+            <if test="id != null">AND u.`id` = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(username)">AND u.`username` = #{username, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">AND u.`username` LIKE "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(password)">AND u.`password` = #{password, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(realname)">AND u.`realname` = #{realname, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(realnameLike)">AND u.`realname` LIKE "%"#{realnameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="entryDt != null">AND u.`entry_dt` = #{entryDt, jdbcType=TIMESTAMP}</if>
+            <if test="updateDt != null">AND u.`update_dt` = #{updateDt, jdbcType=TIMESTAMP}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(ids)">
+                AND u.`id` IN
+                <foreach collection="ids" item="item" separator="," open="(" close=")">#{item}</foreach>
+            </if>
+            <include refid="dynamicSearchCondition"/>
+        </where>
+        GROUP BY u.`id`
+    </select>
+</mapper>

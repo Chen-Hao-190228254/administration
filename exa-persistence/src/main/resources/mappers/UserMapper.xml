@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.skm.exa.persistence.dao.UserDao">
+    <sql id="columns">
+        `id`,
+        `username`,
+        `password`,
+        `realname`,
+        `avatar`,
+        `entry_dt`,
+        `update_dt`
+    </sql>
+
+    <resultMap id="RM" type="com.skm.exa.domain.bean.UserBean">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="realname" column="realname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="entryDt" column="entry_dt"/>
+        <result property="updateDt" column="update_dt"/>
+    </resultMap>
+
+    <sql id="dynamicSearchCondition">
+        <!-- 动态操作符查询 -->
+        <if test="@com.skm.exa.mybatis.Ognl@isDynamicSearch(_parameter) and @com.skm.exa.mybatis.Ognl@isNotEmpty(searchConditions)">
+            <foreach collection="searchConditions" index="fi" item="condition">
+                <if test="fi > 0"> AND </if>
+                <choose>
+                    <when test="condition.operator.name == 'IN'">
+                        ${condition.column} IN
+                        <foreach collection="condition.value" item="item" open="(" separator="," close=")">#{item}</foreach>
+                    </when>
+                    <when test="condition.operator.name == 'NOT_IN'">
+                        ${condition.column} NOT IN
+                        <foreach collection="condition.value" item="item" open="(" separator="," close=")">#{item}</foreach>
+                    </when>
+                    <when test="condition.operator.name == 'BETWEEN'">
+                        ${condition.column} BETWEEN #{condition.value.begin} AND #{condition.value.end}
+                    </when>
+                    <when test="condition.operator.name == 'IS_NULL'">
+                        ${condition.column} IS NULL
+                    </when>
+                    <when test="condition.operator.name == 'IS_NOT_NULL'">
+                        ${condition.column} IS NOT NULL
+                    </when>
+                    <when test="condition.operator.name == 'LIKE'">
+                        ${condition.column} LIKE "%"#{condition.value}"%"
+                    </when>
+                    <when test="condition.operator.name == 'LEFT_LIKE'">
+                        ${condition.column} LIKE #{condition.value}"%"
+                    </when>
+                    <otherwise>
+                        ${condition.column} ${condition.operator.code} #{condition.value}
+                    </otherwise>
+                </choose>
+            </foreach>
+        </if>
+        <if test="@com.skm.exa.mybatis.Ognl@isDynamicSearch(_parameter) and @com.skm.exa.mybatis.Ognl@isNotEmpty(searchConditionGroups)">
+            <foreach collection="searchConditionGroups" index="gi" item="group">
+                ${group.outerConnector.name} (
+                <foreach collection="group.conditions" index="fi" item="condition">
+                    <if test="fi > 0">${group.innerConnector.name}</if>
+                    <choose>
+                        <when test="condition.operator.name == 'IN'">
+                            ${condition.column} IN
+                            <foreach collection="condition.value" item="item" open="(" separator="," close=")">#{item}</foreach>
+                        </when>
+                        <when test="condition.operator.name == 'NOT_IN'">
+                            ${condition.column} NOT IN
+                            <foreach collection="condition.value" item="item" open="(" separator="," close=")">#{item}</foreach>
+                        </when>
+                        <when test="condition.operator.name == 'BETWEEN'">
+                            ${condition.column} BETWEEN #{condition.value.begin} AND #{condition.value.end}
+                        </when>
+                        <when test="condition.operator.name == 'IS_NULL'">
+                            ${condition.column} IS NULL
+                        </when>
+                        <when test="condition.operator.name == 'IS_NOT_NULL'">
+                            ${condition.column} IS NOT NULL
+                        </when>
+                        <when test="condition.operator.name == 'LIKE'">
+                            ${condition.column} LIKE "%"#{condition.value}"%"
+                        </when>
+                        <when test="condition.operator.name == 'LEFT_LIKE'">
+                            ${condition.column} LIKE #{condition.value}"%"
+                        </when>
+                        <otherwise>
+                            ${condition.column} ${condition.operator.code} #{condition.value}
+                        </otherwise>
+                    </choose>
+                </foreach>
+                )
+            </foreach>
+        </if>
+    </sql>
+
+    <sql id="searchCondition">
+        <where>
+            <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(username)">AND `username` = #{username, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">AND `username` = "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(password)">AND `password` = #{password, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(realname)">AND `realname` = #{realname, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(realnameLike)">AND `realname` = "%"#{realnameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(avatar)">AND `avatar` = #{avatar, jdbcType=VARCHAR}</if>
+            <if test="entryDt != null">AND `entry_dt` = #{entryDt, jdbcType=TIMESTAMP}</if>
+            <if test="updateDt != null">AND `update_dt` = #{updateDt, jdbcType=TIMESTAMP}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(ids)">
+                AND `id` IN
+                <foreach collection="ids" item="item" separator="," open="(" close=")">#{item}</foreach>
+            </if>
+            <include refid="dynamicSearchCondition"/>
+        </where>
+    </sql>
+
+    <select id="get" parameterType="long" resultMap="RM">
+        SELECT
+        <include refid="columns"/>
+        FROM `user`
+        WHERE `id` = ${id}
+    </select>
+
+    <select id="select" resultMap="RM">
+        SELECT
+        <include refid="columns"/>
+        FROM `user`
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="selectPage" resultMap="RM">
+        SELECT
+        <include refid="columns"/>
+        FROM `user`
+        <include refid="searchCondition"/>
+    </select>
+
+    <sql id="insertSql">
+        INSERT INTO `user` (
+            `username`,
+            `password`,
+            `realname`,
+            `avatar`,
+            `entry_dt`,
+            `update_dt`
+        ) VALUES (
+            #{username},
+            #{password},
+            #{realname},
+            #{avatar},
+            #{entryDt},
+            #{updateDt}
+        )
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        <include refid="insertSql"/>
+    </insert>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id" parameterType="com.skm.exa.mybatis.BatchSaveParameter">
+        <include refid="insertSql"/>
+    </insert>
+
+    <update id="update" parameterType="com.skm.exa.domain.bean.UserBean">
+        UPDATE `user`
+        SET
+            `username` = #{username},
+            `password` = #{password},
+            `realname` = #{realname},
+            `avatar` = #{avatar},
+            `entry_dt` = #{entryDt},
+            `update_dt` = #{updateDt}
+        WHERE `id` = #{id}
+    </update>
+
+    <update id="dynamicUpdate">
+        UPDATE `user`
+        <set>
+            <if test="username != null">`username` = #{username},</if>
+            <if test="password != null">`password` = #{password},</if>
+            <if test="realname != null">`realname` = #{realname},</if>
+            <if test="avatar != null">`avatar` = #{avatar},</if>
+            <if test="entryDt != null">`entry_dt` = #{entryDt},</if>
+            <if test="updateDt != null">`update_dt` = #{updateDt},</if>
+        </set>
+        WHERE `id` = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM `user` WHERE `id` = #{id}
+    </delete>
+
+    <delete id="deleteByIds">
+        DELETE FROM `user` WHERE `id` IN
+        <foreach collection="collection" item="item" open="(" separator="," close=")">#{id}</foreach>
+    </delete>
+</mapper>
