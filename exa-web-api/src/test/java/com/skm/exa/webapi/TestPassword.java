@@ -17,6 +17,6 @@ public class TestPassword {
 
     @Test
     public void test(){
-        System.out.println(passwordEncoder.encode("123"));
+        System.out.println(passwordEncoder.encode("wangwu"));
     }
 }

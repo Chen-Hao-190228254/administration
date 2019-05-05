@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.skm.exa.persistence.dao.AdminDao">
+    <sql id="columns">
+        `id`,
+        `username`,
+        `password`,
+        `name`,
+        `phone`,
+        `email`,
+        `status`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
+    </sql>
+
+    <resultMap id="RM" type="com.skm.exa.domain.bean.AdminBean">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="status" column="status"/>
+        <result property="entryId" column="entry_id"/>
+        <result property="entryName" column="entry_name"/>
+        <result property="entryDt" column="entry_dt"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateDt" column="update_dt"/>
+    </resultMap>
+
+
+    <sql id="test">
+        <where>
+            <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(username)">AND `username` = #{username, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(password)">AND `password` = #{password, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">AND `username` = "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+
+
+
+    <select id="select" resultMap="RM">
+        SELECT
+        <include refid="columns"/>
+        FROM `administration_admin`
+        <include refid="test"/>
+    </select>
+
+
+
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `administration_admin`(
+            `username`,
+            `password`,
+            `name`,
+            `phone`,
+            `email`,
+            `status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        ) VALUES (
+            #{username},
+            #{password},
+            #{name},
+            #{phone},
+            #{email},
+            #{status},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+    </insert>
+
+</mapper>

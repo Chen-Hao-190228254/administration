@@ -33,6 +33,10 @@ public abstract class BaseServiceImpl<T extends BaseBean, D extends BaseDao<T>> 
     }
 
     @Override
+    /**
+     * 查看是否有指定数据
+     * 如果有则返回true
+     */
     public boolean has(Object condition) {
         List<T> list = this.getList(condition);
         return list != null && list.size() > 0;

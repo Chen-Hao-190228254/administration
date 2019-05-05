@@ -4,7 +4,6 @@ import com.skm.exa.domain.BaseBean;
 import com.skm.exa.mybatis.BatchSaveParameter;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.Collection;
 import java.util.List;

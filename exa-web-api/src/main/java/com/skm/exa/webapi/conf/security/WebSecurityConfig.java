@@ -2,7 +2,7 @@ package com.skm.exa.webapi.conf.security;
 
 import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
-import com.skm.exa.common.service.UnifyUserService;
+import com.skm.exa.common.service.UnifyAdminService;
 import com.skm.exa.common.utils.ServletUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -35,8 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserAuthenticationFilterAndProvider authenticationFilterAndProvider;
 
     @Autowired
-    public WebSecurityConfig(UnifyUserService unifyUserService) {
-        this.authenticationFilterAndProvider = new UserAuthenticationFilterAndProvider(unifyUserService, LOGIN_URL);
+    public WebSecurityConfig(UnifyAdminService unifyAdminService) {
+        this.authenticationFilterAndProvider = new UserAuthenticationFilterAndProvider(unifyAdminService, LOGIN_URL);
     }
 
     @Bean
