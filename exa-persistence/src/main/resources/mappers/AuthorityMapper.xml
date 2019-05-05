@@ -30,6 +30,27 @@
 
 
 
+    <sql id="searchCondition">
+        <where>
+            <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(username)">AND `username` = #{username, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(password)">AND `password` = #{password, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">AND `username` = "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">AND `code` = "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+
+
+    <select id="select" resultMap="RM">
+        SELECT
+        <include refid="columns"/>
+        FROM `administration_admin`
+        <include refid="searchCondition"/>
+    </select>
+
+
+
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `administration_authority`(
             `code`,
