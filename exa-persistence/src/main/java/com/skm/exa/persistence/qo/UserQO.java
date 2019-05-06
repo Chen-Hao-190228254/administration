@@ -2,83 +2,24 @@ package com.skm.exa.persistence.qo;
 
 import com.skm.exa.domain.bean.UserBean;
 import com.skm.exa.mybatis.*;
+import lombok.Data;
 
 import java.util.List;
 
 /**
  * @author dhc
- * 2019-03-07 14:01
+ * 2019-03-07 14:01             //DynamicSearchable ,动态查询 ，Sortable排序
  */
+@Data
 public class UserQO extends UserBean implements DynamicSearchable, Sortable {
-    private String usernameLike;
-    private String realnameLike;
+    private String usernameLike;  //名字模糊查询
+    private String realnameLike;   //真实姓名模糊查询
 
     private List<Long> ids;
-    private String searchLike;
+    private String searchLike;  //模糊搜索
 
-    private List<SearchCondition> searchConditions;
-    private List<SearchConditionGroup> searchConditionGroups;
-    private Sort sort;
+    private List<SearchCondition> searchConditions;   //搜索环境
+    private List<SearchConditionGroup> searchConditionGroups;  //搜索条件组
+    private Sort sort;   //种类
 
-    public String getUsernameLike() {
-        return usernameLike;
-    }
-
-    public void setUsernameLike(String usernameLike) {
-        this.usernameLike = usernameLike;
-    }
-
-    public String getRealnameLike() {
-        return realnameLike;
-    }
-
-    public void setRealnameLike(String realnameLike) {
-        this.realnameLike = realnameLike;
-    }
-
-    public List<Long> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<Long> ids) {
-        this.ids = ids;
-    }
-
-    public String getSearchLike() {
-        return searchLike;
-    }
-
-    public void setSearchLike(String searchLike) {
-        this.searchLike = searchLike;
-    }
-
-    @Override
-    public List<SearchCondition> getSearchConditions() {
-        return searchConditions;
-    }
-
-    @Override
-    public void setSearchConditions(List<SearchCondition> searchConditions) {
-        this.searchConditions = searchConditions;
-    }
-
-    @Override
-    public List<SearchConditionGroup> getSearchConditionGroups() {
-        return searchConditionGroups;
-    }
-
-    @Override
-    public void setSearchConditionGroups(List<SearchConditionGroup> searchConditionGroups) {
-        this.searchConditionGroups = searchConditionGroups;
-    }
-
-    @Override
-    public Sort getSort() {
-        return sort;
-    }
-
-    @Override
-    public void setSort(Sort sort) {
-        this.sort = sort;
-    }
 }

@@ -7,7 +7,7 @@ import com.skm.exa.domain.bean.UserBean;
  * 2019-03-08 23:02
  */
 public class UserDto extends UserBean {
-    private int loginCount;
+    private int loginCount;//登陆次数
 
     public int getLoginCount() {
         return loginCount;

@@ -30,15 +30,17 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    // 测试分页
+    // 测试分页    Operation 操作 ，Implicit 隐式 ，  Param 参数
     @PostMapping("/page")
     @ApiOperation(value = "分页获取用户信息", notes = "分页获取用户信息列表")
     @ApiImplicitParam(name = "param", value = "分页查询参数对象", required = true, dataType = "PageParam")
     public Result<Page<UserVo>> getUserPage(@RequestBody PageParam<UserQO> param) {
         UserQO qo = param.getCondition();
-        qo.addSearchConditionGroup(SearchConditionGroup.buildMultiColumnsSearch("dh", "u.username", "u.realname"));
-        if (!qo.hasSort()) {
-            qo.addOrder("u.entry_dt", Sort.DESC);
+        qo.addSearchConditionGroup(SearchConditionGroup    //columns 列
+                .buildMultiColumnsSearch("dh", "u.username", "u.realname"));
+               /** buildMultiColumnsSearch  构建多列搜索*/
+        if (!qo.hasSort()) {  //hasSort 已有排序
+            qo.addOrder("u.entry_dt", Sort.DESC); //addOrder 添加排序
         }
         Page<UserDto> page = userService.selectDtoPage(param);
         Page<UserVo> voPage = page.map(UserDto.class, UserVo.class);

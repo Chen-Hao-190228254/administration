@@ -8,14 +8,14 @@ import java.util.Collection;
  * @author dhc
  * 2019-03-05 12:22
  */
-public class AppContext {
-    public static ConfigurableApplicationContext context;
+public class AppContext {   /*应用文*/
+    public static ConfigurableApplicationContext context;//可配置的应用程序上下文
 
     /**
      * 根据名称获取bean
      *
-     * @param beanName Bean的名称
-     * @return Bean
+     * @param
+     * @return BeanbeanName Bean的名称
      */
     public static Object getBean(String beanName) {
         return context.getBean(beanName);
@@ -43,7 +43,10 @@ public class AppContext {
     public static <T> T getBean(Class<T> clazz) {
         try {
             Collection<T> beans = context.getBeansOfType(clazz).values();
-            return beans.isEmpty() ? null : beans.stream().filter(t -> t.getClass().getName().equals(clazz.getName())).findFirst().orElse(beans.iterator().next());
+            return beans.isEmpty() ? null : beans.stream()
+                    .filter(t -> t.getClass().getName()
+                    .equals(clazz.getName())).findFirst()
+                    .orElse(beans.iterator().next());
         } catch (Exception e) {
             return null;
         }

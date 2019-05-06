@@ -12,10 +12,10 @@
         u.`update_dt`
     </sql>
 
-    <resultMap id="DTORM" type="com.skm.exa.persistence.dto.UserDto" extends="RM">
+    <resultMap id="DTORM" type="com.skm.exa.persistence.dto.UserDto" extends="RM"><!--extends 扩展，延伸-->
         <result property="loginCount" column="login_count"/>
     </resultMap>
-
+    <!--模糊查询-->
     <select id="getDtoPage" resultMap="DTORM">
         SELECT
         <include refid="dtoColumns"/>,

@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * @author dhc
  * 2019-03-05 14:56
  */
-public enum Msg {
+public enum Msg {    //枚举信息
     S00000("成功"),
     E40000("未知的错误信息"),
     E40001("需要登录"),

@@ -11,10 +11,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaticBeans {
-    private static ObjectMapper objectMapper;
-    private static XmlMapper xmlMapper;
-    private static RestTemplate restTemplate;
+public class StaticBeans {   //静态beans
+    private static ObjectMapper objectMapper;    //对象映射
+    private static XmlMapper xmlMapper;          //xml映射
+    private static RestTemplate restTemplate;    //客户端
 
     public static ObjectMapper getObjectMapper() {
         if (objectMapper == null) {
@@ -22,8 +22,10 @@ public class StaticBeans {
         }
         if (objectMapper == null) {
             objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            objectMapper.setSerializationInclusion(com.fasterxml.jackson.annotation
+                    .JsonInclude.Include.NON_NULL);
+            objectMapper.configure(DeserializationFeature
+                    .FAIL_ON_UNKNOWN_PROPERTIES, false);
         }
         return objectMapper;
     }
@@ -39,6 +41,8 @@ public class StaticBeans {
         }
         return xmlMapper;
     }
+
+
 
     public static RestTemplate getRestTemplate() {
         if (restTemplate == null) {

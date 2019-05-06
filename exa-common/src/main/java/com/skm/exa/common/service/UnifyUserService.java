@@ -6,7 +6,7 @@ import com.skm.exa.common.object.UnifyUser;
  * @author dhc
  * 2019-03-13 14:11
  */
-public interface UnifyUserService {
+public interface UnifyUserService {  //统一用户服务
     /**
      * 根据用户名获取用户基本信息
      *

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * @author dhc
- * 2019-03-07 14:21
+ * 2019-03-07 14:21   //动态查询
  */
 public interface DynamicSearchable {
     List<SearchCondition> getSearchConditions();
@@ -25,7 +25,7 @@ public interface DynamicSearchable {
     List<SearchConditionGroup> getSearchConditionGroups();
 
     void setSearchConditionGroups(List<SearchConditionGroup> searchConditionGroups);
-
+    /*  addSearchConditionGroup 添加搜索条件组 */
     default List<SearchConditionGroup> addSearchConditionGroup(SearchConditionGroup group) {
         List<SearchConditionGroup> groups = this.getSearchConditionGroups();
         if (groups == null) {

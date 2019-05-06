@@ -9,8 +9,8 @@ import java.util.List;
  * @author dhc
  * 2019-03-05 14:38
  */
-public class Result<T> implements Serializable {
-    public static final String SUCCESS = "success";
+public class Result<T> implements Serializable {    //Serializable  序列化
+    public static final String SUCCESS = "success";   //成功
 
     private int code;
     private String message;

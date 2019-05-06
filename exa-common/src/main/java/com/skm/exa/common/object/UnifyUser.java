@@ -8,13 +8,13 @@ import java.io.Serializable;
  * @author dhc
  * 2019-03-05 16:14
  */
-public class UnifyUser implements Serializable {
+public class UnifyUser implements Serializable {  //同一用户
     private Long id;
     private String username;
     @JsonIgnore
     private String password;
-    private String realname;
-    private String avatar;
+    private String realname;  //真实名称
+    private String avatar;  //体现
 
     public UnifyUser() {
     }

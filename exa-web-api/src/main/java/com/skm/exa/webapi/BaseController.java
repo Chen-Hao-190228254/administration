@@ -17,7 +17,7 @@ public abstract class BaseController {
     @Autowired
     protected HttpServletRequest request;
 
-    @Resource
+    @Resource   //资源
     protected HttpServletResponse response;
 
     protected UnifyUser getCurrentUser() {
