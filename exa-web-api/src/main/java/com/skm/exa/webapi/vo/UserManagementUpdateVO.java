@@ -1,17 +1,11 @@
-package com.skm.exa.domain.bean;
+package com.skm.exa.webapi.vo;
 
-
-import com.skm.exa.domain.BaseBean;
 import lombok.Data;
 
 import java.util.Date;
-
-/**
- * 用户管理
- */
 @Data
-public class UserManagementBean extends BaseBean {
-    /*用户id*/
+public class UserManagementUpdateVO {
+    /*id**/
     private Long id;
     /*用户账号*/
     private String accountNumber;
@@ -44,4 +38,3 @@ public class UserManagementBean extends BaseBean {
     /*用户状态*/
     private Long status;
 }
-

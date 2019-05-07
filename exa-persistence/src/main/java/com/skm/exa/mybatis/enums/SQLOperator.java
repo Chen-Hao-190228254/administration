@@ -22,8 +22,8 @@ public enum SQLOperator {
     IS_NOT_NULL("不为空", "IS NOT NULL"),
     ;
 
-    public final String label;
-    public final String code;
+    public final String label;   //label 标签
+    public final String code;    // 编码
 
     SQLOperator(String label, String code) {
         this.label = label;

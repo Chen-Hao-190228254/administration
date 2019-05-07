@@ -23,8 +23,6 @@ public class AdminBean extends BaseBean {
      */
     private String name;
 
-
-
     /**
      * 联系电话
      */

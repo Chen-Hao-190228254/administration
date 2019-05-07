@@ -1,6 +1,6 @@
 package com.skm.exa.service.biz;
 
-import com.skm.exa.common.object.UnifyUser;
+import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.domain.bean.UserManagementBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
@@ -8,7 +8,7 @@ import com.skm.exa.persistence.dto.UserManagementDto;
 import com.skm.exa.persistence.qo.UserManagementLikeQO;
 import com.skm.exa.service.BaseService;
 
-import java.util.List;
+
 
 public interface UserManagementService extends BaseService<UserManagementBean> {
     /**
@@ -18,11 +18,35 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
      */
     Page<UserManagementDto> selectDtoPage(PageParam<UserManagementLikeQO> userManagementLikeQoPage);
 
-    /**
-     *   添加用户
-     * @param userManagementBeans
-     * @param unifyUser
+    /***
+     *  添加用户
+     * @param userManagementBean
+     * @param
      * @return
      */
-    List<UserManagementDto> add (List<UserManagementBean> userManagementBeans , UnifyUser unifyUser);
+    UserManagementBean add (UserManagementBean userManagementBean, UnifyAdmin unifyAdmin);
+
+    /**
+     *  更新用户
+     * @param userManagementBean
+     * @param unifyAdmin
+     * @return
+     */
+    UserManagementBean update(UserManagementBean userManagementBean ,UnifyAdmin unifyAdmin);
+
+    /**
+     *  通过id删除用户
+     * @param userManagementBeanClass
+     * @param id
+     * @return
+     */
+    Integer delete(Class<UserManagementBean> userManagementBeanClass ,Long id);
+
+    /**
+     * 更改用户状态
+     * @param userManagementBean
+     * @param unifyAdmin
+     * @return
+     */
+    UserManagementBean updateStatus (UserManagementBean userManagementBean ,UnifyAdmin unifyAdmin);
 }

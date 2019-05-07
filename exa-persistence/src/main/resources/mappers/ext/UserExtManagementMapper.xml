@@ -47,4 +47,97 @@
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(accountNumberLike)">OR `account_number` LIKE "%"#{accountNumberLike, jdbcType=VARCHAR}"%"</if>
         </where>
     </select>
+    <!--添加用户-->
+    <sql id="insertSql" >
+        INSERT INTO `administration_users_management` (
+            `id`,
+            `account_number`,
+            `password`,
+            `name`,
+            `photo_id`,
+            `card`,
+            `card_photo_front_id`,
+            `card_photo_reverse_id`,
+            `phone`,
+            `native_place`,
+            `email`,
+            `qq`,
+            `skill`,
+            `report_dt`,
+            `leave_dt`,
+            `status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        ) VALUES (
+            #{id},
+            #{accountNumber},
+            #{password},
+            #{name},
+            #{photoId},
+            #{card},
+            #{cardPhotoFrontId},
+            #{cardPhotoReverseId},
+            #{phone},
+            #{nativePlace},
+            #{email},
+            #{qq},
+            #{skill},
+            #{reportDt},
+            #{leaveDt},
+            #{status},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+    </sql>
+
+    <insert id="addManagement" useGeneratedKeys="true" keyProperty="id">
+        <include refid="insertSql"/>
+    </insert>
+    <!--更新用户-->
+    <update id="updateManagement" parameterType="com.skm.exa.domain.bean.UserManagementBean">
+        UPDATE `administration_users_management`
+        SET
+            `account_number`= #{accountNumber},
+            `password`= #{password},
+            `name`= #{name},
+            `photo_id`= #{photoId},
+            `card`= #{card},
+            `card_photo_front_id`= #{cardPhotoFrontId},
+            `card_photo_reverse_id`= #{cardPhotoReverseId},
+            `phone`= #{phone},
+            `native_place`= #{nativePlace},
+            `email`= #{email},
+            `qq`= #{qq},
+            `skill`= #{skill},
+            `report_dt`= #{reportDt},
+            `leave_dt`= #{leaveDt},
+            `status`= #{status},
+            `entry_id`= #{entryId},
+            `entry_name`= #{entryName},
+            `entry_dt`= #{entryDt},
+            `update_id`= #{updateId},
+            `update_name`= #{updateName},
+            `update_dt`= #{updateDt}
+        WHERE `id` = #{id}
+    </update>
+
+    <!--通过 id 删除用户-->
+    <delete id="deleteManagement">
+        DELETE FROM `administration_users_management` WHERE `id` = #{id}
+    </delete>
+    <!--通过 id 更改状态-->
+    <update id="updateStatus" parameterType="com.skm.exa.domain.bean.UserManagementBean">
+        UPDATE `administration_users_management`
+        SET
+        `status`= #{status}
+        WHERE `id` = #{id}
+    </update>
 </mapper>
