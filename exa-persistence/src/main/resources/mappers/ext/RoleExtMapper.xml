@@ -3,13 +3,141 @@
 
 <mapper namespace="com.skm.exa.persistence.dao.RoleDao">
 
-
-
-    <select id="getAdminList" resultMap="RM">
-        SELECT * FROM `administration_admin`
+    <select id="getRoleList" resultMap="RM">
+        SELECT * FROM `administration_role`
     </select>
 
 
+
+
+
+    <sql id="test">
+        <where>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">OR `code` LIKE "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">OR `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+
+
+    <select id="getRolePage" resultMap="RM">
+        SELECT * FROM `administration_role` <include refid="test"/>
+    </select>
+
+
+
+    <insert id="addRole" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `administration_role`(
+            `code`,
+            `name`,
+            `status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        )VALUES(
+            #{code},
+            #{name},
+            #{status},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+    </insert>
+
+
+
+
+
+    <update id="updateRole" useGeneratedKeys="true" keyProperty="id">
+        UPDATE `administration_role`
+        SET
+            `code` = #{code},
+            `name` = #{name},
+            `status` = #{status},
+            `update_id` = #{updateId},
+            `update_name` = #{updateName},
+            `update_dt` = #{updateDt}
+            WHERE
+            `id` = #{id}
+    </update>
+
+
+
+
+<!--用户权限操作mapper-->
+<!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+
+
+    <resultMap id="Authority" type="com.skm.exa.domain.bean.AuthorityBean">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="status" column="status"/>
+        <result property="entryId" column="entry_id"/>
+        <result property="entryName" column="entry_name"/>
+        <result property="entryDt" column="entry_dt"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateDt" column="update_dt"/>
+    </resultMap>
+
+
+
+
+    <select id="getAuthorityIn" resultMap="Authority">
+        SELECT * FROM `administration_authority` WHERE `id` IN (SELECT authority_id FROM `administration_role_authority` WHERE `role_id` = #{id})
+    </select>
+
+
+
+
+    <insert id="addRoleAuthority" >
+        INSERT INTO `administration_role_authority`(
+        `role_id`,
+        `authority_id`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
+        )VALUES
+        <foreach collection="authorityBeans" item="fId" separator=",">
+            (
+            #{roleId},
+            #{fId.id},
+            #{fId.entryId},
+            #{fId.entryName},
+            #{fId.entryDt},
+            #{fId.updateId},
+            #{fId.updateName},
+            #{fId.updateDt}
+            )
+        </foreach>
+    </insert>
+
+
+
+    <delete id="deleteRoleAuthority">
+        DELETE FROM `administration_role_authority` WHERE `role_id` = #{roleId}
+    </delete>
+
+
+
+
+    <update id="setStatus">
+        UPDATE `administration_role`
+        SET
+            `status` = #{status}
+            WHERE
+            `id` = #{id}
+    </update>
 
 
 </mapper>

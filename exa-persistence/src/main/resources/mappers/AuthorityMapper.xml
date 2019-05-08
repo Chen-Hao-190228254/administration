@@ -33,10 +33,10 @@
     <sql id="searchCondition">
         <where>
             <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(username)">AND `username` = #{username, jdbcType=VARCHAR}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(password)">AND `password` = #{password, jdbcType=VARCHAR}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">AND `username` = "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">AND `code` = "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(code)">AND `code` = #{code, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(name)">AND `name` = #{name, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">AND `code` LIKE "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">AND `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
         </where>
     </sql>
 
@@ -44,9 +44,20 @@
     <select id="select" resultMap="RM">
         SELECT
         <include refid="columns"/>
-        FROM `administration_admin`
+        FROM `administration_authority`
         <include refid="searchCondition"/>
     </select>
+
+
+
+
+    <select id="get" resultMap="RM">
+        SELECT
+        <include refid="columns"/>
+        FROM `administration_authority`
+        WHERE `id`=#{id}
+    </select>
+
 
 
 
@@ -74,5 +85,28 @@
             #{updateDt}
         )
     </insert>
+
+
+
+    <update id="update" useGeneratedKeys="true" keyProperty="id">
+        UPDATE `administration_authority`
+        SET
+            `code` = #{code},
+            `name` = #{name},
+            `status` = #{status},
+            `update_id` = #{updateId},
+            `update_name` = #{updateName},
+            `update_dt` = #{updateDt}
+            WHERE
+            `id` = #{id}
+    </update>
+
+
+
+
+    <delete id="delete">
+        DELETE FROM `administration_authority` WHERE `id` = #{id}
+    </delete>
+
 
 </mapper>

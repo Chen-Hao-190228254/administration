@@ -2,6 +2,7 @@ package com.skm.exa.service.biz.impl;
 
 
 import com.skm.exa.common.enums.Msg;
+import com.skm.exa.common.enums.StatusEnum;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
@@ -148,6 +149,22 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleBean, RoleDao> implemen
         }
     }
 
+    @Override
+    public Result<RoleBean> setStatus(Long id) {
+        RoleBean roleBean = getRole(id);
+        if(roleBean == null){
+            return Result.error(-1,"指定ID的数据不存在");
+        }else {
+            if(roleBean.getStatus() == StatusEnum.NORMAL.getIndex()){
+                dao.setStatus(id,StatusEnum.FORBIDDEN.getIndex());
+            }else if (roleBean.getStatus() == StatusEnum.FORBIDDEN.getIndex()){
+                dao.setStatus(id,StatusEnum.NORMAL.getIndex());
+            }else {
+                return Result.error(-1,"数据库状态数据有误");
+            }
+        }
+        return Result.success(getRole(id));
+    }
 
 
 //<-----------------------角色权限的获取及操作---------------------------->

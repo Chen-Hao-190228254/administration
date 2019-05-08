@@ -26,6 +26,7 @@ public interface RoleService {
 
     Boolean deleteRole(Long id);
 
+    Result<RoleBean> setStatus(Long id);
 
 
     List<RoleBean> getRoleAuthority(List<RoleBean> roleBeans);

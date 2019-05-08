@@ -17,9 +17,7 @@ import com.skm.exa.webapi.vo.RoleSaveVo;
 import com.skm.exa.webapi.vo.RoleUpdateVo;
 import com.skm.exa.webapi.vo.RoleVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.web.bind.annotation.*;
-import sun.util.resources.cldr.az.CurrencyNames_az_Cyrl;
 
 import java.util.List;
 
@@ -92,6 +90,11 @@ public class RoleController extends BaseController {
     }
 
 
+    /**
+     *更新角色
+     * @param roleUpdateVo
+     * @return
+     */
     @PostMapping("/updateRole")
     public Result<RoleVo> updateRole(@RequestBody RoleUpdateVo roleUpdateVo){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
@@ -105,7 +108,11 @@ public class RoleController extends BaseController {
     }
 
 
-
+    /**
+     * 删除角色
+     * @param id
+     * @return
+     */
     @PostMapping("/deleteRole/id")
     public Result<Boolean> deleteRole(@RequestParam("id") Long id){
         boolean is = roleService.deleteRole(id);
@@ -118,6 +125,21 @@ public class RoleController extends BaseController {
             result.setContent(false);
             return result;
         }
+    }
+
+
+    /**
+     * 更改角色状态
+     * @param id
+     * @return
+     */
+    @PostMapping("/setStatus/id")
+    public Result<RoleVo> setStatus(@RequestParam("id") Long id){
+        Result<RoleBean> roleBeanResult = roleService.setStatus(id);
+        RoleVo roleVo = BeanMapper.map(roleBeanResult.getContent(),RoleVo.class);
+        Result<RoleVo> result = BeanMapper.map(roleBeanResult,Result.class);
+        result.setContent(roleVo);
+        return result;
     }
 
 

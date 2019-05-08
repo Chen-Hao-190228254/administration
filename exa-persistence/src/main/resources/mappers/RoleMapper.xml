@@ -29,5 +29,16 @@
     </resultMap>
 
 
+    <select id="get" resultMap="RM">
+        SELECT * FROM `administration_role` WHERE `id` = #{id}
+    </select>
+
+
+
+    <delete id="delete">
+        DELETE FROM `administration_role` WHERE `id` = #{id}
+    </delete>
+
+
 
 </mapper>
