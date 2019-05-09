@@ -26,7 +26,7 @@
         `update_name`,
         `update_dt`
     </sql>
-    <!--extends 扩展，延伸-->
+
     <resultMap id="DTORM" type="com.skm.exa.persistence.dto.UserManagementDto" extends="RM">
     </resultMap>
 
@@ -97,7 +97,7 @@
             #{updateDt}
         )
     </sql>
-
+    <!--添加用户-->
     <insert id="addManagement" useGeneratedKeys="true" keyProperty="id">
         <include refid="insertSql"/>
     </insert>
@@ -133,11 +133,29 @@
     <delete id="deleteManagement">
         DELETE FROM `administration_users_management` WHERE `id` = #{id}
     </delete>
+
+    <!--通过id获取数据-->
+    <select id="detailsManagement" resultType="com.skm.exa.domain.bean.UserManagementBean">
+        SELECT
+        <include refid="dtoManagementColumns"/>
+        FROM `administration_users_management`
+        <where>
+            <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
+        </where>
+    </select>
+
     <!--通过 id 更改状态-->
     <update id="updateStatus" parameterType="com.skm.exa.domain.bean.UserManagementBean">
         UPDATE `administration_users_management`
         SET
         `status`= #{status}
+        WHERE `id` = #{id}
+    </update>
+    <!--更改密码-->
+    <update id="updatePassword" parameterType="com.skm.exa.domain.bean.UserManagementBean">
+        UPDATE `administration_users_management`
+        SET
+        `password`= #{password}
         WHERE `id` = #{id}
     </update>
 </mapper>

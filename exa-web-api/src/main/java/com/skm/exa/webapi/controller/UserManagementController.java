@@ -38,7 +38,7 @@ public class UserManagementController extends BaseController {
                         "account_number","name","card","phone","native_place","email","qq","skill"));//search  搜索
             //转换并返回值给Service
         PageParam<UserManagementLikeQO> qoPageParam = new PageParam<>(pageParam.getPage(), pageParam.getSize());
-        qoPageParam.setCondition(qo); //setCondition 设置条件
+        qoPageParam.setCondition(qo); //setCondition 设置状态
         qo.setAccountNumberLike(queryVO.getKeyword());
         qo.setCardLike(queryVO.getKeyword());
         qo.setEmailLike(queryVO.getKeyword());
@@ -93,15 +93,50 @@ public class UserManagementController extends BaseController {
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
         Integer delete = userManagementService.delete(UserManagementBean.class,id );
+        System.out.println("到达这里");
         UserManagementDeleteVO userManagementDeleteVO = BeanMapper.map(delete,UserManagementDeleteVO.class );
         System.out.println(userManagementDeleteVO.toString());
         return Result.success(userManagementDeleteVO);
     }
+
+    /**
+     *  通过id查询
+     * @param id
+     * @return
+     */
+    @PostMapping("details")
+    public Result details(@RequestParam ("id") Long id){
+        UserManagementBean userManagementBean = new UserManagementBean();
+        userManagementBean.setId(id);
+        UserManagementBean details = userManagementService.details(userManagementBean ,id);
+        UserManagementVO userManagementVO = BeanMapper.map(details,UserManagementVO.class );
+        System.out.println(userManagementVO.toString() +"嗯嗯嗯");
+        return Result.success(userManagementVO) ;
+    }
+
+    /***
+     * 更改状态
+     * @param statusVO
+     * @return
+     */
     @PostMapping("status")
     public Result<UserManagementBean> updateStatus(@RequestBody UserManagementStatusVO statusVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         UserManagementBean userManagementBean = BeanMapper.map(statusVO,UserManagementBean.class);
         userManagementBean = userManagementService.updateStatus(userManagementBean,unifyAdmin );
         return Result.success(userManagementBean) ;
+    }
+
+    /**
+     * 更改密码
+     * @param updatePasswordVO
+     * @return
+     */
+    @PostMapping("updatePassword")
+    public Result<UserManagementBean> updatePassword(@RequestBody UserManagementUpdatePasswordVO updatePasswordVO){
+        UnifyAdmin unifyAdmin = getCurrentAdmin();
+        UserManagementBean userManagementBean = BeanMapper.map(updatePasswordVO,UserManagementBean.class );
+        userManagementBean = userManagementService.updatePassword(userManagementBean,unifyAdmin );
+        return Result.success(userManagementBean);
     }
 }

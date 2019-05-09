@@ -1,6 +1,7 @@
 package com.skm.exa.persistence.dao;
 
 
+
 import com.skm.exa.domain.bean.UserManagementBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
@@ -41,9 +42,23 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
    Integer deleteManagement(Class<UserManagementBean> userManagementBeanClass,@Param("id") Long id);
 
    /**
+    * 通过id 查询
+    * @param
+    * @param id
+    * @return
+    */
+   UserManagementBean detailsManagement(@Param("id") Long id );
+   /**
     * 通过id 更改角色状态
     * @param userManagementBean
     * @return
     */
    int updateStatus(UserManagementBean userManagementBean);
+
+   /**
+    *  更改密码
+    * @param userManagementBean
+    * @return
+    */
+   int updatePassword(UserManagementBean userManagementBean);
 }

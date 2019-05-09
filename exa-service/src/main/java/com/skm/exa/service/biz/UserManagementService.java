@@ -43,10 +43,25 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
     Integer delete(Class<UserManagementBean> userManagementBeanClass ,Long id);
 
     /**
+     * 通过id获取数据
+     * @param
+     * @param id
+     * @return
+     */
+    UserManagementBean details(UserManagementBean userManagementBean , Long id );
+    /**
      * 更改用户状态
      * @param userManagementBean
      * @param unifyAdmin
      * @return
      */
     UserManagementBean updateStatus (UserManagementBean userManagementBean ,UnifyAdmin unifyAdmin);
+
+    /***
+     * 更改用户密码
+     * @param userManagementBean
+     * @param unifyAdmin
+     * @return
+     */
+    UserManagementBean updatePassword(UserManagementBean userManagementBean ,UnifyAdmin unifyAdmin);
 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skm.exa.persistence.dao.UserCodesDao">
+    <sql id="page">
+        `id`,
+        `codes`,
+        `select_status`,
+        `code_name`,
+        `status`,
+        `compile_status`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
+    </sql>
+
+    <resultMap id="RM" type="com.skm.exa.domain.bean.UserCodesBean">
+        <id property="id" column="id"/>
+        <result property="codes" column="codes"/>
+        <result property="selectStatus" column="select_status"/>
+        <result property="codeName" column="code_name"/>
+        <result property="status" column="status"/>
+        <result property="compileStatus" column="compile_status"/>
+        <result property="entryId" column="entry_id"/>
+        <result property="entryName" column="entry_name"/>
+        <result property="entryDt" column="entry_dt"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateDt" column="update_dt"/>
+    </resultMap>
+
+    <resultMap id="DTORM" type="com.skm.exa.persistence.dto.UserCodesDto" extends="RM">
+    </resultMap>
+    <!--代码分页查询-->
+    <select id="pageCodes" resultMap="DTORM">
+        SELECT
+        <include refid="page"/>
+        FROM `administration_codes`
+        <where>
+            <if test="id != null">OR`id` = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codesLike)">OR `codes` LIKE "%"#{codesLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeNameLike)">OR `code_name` LIKE "%"#{codeNameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </select>
+    <!--添加代码-->
+    <sql id="add">
+        INSERT INTO `administration_codes`(
+            `codes`,
+            `select_status`,
+            `code_name`,
+            `status`,
+            `compile_status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        )VALUE (
+            #{codes},
+            #{selectStatus},
+            #{codeName},
+            #{status},
+            #{compileStatus},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+
+    </sql>
+    <insert id="addCodes" useGeneratedKeys="true" keyProperty="id">
+          <include refid="add"/>
+    </insert>
+</mapper>

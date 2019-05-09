@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+
 import java.util.Date;
+
 
 
 @Service
@@ -35,8 +37,9 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     @Override
     @Transactional
     public Page<UserManagementDto> selectDtoPage(PageParam<UserManagementLikeQO> userManagementLikeQoPage) {
-        System.out.println("数据传输到Impl");
+
         return dao.getManagementDtoPage(userManagementLikeQoPage);
+
     }
 
     /**
@@ -74,7 +77,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
         userManagementBean.setUpdateName(unifyAdmin.getName());
         userManagementBean.setUpdateDt(new Date());
         dao.updateManagement(userManagementBean);
-        return userManagementBean;
+            return userManagementBean;
     }
 
     /**
@@ -88,6 +91,25 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
         return dao.deleteManagement(UserManagementBean.class, id);
     }
 
+    /**
+     * 通过id获取数据
+     * @param
+     * @param id
+     * @return
+     */
+    @Override
+    public UserManagementBean details(UserManagementBean userManagementBean ,Long id ) {
+         UserManagementBean  beans = dao.detailsManagement(id);
+        /* if (beans.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){  //判断当前状态
+             dao.updateStatus(userManagementBean);
+             System.out.println(beans.getStatus().toString()+" = "+ UserManagementStatusEnum.NORMAL.getValue());
+             return beans;
+         }*/
+            System.out.println(beans.getStatus());
+
+            return beans;
+    }
+
     /***
      * 通过id 更该角色状态
      * @param userManagementBean
@@ -96,8 +118,36 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
      */
     @Override
     public UserManagementBean updateStatus(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
-        dao.updateStatus(userManagementBean);
-        return userManagementBean;
+        if ( userManagementBean.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
+            System.out.println("当前状态是正常");
+            System.out.println(userManagementBean.getStatus().toString()+"=" + UserManagementStatusEnum.FORBIDDEN.getValue());
+            return userManagementBean;
+        }
+        if (userManagementBean.getStatus() == UserManagementStatusEnum.FORBIDDEN.getValue()){
+            System.out.println("当前状态是禁用");
+            System.out.println(userManagementBean.getStatus().toString()+"=" + UserManagementStatusEnum.FORBIDDEN.getValue());
+            dao.updateStatus(userManagementBean);
+            return userManagementBean;
+        }
+        if (userManagementBean.getStatus() == UserManagementStatusEnum.VOID.getValue()){
+
+            System.out.println("当前状态是无效");
+            return null ;
+        }
+        return null;
     }
+
+    /**
+     * 更改密码
+     * @param userManagementBean
+     * @param unifyAdmin
+     * @return
+     */
+    @Override
+    public UserManagementBean updatePassword(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
+            dao.updatePassword(userManagementBean);
+            return userManagementBean;
+    }
+
 
 }
