@@ -1,6 +1,7 @@
 package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.enums.Msg;
+import com.skm.exa.common.enums.StatusEnum;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.domain.bean.AuthorityBean;
@@ -125,8 +126,35 @@ public class AuthorityServiceImpl extends BaseServiceImpl<AuthorityBean, Authori
         }
     }
 
+    /**
+     * 更改权限状态
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result<AuthorityBean> setStatus(Long id){
+        AuthorityBean authorityBean = getAuthority(id);
+        if(authorityBean != null){
+            if(authorityBean.getStatus() == StatusEnum.NORMAL.getIndex()){
+                int is = dao.setStatus(id,StatusEnum.FORBIDDEN.getIndex());
+                if(is<=0){
+                    return Result.error(-1,"状态更改失败");
+                }
+            }else if(authorityBean.getStatus() == StatusEnum.FORBIDDEN.getIndex()){
+                int is = dao.setStatus(id,StatusEnum.NORMAL.getIndex());
+                if(is<=0){
+                    return Result.error(-1,"状态更改失败");
+                }
+            }else {
+                return Result.error(-1,"数据库权限状态有误");
+            }
+        }else {
+            return Result.error(-1,"权限ID有误");
+        }
+        return Result.success(getAuthority(id));
 
-
+    }
 
 
 }

@@ -29,16 +29,28 @@
     </resultMap>
 
 
-    <select id="get" resultMap="RM">
-        SELECT * FROM `administration_role` WHERE `id` = #{id}
-    </select>
-
 
 
     <delete id="delete">
         DELETE FROM `administration_role` WHERE `id` = #{id}
     </delete>
 
+
+
+
+    <sql id="test">
+        <where>
+            <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(code)">AND `code` = #{code, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">AND `code` LIKE "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(name)">AND `name` = #{name, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">AND `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+
+    <select id="select" resultMap="RM">
+        SELECT * FROM `administration_role` WHERE `code` = #{code}
+    </select>
 
 
 </mapper>

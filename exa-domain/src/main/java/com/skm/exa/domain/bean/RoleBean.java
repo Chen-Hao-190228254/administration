@@ -23,9 +23,5 @@ public class RoleBean extends BaseBean {
      */
     private byte status;
 
-    /**
-     * 权限
-     */
-    List<AuthorityBean> authorityBeans;
 
 }

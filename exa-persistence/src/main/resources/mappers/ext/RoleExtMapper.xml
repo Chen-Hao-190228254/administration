@@ -3,6 +3,15 @@
 
 <mapper namespace="com.skm.exa.persistence.dao.RoleDao">
 
+
+
+<!--查询指定ID的角色-->
+    <select id="getRole" resultMap="RM">
+        SELECT * FROM `administration_role` WHERE `id` = #{id}
+    </select>
+
+
+<!--查询所有的角色-->
     <select id="getRoleList" resultMap="RM">
         SELECT * FROM `administration_role`
     </select>
@@ -10,21 +19,20 @@
 
 
 
-
-    <sql id="test">
+<!--分页查询角色，可加条件-->
+    <sql id="pageCondition">
         <where>
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">OR `code` LIKE "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">OR `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
         </where>
     </sql>
 
-
     <select id="getRolePage" resultMap="RM">
-        SELECT * FROM `administration_role` <include refid="test"/>
+        SELECT * FROM `administration_role` <include refid="pageCondition"/>
     </select>
 
 
-
+<!--添加角色-->
     <insert id="addRole" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `administration_role`(
             `code`,
@@ -50,9 +58,7 @@
     </insert>
 
 
-
-
-
+<!--更新角色-->
     <update id="updateRole" useGeneratedKeys="true" keyProperty="id">
         UPDATE `administration_role`
         SET
@@ -67,14 +73,25 @@
     </update>
 
 
+<!--更新角色状态-->
+    <update id="setStatus">
+        UPDATE `administration_role`
+        SET
+            `status` = #{status}
+            WHERE
+            `id` = #{id}
+    </update>
+
+
+
+
 
 
 <!--用户权限操作mapper-->
 <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
 
-
-    <resultMap id="Authority" type="com.skm.exa.domain.bean.AuthorityBean">
+    <resultMap id="RoleAuthority" type="com.skm.exa.persistence.dto.RoleAuthorityDto">
         <id property="id" column="id"/>
         <result property="code" column="code"/>
         <result property="name" column="name"/>
@@ -85,18 +102,47 @@
         <result property="updateId" column="update_id"/>
         <result property="updateName" column="update_name"/>
         <result property="updateDt" column="update_dt"/>
+
+        <result property="roleId" column="role_id"/>
     </resultMap>
 
 
 
-
-    <select id="getAuthorityIn" resultMap="Authority">
+<!--根据角色ID，查询角色权限-->
+    <select id="getRoleAuthorityRoleId" resultMap="RoleAuthority">
         SELECT * FROM `administration_authority` WHERE `id` IN (SELECT authority_id FROM `administration_role_authority` WHERE `role_id` = #{id})
     </select>
 
 
+<!--通过角色ID列表，查询角色权限列表-->
+    <select id="getRoleAuthority" resultMap="RoleAuthority">
+        SELECT
+            aa.`id`,
+            aa.`code`,
+            aa.`name`,
+            aa.`status`,
+            aa.`entry_id`,
+            aa.`entry_name`,
+            aa.`entry_dt`,
+            aa.`update_id`,
+            aa.`update_name`,
+            aa.`update_dt`,
+            ara.`role_id` role_id
+        FROM
+            `administration_authority` aa,
+            `administration_role_authority` ara
+        WHERE ara.`role_id`
+        IN (
+              <foreach collection="roleIdList" item="fId" separator=",">
+              #{fId}
+              </foreach>
+        )
+        AND aa.id = ara.`authority_id`
+    </select>
 
 
+
+<!--添加角色权限-->
     <insert id="addRoleAuthority" >
         INSERT INTO `administration_role_authority`(
         `role_id`,
@@ -123,7 +169,7 @@
     </insert>
 
 
-
+<!--删除角色权限-->
     <delete id="deleteRoleAuthority">
         DELETE FROM `administration_role_authority` WHERE `role_id` = #{roleId}
     </delete>
@@ -131,13 +177,7 @@
 
 
 
-    <update id="setStatus">
-        UPDATE `administration_role`
-        SET
-            `status` = #{status}
-            WHERE
-            `id` = #{id}
-    </update>
+
 
 
 </mapper>

@@ -39,8 +39,9 @@
         <where>
             <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(username)">AND `username` = #{username, jdbcType=VARCHAR}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(password)">AND `password` = #{password, jdbcType=VARCHAR}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">AND `username` = "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">AND `username` LIKE "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(name)">AND `name` = #{name, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">AND `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
         </where>
     </sql>
 

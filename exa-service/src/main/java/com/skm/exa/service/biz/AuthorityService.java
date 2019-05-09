@@ -24,6 +24,7 @@ public interface AuthorityService {
 
     Boolean deleteAuthority(Long id);
 
+    Result<AuthorityBean> setStatus(Long id);
 
 
 }

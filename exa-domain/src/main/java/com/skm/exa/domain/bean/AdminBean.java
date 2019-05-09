@@ -41,9 +41,9 @@ public class AdminBean extends BaseBean {
      */
     private byte status;
 
+
     /**
      * 用户角色
      */
     private List<RoleBean> roleBeans;
-
 }

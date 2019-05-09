@@ -116,7 +116,21 @@ public class AuthorityController extends BaseController {
             result.setContent(false);
             return result;
         }
+    }
 
+
+    /**
+     * 更改权限状态
+     * @param id
+     * @return
+     */
+    @PostMapping("/setStatus")
+    public Result<AuthorityVo> setStatus(@RequestParam("id") Long id){
+        Result<AuthorityBean> authorityBeanResult = authorityService.setStatus(id);
+        Result<AuthorityVo> result = BeanMapper.map(authorityBeanResult,Result.class);
+        AuthorityVo authorityVo = BeanMapper.map(authorityBeanResult.getContent(),AuthorityVo.class);
+        result.setContent(authorityVo);
+        return result;
     }
 
 }
