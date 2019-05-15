@@ -1,12 +1,16 @@
-package com.skm.exa.persistence.dto;
+package com.skm.exa.common.object;
 
 import lombok.Data;
 
-import java.util.List;
-
+import java.io.Serializable;
 
 @Data
-public class RoleSaveDto  {
+public class UnifyAuthority implements Serializable {
+
+    /**
+     * ID
+     */
+    private Long id;
 
     /**
      * 编码
@@ -23,9 +27,4 @@ public class RoleSaveDto  {
      */
     private Byte status;
 
-
-    /**
-     * 权限ID列表
-     */
-    private List<Long> authorityId;
 }

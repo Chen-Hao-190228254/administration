@@ -11,5 +11,6 @@ spring:
     url: jdbc:mysql://rm-wz947v41a829fdmr2go.mysql.rds.aliyuncs.com:3306/skm-manage?createDatabaseIfNotExist=true&autoReconnect=true&useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: skm_manage
     password: skm_manage@123
+
 server:
   port: 9000

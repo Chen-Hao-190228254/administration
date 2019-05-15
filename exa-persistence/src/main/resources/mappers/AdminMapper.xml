@@ -55,36 +55,11 @@
     </select>
 
 
+    <delete id="delete">
+        DELETE FROM `administration_admin` WHERE `id` = #{id}
+    </delete>
 
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO `administration_admin`(
-            `username`,
-            `password`,
-            `name`,
-            `phone`,
-            `email`,
-            `status`,
-            `entry_id`,
-            `entry_name`,
-            `entry_dt`,
-            `update_id`,
-            `update_name`,
-            `update_dt`
-        ) VALUES (
-            #{username},
-            #{password},
-            #{name},
-            #{phone},
-            #{email},
-            #{status},
-            #{entryId},
-            #{entryName},
-            #{entryDt},
-            #{updateId},
-            #{updateName},
-            #{updateDt}
-        )
-    </insert>
+
 
 </mapper>

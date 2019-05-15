@@ -10,38 +10,38 @@ import java.util.List;
 public class AdminSaveDto {
 
     /**
-     * 用户账号名称
+     * 管理员账号名称
      */
     private String username;
 
     /**
-     * 用户账号密码
+     * 管理员账号密码
      */
     private String password;
 
     /**
-     * 用户名称
+     * 管理员名称
      */
     private String name;
 
 
     /**
-     * 联系电话
+     * 管理员联系电话
      */
     private Long phone;
 
     /**
-     * 用户邮箱
+     * 管理员邮箱
      */
     private String email;
 
     /**
-     * 用户状态
+     * 管理员状态
      */
     private byte status;
 
     /**
-     * 角色ID列表
+     * 管理员角色ID列表
      */
     private List<Long> roleId;
 }

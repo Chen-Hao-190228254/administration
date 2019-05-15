@@ -126,7 +126,7 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleBean, RoleDao> implemen
         boolean has = super.has(roleQO);
         if(has){
             RoleDto roleDto = BeanMapper.map(roleUpdateDto,RoleDto.class);
-            Result<RoleDto> result = Result.error(-1,"角色编码已经存在");
+            Result<RoleDto> result = new Result(-1,"角色编码已经存在");
             result.setContent(roleDto);
             return result;
         }
@@ -136,18 +136,24 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleBean, RoleDao> implemen
         roleBean.setUpdateDt(new Date());
         int is = dao.updateRole(roleBean);
         if(is<=0){
-            Result result = new Result(Msg.E40000);
-            result.setMessage("更新角色时发生错误");
+            RoleDto roleDto = BeanMapper.map(roleUpdateDto,RoleDto.class);
+            Result<RoleDto> result = new Result(-1,"在更新角色时发生错误");
+            result.setContent(roleDto);
             return result;
         }else {
             List<Long> authorityId = roleUpdateDto.getAuthorityId();
-            Result<List<AuthorityBean>> updateRoleAuthority = updateRoleAuthority(authorityId,roleBean.getId(),unifyAdmin);
-            List<AuthorityBean> authorityBeanList = updateRoleAuthority.getContent();
-            RoleDto roleDto = BeanMapper.map(roleBean,RoleDto.class);
-            roleDto.setAuthorityBeans(authorityBeanList);
-            Result<RoleDto> result = BeanMapper.map(updateRoleAuthority,Result.class);
-            result.setContent(roleDto);
-            return result;
+            if(authorityId.size() <=0){
+                return Result.success(getRole(roleUpdateDto.getId()));
+            }else {
+                Result<List<AuthorityBean>> updateRoleAuthority = updateRoleAuthority(authorityId,roleBean.getId(),unifyAdmin);
+                List<AuthorityBean> authorityBeanList = updateRoleAuthority.getContent();
+                RoleDto roleDto = BeanMapper.map(roleBean,RoleDto.class);
+                roleDto.setAuthorityBeans(authorityBeanList);
+                Result<RoleDto> result = BeanMapper.map(updateRoleAuthority,Result.class);
+                result.setContent(roleDto);
+                return result;
+            }
+
         }
 
     }
@@ -161,16 +167,16 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleBean, RoleDao> implemen
     @Override
     @Transactional
     public Boolean deleteRole(Long id) {
-        int i = dao.deleteRoleAuthority(id);
-        if(i<=0){
-            return false;
-        }else {
+        boolean i = deleteRoleAuthority(id);
+        if(i){
             int is = dao.delete(id);
             if (is<=0){
                 return false;
             }else {
                 return true;
             }
+        }else {
+            return false;
         }
     }
 
@@ -181,17 +187,17 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleBean, RoleDao> implemen
      */
     @Override
     @Transactional
-    public Result<RoleBean> setStatus(Long id) {
-        RoleBean roleBean = getRole(id);
-        if(roleBean == null){
+    public Result<RoleDto> setStatus(Long id) {
+        RoleDto roleDto = getRole(id);
+        if(roleDto == null){
             return Result.error(-1,"指定ID的数据不存在");
         }else {
-            if(roleBean.getStatus() == StatusEnum.NORMAL.getIndex()){
+            if(roleDto.getStatus() == StatusEnum.NORMAL.getIndex()){
                 int is = dao.setStatus(id,StatusEnum.FORBIDDEN.getIndex());
                 if(is<=0){
                     return Result.error(-1,"状态更改失败");
                 }
-            }else if (roleBean.getStatus() == StatusEnum.FORBIDDEN.getIndex()){
+            }else if (roleDto.getStatus() == StatusEnum.FORBIDDEN.getIndex()){
                 int is = dao.setStatus(id,StatusEnum.NORMAL.getIndex());
                 if(is<=0){
                     return Result.error(-1,"状态更改失败");
@@ -211,16 +217,19 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleBean, RoleDao> implemen
 
 
     /**
-     * 通过角色ID，获得角色的权限
+     * 通过角色，获得角色的权限
      * @param roleBean
      * @return
      */
     @Override
      public RoleDto getRoleAuthority(RoleBean roleBean){
+        if(roleBean == null)
+            return null;
         List<AuthorityBean> roleAuthority = dao.getRoleAuthorityRoleId(roleBean.getId());
         RoleDto roleDto = BeanMapper.map(roleBean,RoleDto.class);
         roleDto.setAuthorityBeans(roleAuthority);
         return roleDto;
+
      }
 
 
@@ -231,6 +240,8 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleBean, RoleDao> implemen
      */
     @Override
     public List<RoleDto> getRoleAuthority(List<RoleBean> roleBeans){
+        if(roleBeans == null)
+            return null;
         Map<Long,List<AuthorityBean>> mapAuthority = new HashMap<>();
         Map<Long,RoleDto> mapRole = new HashMap<>();
         List<Long> roleIdList = new ArrayList<>();

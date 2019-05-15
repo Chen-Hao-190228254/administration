@@ -3,6 +3,7 @@ package com.skm.exa.common.object;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class UnifyAdmin implements Serializable {
@@ -42,5 +43,16 @@ public class UnifyAdmin implements Serializable {
      */
     private byte status;
 
+    /**
+     * 角色
+     */
+    List<UnifyRole> role;
+
+    /**
+     * 权限
+     */
+    List<UnifyAuthority> authority;
 
 }
+
+

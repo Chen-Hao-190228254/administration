@@ -65,7 +65,7 @@ public interface RoleService {
      * @param id
      * @return
      */
-    Result<RoleBean> setStatus(Long id);
+    Result<RoleDto> setStatus(Long id);
 
 
 

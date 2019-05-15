@@ -6,6 +6,7 @@ import com.skm.exa.domain.bean.AdminBean;
 import com.skm.exa.domain.bean.RoleBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
+import com.skm.exa.persistence.dto.AdminDto;
 import com.skm.exa.persistence.dto.AdminSaveDto;
 import com.skm.exa.persistence.dto.AdminUpdateDto;
 import com.skm.exa.persistence.qo.AdminQO;
@@ -15,20 +16,21 @@ import java.util.List;
 
 public interface AdminService extends BaseService<AdminBean> {
 
-
-    /**
-     * 获得所有管理员
-     * @return
-     */
-    List<AdminBean> getAdminList();
-
-
     /**
      * 获得指定ID的管理员
      * @param id
      * @return
      */
-    AdminBean getAdmin(Long id);
+    AdminDto getAdmin(Long id);
+
+    /**
+     * 获得所有管理员
+     * @return
+     */
+    List<AdminDto> getAdminList();
+
+
+
 
 
     /**
@@ -36,7 +38,7 @@ public interface AdminService extends BaseService<AdminBean> {
      * @param pageParam
      * @return
      */
-    Page<AdminBean> getAdminPage(PageParam<AdminQO> pageParam);
+    Page<AdminDto> getAdminPage(PageParam<AdminQO> pageParam);
 
 
 
@@ -46,26 +48,61 @@ public interface AdminService extends BaseService<AdminBean> {
      * @param unifyAdmin
      * @return
      */
-    Result<AdminBean> addAdmin(AdminSaveDto adminSaveDto, UnifyAdmin unifyAdmin);
+    Result<AdminDto> addAdmin(AdminSaveDto adminSaveDto, UnifyAdmin unifyAdmin);
 
 
     /**
      * 更新管理员
-     * @param adminUpDto
+     * @param adminUpdateDto
      * @param unifyAdmin
      * @return
      */
-    AdminBean upAdmin(AdminUpdateDto adminUpDto, UnifyAdmin unifyAdmin);
+    Result<AdminDto> updateAdmin(AdminUpdateDto adminUpdateDto, UnifyAdmin unifyAdmin);
+
+
+    /**
+     * 更新管理员密码
+     * @param password
+     * @return
+     */
+    Result updatePassword(String password,Long adminId);
+
+
+    /**
+     * 更新管理员状态
+     * @param id
+     * @return
+     */
+    Result<AdminDto> updateStatus(Long id);
 
 
 
-
+    /**
+     * 删除指定管理员
+     * @param id
+     * @return
+     */
+    Boolean deleteAdmin(Long id);
 
 
 
 
 
 //<-----------------------管理员角色的获取及操作---------------------------->
+
+
+
+    AdminDto getAdminRole(AdminBean adminBean);
+
+
+    /**
+     * 根据管理员列表，获得管理员角色
+     * @param adminBeans
+     * @return
+     */
+    List<AdminDto> getAdminRole(List<AdminBean> adminBeans);
+
+
 
     /**
      * 添加管理员角色
@@ -76,11 +113,25 @@ public interface AdminService extends BaseService<AdminBean> {
      */
     Result<List<RoleBean>> addAdminRole(List<Long> roleId, Long adminId, UnifyAdmin unifyAdmin);
 
+
     /**
-     * 根据管理员列表，获得管理员角色
-     * @param adminBeans
+     * 更新管理员角色
+     * @param roleId
+     * @param adminId
+     * @param unifyAdmin
      * @return
      */
-    List<AdminBean> getAdminRoleList(List<AdminBean> adminBeans);
+    Result<List<RoleBean>> updateAdminRole(List<Long> roleId,Long adminId,UnifyAdmin unifyAdmin);
+
+
+
+
+    /**
+     * 删除管理员角色
+     * @param adminId
+     * @return
+     */
+    Boolean deleteAdminRole(Long adminId);
+
 
 }

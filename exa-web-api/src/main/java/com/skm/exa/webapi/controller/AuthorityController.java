@@ -13,11 +13,16 @@ import com.skm.exa.webapi.vo.AuthoritySaveVo;
 import com.skm.exa.webapi.vo.AuthorityUpdateVo;
 import com.skm.exa.webapi.vo.AuthorityVo;
 import com.skm.exa.webapi.vo.QueryVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@Api(tags = "权限操作",description = "权限操作")
 @RestController
 @RequestMapping("/web/v1/authority")
 public class AuthorityController extends BaseController {
@@ -31,7 +36,8 @@ public class AuthorityController extends BaseController {
      * 获得所有权限
      * @return
      */
-    @PostMapping("/getAuthorityList")
+    @ApiOperation(value = "获得所有权限", notes = "获得所有权限")
+    @GetMapping("/getAuthorityList")
     public Result<List<AuthorityVo>> getAuthorityList(){
         List<AuthorityBean> authorityBeanList = authorityService.getAuthorityList();
         return new Result<List<AuthorityVo>>().setContent(BeanMapper.mapList(authorityBeanList,AuthorityBean.class,AuthorityVo.class));
@@ -43,8 +49,9 @@ public class AuthorityController extends BaseController {
      * @param id
      * @return
      */
-    @PostMapping("/getAuthority/id")
-    public Result<AuthorityVo> getAuthority(@RequestParam("id") Long id){
+    @ApiOperation(value = "根据ID获得权限信息", notes = "根据ID获得权限信息")
+    @GetMapping("/getAuthority/id")
+    public Result<AuthorityVo> getAuthority(@ApiParam("要获取权限的ID") @RequestParam("id") Long id){
         AuthorityBean authorityBean = authorityService.getAuthority(id);
         return new Result<AuthorityVo>().setContent(BeanMapper.map(authorityBean,AuthorityVo.class));
     }
@@ -55,8 +62,9 @@ public class AuthorityController extends BaseController {
      * @param pageParam
      * @return
      */
+    @ApiOperation(value = "分页查询权限", notes = "分页查询权限")
     @PostMapping("/getAuthorityPage")
-    public Result<Page<AuthorityVo>> getAuthorityPage(@RequestBody PageParam<QueryVo> pageParam){
+    public Result<Page<AuthorityVo>> getAuthorityPage(@ApiParam("分页及条件信息") @RequestBody PageParam<QueryVo> pageParam){
         QueryVo queryVo = pageParam.getCondition();
         AuthorityQO qo = new AuthorityQO();
         qo.setNameLike(queryVo.getKey());
@@ -73,8 +81,9 @@ public class AuthorityController extends BaseController {
      * @param authoritySaveVo
      * @return
      */
+    @ApiOperation(value = "添加权限", notes = "添加权限")
     @PostMapping("/addAuthority")
-    public Result<AuthorityVo> addAuthority(@RequestBody AuthoritySaveVo authoritySaveVo){
+    public Result<AuthorityVo> addAuthority(@ApiParam("添加权限的信息") @RequestBody AuthoritySaveVo authoritySaveVo){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         AuthorityBean authorityBean = BeanMapper.map(authoritySaveVo,AuthorityBean.class);
         Result<AuthorityBean> resultAuthorityBean = authorityService.addAuthority(authorityBean,unifyAdmin);
@@ -89,8 +98,9 @@ public class AuthorityController extends BaseController {
      * @param authorityUpdateVo
      * @return
      */
-    @PostMapping("/updateAuthority")
-    public Result<AuthorityVo> updateAuthority(@RequestBody AuthorityUpdateVo authorityUpdateVo){
+    @ApiOperation(value = "更新权限", notes = "更新权限")
+    @PutMapping("/updateAuthority")
+    public Result<AuthorityVo> updateAuthority(@ApiParam("更新权限的信息") @RequestBody AuthorityUpdateVo authorityUpdateVo){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         AuthorityBean authorityBean = BeanMapper.map(authorityUpdateVo,AuthorityBean.class);
         Result<AuthorityBean> resultAuthorityBean = authorityService.updateAuthority(authorityBean,unifyAdmin);
@@ -104,8 +114,9 @@ public class AuthorityController extends BaseController {
      * @param id
      * @return
      */
-    @PostMapping("/deleteAuthority/id")
-    public Result<Boolean> deleteAuthority(@RequestParam("id") Long id){
+    @ApiOperation(value = "删除权限", notes = "删除权限")
+    @DeleteMapping("/deleteAuthority/id")
+    public Result<Boolean> deleteAuthority(@ApiParam("需要删除权限的ID") @RequestParam("id") Long id){
         boolean is = authorityService.deleteAuthority(id);
         if(is){
             Result<Boolean> result = new Result<>(1,"删除成功");
@@ -124,8 +135,9 @@ public class AuthorityController extends BaseController {
      * @param id
      * @return
      */
-    @PostMapping("/setStatus")
-    public Result<AuthorityVo> setStatus(@RequestParam("id") Long id){
+    @ApiOperation(value = "更新权限状态", notes = "更新权限状态")
+    @PutMapping("/setStatus/id")
+    public Result<AuthorityVo> setStatus(@ApiParam("需要更新权限的ID") @RequestParam("id") Long id){
         Result<AuthorityBean> authorityBeanResult = authorityService.setStatus(id);
         Result<AuthorityVo> result = BeanMapper.map(authorityBeanResult,Result.class);
         AuthorityVo authorityVo = BeanMapper.map(authorityBeanResult.getContent(),AuthorityVo.class);

@@ -135,23 +135,22 @@ public class AuthorityServiceImpl extends BaseServiceImpl<AuthorityBean, Authori
     @Transactional
     public Result<AuthorityBean> setStatus(Long id){
         AuthorityBean authorityBean = getAuthority(id);
-        if(authorityBean != null){
-            if(authorityBean.getStatus() == StatusEnum.NORMAL.getIndex()){
-                int is = dao.setStatus(id,StatusEnum.FORBIDDEN.getIndex());
-                if(is<=0){
-                    return Result.error(-1,"状态更改失败");
-                }
-            }else if(authorityBean.getStatus() == StatusEnum.FORBIDDEN.getIndex()){
-                int is = dao.setStatus(id,StatusEnum.NORMAL.getIndex());
-                if(is<=0){
-                    return Result.error(-1,"状态更改失败");
-                }
-            }else {
-                return Result.error(-1,"数据库权限状态有误");
+        if(authorityBean == null)
+            return Result.error(-1,"权限ID有误");
+        if(authorityBean.getStatus() == StatusEnum.NORMAL.getIndex()){
+            int is = dao.setStatus(id,StatusEnum.FORBIDDEN.getIndex());
+            if(is<=0){
+                return Result.error(-1,"状态更改失败");
+            }
+        }else if(authorityBean.getStatus() == StatusEnum.FORBIDDEN.getIndex()){
+            int is = dao.setStatus(id,StatusEnum.NORMAL.getIndex());
+            if(is<=0){
+                return Result.error(-1,"状态更改失败");
             }
         }else {
-            return Result.error(-1,"权限ID有误");
+            return Result.error(-1,"数据库权限状态有误");
         }
+
         return Result.success(getAuthority(id));
 
     }
