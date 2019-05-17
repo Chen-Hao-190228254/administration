@@ -37,7 +37,6 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     @Override
     @Transactional
     public Page<UserManagementDto> selectDtoPage(PageParam<UserManagementLikeQO> userManagementLikeQoPage) {
-
         return dao.getManagementDtoPage(userManagementLikeQoPage);
 
     }
@@ -61,6 +60,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
         return userManagementBean;
     }
 
+
     /**
      *  更新用户
      * @param userManagementBean
@@ -70,25 +70,34 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     @Override
     @Transactional
     public UserManagementBean update(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
-        userManagementBean.setEntryId(unifyAdmin.getId());
-        userManagementBean.setEntryName(unifyAdmin.getName());
-        userManagementBean.setEntryDt(new Date());
-        userManagementBean.setUpdateId(unifyAdmin.getId());
-        userManagementBean.setUpdateName(unifyAdmin.getName());
-        userManagementBean.setUpdateDt(new Date());
-        dao.updateManagement(userManagementBean);
+        UserManagementBean  beans = dao.detailsManagement(userManagementBean.getId());
+        if (beans.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
+            userManagementBean.setEntryId(unifyAdmin.getId());
+            userManagementBean.setEntryName(unifyAdmin.getName());
+            userManagementBean.setEntryDt(new Date());
+            userManagementBean.setUpdateId(unifyAdmin.getId());
+            userManagementBean.setUpdateName(unifyAdmin.getName());
+            userManagementBean.setUpdateDt(new Date());
+            dao.updateManagement(userManagementBean);
             return userManagementBean;
+        }
+
+            return null;
     }
 
     /**
      * 通过id删除
-     * @param userManagementBeanClass
+     * @param userManagementBean
      * @param id
      * @return
      */
     @Override
-    public Integer delete(Class<UserManagementBean> userManagementBeanClass, Long id) {
-        return dao.deleteManagement(UserManagementBean.class, id);
+    public Integer delete(UserManagementBean userManagementBean, Long id) {
+        UserManagementBean bean = dao.detailsManagement(id);
+        if (bean.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
+            return dao.deleteManagement(userManagementBean, id);
+        }
+            return null;
     }
 
     /**
@@ -100,13 +109,6 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     @Override
     public UserManagementBean details(UserManagementBean userManagementBean ,Long id ) {
          UserManagementBean  beans = dao.detailsManagement(id);
-        /* if (beans.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){  //判断当前状态
-             dao.updateStatus(userManagementBean);
-             System.out.println(beans.getStatus().toString()+" = "+ UserManagementStatusEnum.NORMAL.getValue());
-             return beans;
-         }*/
-            System.out.println(beans.getStatus());
-
             return beans;
     }
 
@@ -120,21 +122,20 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     public UserManagementBean updateStatus(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
         if ( userManagementBean.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
             System.out.println("当前状态是正常");
-            System.out.println(userManagementBean.getStatus().toString()+"=" + UserManagementStatusEnum.FORBIDDEN.getValue());
+            dao.updateStatus(userManagementBean);
             return userManagementBean;
         }
         if (userManagementBean.getStatus() == UserManagementStatusEnum.FORBIDDEN.getValue()){
             System.out.println("当前状态是禁用");
-            System.out.println(userManagementBean.getStatus().toString()+"=" + UserManagementStatusEnum.FORBIDDEN.getValue());
             dao.updateStatus(userManagementBean);
             return userManagementBean;
         }
         if (userManagementBean.getStatus() == UserManagementStatusEnum.VOID.getValue()){
-
             System.out.println("当前状态是无效");
-            return null ;
+            dao.updateStatus(userManagementBean);
+            return userManagementBean;
         }
-        return null;
+            return null;
     }
 
     /**
@@ -145,8 +146,12 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
      */
     @Override
     public UserManagementBean updatePassword(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
+        UserManagementBean bean = dao.detailsManagement(userManagementBean.getId());
+        if (bean .getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
             dao.updatePassword(userManagementBean);
             return userManagementBean;
+        }
+            return null ;
     }
 
 

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skm.exa.persistence.dao.QuestionBankDao">
+    <sql id="data">
+        `id`,
+        `enterprise_id`,
+        `enterprise_name`,
+        `title`,
+        `technological_type`,
+        `topic_type`,
+        `topic_details`,
+        `option_codes`,
+        `label`,
+        `answer`,
+        `status`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
+    </sql>
+    <resultMap id="RM" type="com.skm.exa.domain.bean.QuestionBankBean">
+        <id property="id" column="id"/>
+        <result property="enterpriseId" column="enterprise_id"/>
+        <result property="enterpriseName" column="enterprise_name"/>
+        <result property="title" column="title"/>
+        <result property="technologicalType" column="technological_type"/>
+        <result property="topicType" column="topic_type"/>
+        <result property="topicDetails" column="topic_details"/>
+        <result property="optionCodes" column="option_codes"/>
+        <result property="label" column="label"/>
+        <result property="answer" column="answer"/>
+        <result property="status" column="status"/>
+        <result property="entryId" column="entry_id"/>
+        <result property="entryName" column="entry_name"/>
+        <result property="entryDt" column="entry_dt"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateDt" column="update_dt"/>
+    </resultMap>
+    <resultMap id="DTORM" type="com.skm.exa.persistence.dto.QuestionBankDto" extends="RM">
+    </resultMap>
+    <!--分页模糊搜索-->
+    <select id="page" resultMap="DTORM">
+        SELECT
+        <include refid="data"/>
+        FROM `administration_question_bank`
+        <where>
+            <if test="id != null">OR`id` = #{id ,jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(titleLike)">OR `title` LIKE "%"#{titleLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(labelLike)">OR `label` LIKE "%"#{labelLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)">OR `enterprise_name` LIKE "%"#{enterpriseNameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </select>
+    <sql id="question">
+        INSERT INTO `administration_question_bank`(
+            `enterprise_id`,
+            `enterprise_name`,
+            `title`,
+            `technological_type`,
+            `topic_type`,
+            `topic_details`,
+            `option_codes`,
+            `label`,
+            `answer`,
+            `status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        )VALUE (
+            #{enterpriseId},
+            #{enterpriseName},
+            #{title},
+            #{technologicalType},
+            #{topicType},
+            #{topicDetails},
+            #{optionCodes},
+            #{label},
+            #{answer},
+            #{status},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+    </sql>
+    <!--添加题库-->
+    <insert id="addQuestion" useGeneratedKeys="true" keyProperty="id">
+          <include refid="question"/>
+    </insert>
+    <!--题目详情-->
+    <sql id="details">
+        `id`,
+        `topic_type`,
+        `title`,
+        `label`,
+        `enterprise_name`,
+        `topic_details`,
+        `answer`
+    </sql>
+    <!--题目详情-->
+    <select id="questionDetails" resultType="com.skm.exa.domain.bean.QuestionBankBean">
+        SELECT
+        <include refid="details"/>
+        FROM `administration_question_bank`
+        <where>
+            <if test="id != null">AND `id` = #{id ,jdbcType=BIGINT}</if>
+        </where>
+    </select>
+
+    <!--通过id获取所有数据-->
+    <select id="details" resultType="com.skm.exa.domain.bean.QuestionBankBean">
+    SELECT
+    <include refid="data"/>
+    FROM `administration_question_bank`
+        <where>
+            <if test="id != null">AND `id` = #{id ,jdbcType=BIGINT}</if>
+        </where>
+    </select>
+    <!--通过id更改状态-->
+    <update id="updateStatus">
+        UPDATE `administration_question_bank`
+        SET `status` = #{status}
+        WHERE `id` = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM `administration_question_bank` WHERE `id` = #{id}
+    </delete>
+</mapper>

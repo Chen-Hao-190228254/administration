@@ -40,7 +40,7 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
      * @param id
      * @return
      */
-    Integer delete(Class<UserManagementBean> userManagementBeanClass ,Long id);
+    Integer delete(UserManagementBean userManagementBeanClass ,Long id);
 
     /**
      * 通过id获取数据

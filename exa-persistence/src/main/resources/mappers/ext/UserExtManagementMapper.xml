@@ -136,13 +136,13 @@
 
     <!--通过id获取数据-->
     <select id="detailsManagement" resultType="com.skm.exa.domain.bean.UserManagementBean">
-        SELECT
-        <include refid="dtoManagementColumns"/>
-        FROM `administration_users_management`
-        <where>
-            <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
-        </where>
-    </select>
+    SELECT
+    <include refid="dtoManagementColumns"/>
+    FROM `administration_users_management`
+    <where>
+        <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
+    </where>
+</select>
 
     <!--通过 id 更改状态-->
     <update id="updateStatus" parameterType="com.skm.exa.domain.bean.UserManagementBean">

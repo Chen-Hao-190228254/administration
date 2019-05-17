@@ -4,11 +4,11 @@ import com.skm.exa.common.utils.BeanMapper;
 import com.skm.exa.domain.bean.AdminBean;
 import com.skm.exa.service.biz.AdminService;
 import com.skm.exa.webapi.vo.AdminVo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/admin")
 public class AdminController {

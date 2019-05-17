@@ -39,7 +39,7 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
     * @param id
     * @return
     */
-   Integer deleteManagement(Class<UserManagementBean> userManagementBeanClass,@Param("id") Long id);
+   Integer deleteManagement(UserManagementBean userManagementBeanClass,@Param("id") Long id);
 
    /**
     * 通过id 查询

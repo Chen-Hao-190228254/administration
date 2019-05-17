@@ -13,10 +13,14 @@ import com.skm.exa.persistence.qo.UserManagementLikeQO;
 import com.skm.exa.service.biz.UserManagementService;
 import com.skm.exa.webapi.BaseController;
 import com.skm.exa.webapi.vo.*;
+import io.swagger.annotations.Api;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
+@Api(tags = "用户管理" ,description = "用户管理接口")
 @RestController
 @RequestMapping("/web/v1/userManagement")
 public class UserManagementController extends BaseController {
@@ -29,8 +33,9 @@ public class UserManagementController extends BaseController {
      * @return
      */
     @PostMapping("/page")
+    @ApiOperation(notes = "分页模糊查询获取用户信息",value = "分页模糊查询获取用户信息")
     public Result<Page<UserManagementVO>> pageResult
-            (@RequestBody PageParam<UserManagementQueryVO> pageParam){
+            (@ApiParam("分页模糊查询获取用户信息")@RequestBody PageParam<UserManagementQueryVO> pageParam){
         UserManagementQueryVO queryVO = pageParam.getCondition();
         UserManagementLikeQO qo = new UserManagementLikeQO();
         qo.addSearchConditionGroup(SearchConditionGroup //columns 列
@@ -61,25 +66,25 @@ public class UserManagementController extends BaseController {
      * @return
      */
     @PostMapping("add")
-    public Result<UserManagementBean> add (@RequestBody UserManagementSaveVO userManagementSaveVO){
+    @ApiOperation(notes = "添加用户",value = "添加用户")
+    public Result<UserManagementBean> add (@ApiParam("添加用户")@RequestBody UserManagementSaveVO userManagementSaveVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         UserManagementBean userManagementBean = BeanMapper.map(userManagementSaveVO, UserManagementBean.class);
         userManagementBean = userManagementService.add(userManagementBean, unifyAdmin);
         System.out.println(userManagementBean.toString());
         return Result.success(userManagementBean);
     }
-
     /**
      *  更新用户
      * @param userManagementUpdateVO
      * @return
      */
     @PostMapping("updateManagement")
-    public Result<UserManagementBean> update(@RequestBody UserManagementUpdateVO userManagementUpdateVO){
+    @ApiOperation(notes = "更新用户",value = "更新用户")
+    public Result<UserManagementBean> update(@ApiParam("更新用户")@RequestBody UserManagementUpdateVO userManagementUpdateVO){
        UnifyAdmin unifyAdmin = getCurrentAdmin();
        UserManagementBean userManagementBean = BeanMapper.map(userManagementUpdateVO,UserManagementBean.class );
        userManagementBean = userManagementService.update(userManagementBean,unifyAdmin );
-       System.out.println(userManagementBean.toString());
         return Result.success(userManagementBean);
     }
 
@@ -89,13 +94,14 @@ public class UserManagementController extends BaseController {
      * @return
      */
     @PostMapping("deleteManagement")
-    public Result<UserManagementDeleteVO> delete (@RequestParam ("id") Long id){
+    @ApiOperation(notes = "通过id删除用户",value = "通过id删除用户")
+    public Result<UserManagementDeleteVO> delete (@ApiParam("通过id删除用户")@RequestParam ("id") Long id){
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
-        Integer delete = userManagementService.delete(UserManagementBean.class,id );
+        Integer delete = userManagementService.delete(userManagementBean,id );
         System.out.println("到达这里");
         UserManagementDeleteVO userManagementDeleteVO = BeanMapper.map(delete,UserManagementDeleteVO.class );
-        System.out.println(userManagementDeleteVO.toString());
+
         return Result.success(userManagementDeleteVO);
     }
 
@@ -105,12 +111,12 @@ public class UserManagementController extends BaseController {
      * @return
      */
     @PostMapping("details")
-    public Result details(@RequestParam ("id") Long id){
+    @ApiOperation(notes = "通过id查询",value = "通过id查询")
+    public Result details(@ApiParam("通过id查询")@RequestParam ("id") Long id){
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
         UserManagementBean details = userManagementService.details(userManagementBean ,id);
         UserManagementVO userManagementVO = BeanMapper.map(details,UserManagementVO.class );
-        System.out.println(userManagementVO.toString() +"嗯嗯嗯");
         return Result.success(userManagementVO) ;
     }
 
@@ -120,7 +126,8 @@ public class UserManagementController extends BaseController {
      * @return
      */
     @PostMapping("status")
-    public Result<UserManagementBean> updateStatus(@RequestBody UserManagementStatusVO statusVO){
+    @ApiOperation(notes = "更改状态",value = "更改状态")
+    public Result<UserManagementBean> updateStatus(@ApiParam("更改状态")@RequestBody UserManagementStatusVO statusVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         UserManagementBean userManagementBean = BeanMapper.map(statusVO,UserManagementBean.class);
         userManagementBean = userManagementService.updateStatus(userManagementBean,unifyAdmin );
@@ -133,7 +140,8 @@ public class UserManagementController extends BaseController {
      * @return
      */
     @PostMapping("updatePassword")
-    public Result<UserManagementBean> updatePassword(@RequestBody UserManagementUpdatePasswordVO updatePasswordVO){
+    @ApiOperation(notes = "更改密码",value = "更改密码")
+    public Result<UserManagementBean> updatePassword(@ApiParam("更改密码")@RequestBody UserManagementUpdatePasswordVO updatePasswordVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         UserManagementBean userManagementBean = BeanMapper.map(updatePasswordVO,UserManagementBean.class );
         userManagementBean = userManagementService.updatePassword(userManagementBean,unifyAdmin );

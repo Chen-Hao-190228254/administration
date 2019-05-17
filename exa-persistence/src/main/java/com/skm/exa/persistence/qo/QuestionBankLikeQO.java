@@ -1,9 +1,8 @@
 package com.skm.exa.persistence.qo;
 
-import com.skm.exa.domain.bean.UserCodesBean;
+import com.skm.exa.domain.bean.QuestionBankBean;
 import com.skm.exa.mybatis.*;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,13 +10,15 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class UserCodesLikeQO extends UserCodesBean implements DynamicSearchable , Sortable {
-    @ApiModelProperty(value = "代码模糊查询")
-    private String codesLike;  // 代码
-    @ApiModelProperty(value = "代码名称迷糊查询")
-    private String codeNameLike;        //代码名称
+@AllArgsConstructor
+public class QuestionBankLikeQO extends QuestionBankBean implements DynamicSearchable , Sortable {
+    @ApiModelProperty(value = "标题")
+    private String titleLike;
+    @ApiModelProperty(value = "题目类型")
+    private String labelLike;
+    @ApiModelProperty(value = "企业名称")
+    private String enterpriseNameLike;
     @ApiModelProperty(value = "搜索环境")
     private List<SearchCondition> searchConditions;   //搜索环境
     @ApiModelProperty(value = "搜索条件组")
