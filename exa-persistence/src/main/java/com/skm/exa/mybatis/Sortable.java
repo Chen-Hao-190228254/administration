@@ -3,9 +3,9 @@ package com.skm.exa.mybatis;
 /**
  * @author dhc
  * 2019-03-07 14:35
- */
+ */                     //Sortable  排序
 public interface Sortable {
-    Sort getSort();
+    Sort getSort();   //sort  种类
 
     void setSort(Sort sort);
 

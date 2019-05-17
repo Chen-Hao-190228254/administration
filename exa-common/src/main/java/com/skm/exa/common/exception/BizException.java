@@ -10,10 +10,10 @@ import java.util.List;
  * 2019-03-10 13:21
  */
 public class BizException extends RuntimeException {
-    private int code;
+    private int code;   //编码
     private String message;
-    private List<String> messages;
-    private Object content;
+    private List<String> messages;   //信息
+    private Object content;   //content  内容
 
     public BizException(int code, String message) {
         super(message);

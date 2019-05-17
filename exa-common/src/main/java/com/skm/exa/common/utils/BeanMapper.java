@@ -19,8 +19,8 @@ import java.util.function.Supplier;
  * 2019-03-06 10:42
  */
 public class BeanMapper {
-    private static final MapperFactory MAPPER_FACTORY;
-    private static final MapperFacade DEFAULT_MAPPER;
+    private static final MapperFactory MAPPER_FACTORY;  //映射工厂
+    private static final MapperFacade DEFAULT_MAPPER;   //映射外观
 
     static {
         MAPPER_FACTORY = new DefaultMapperFactory.Builder().build();
@@ -49,7 +49,7 @@ public class BeanMapper {
      * @param <S>       源对象类型
      * @param <D>       目标对象类型
      * @return 复制后的对象
-     */
+     */                                     //Supplier 供应商
     public static <S, D> D map(S source, Class<D> distClass, Supplier<MapperFacade> mapper) {
         return mapper.get().map(source, distClass);
     }
@@ -63,7 +63,7 @@ public class BeanMapper {
      * @param <S>         转入类泛型
      * @param <D>         转出类泛型
      * @return 构建后的 MapperFacade
-     */
+     */                                 //构建类映射器外观
     private static <S, D> MapperFacade buildClassMapperFacade(Class<S> sourceClass, Class<D> distClass, Map<String, String> fieldMap) {
         MapperFactory factory = new DefaultMapperFactory.Builder().build();
         ClassMapBuilder<S, D> classMapBuilder = factory.classMap(sourceClass, distClass);

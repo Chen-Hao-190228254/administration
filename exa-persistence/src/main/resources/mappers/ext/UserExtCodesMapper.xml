@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.skm.exa.persistence.dao.UserCodesDao">
+    <sql id="codes">
+        `id`,
+        `codes`,
+        `code_name`,
+        `status`,
+        `edit_status`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
+    </sql>
+
+    <resultMap id="RM" type="com.skm.exa.domain.bean.UserCodesBean">
+        <id property="id" column="id"/>
+        <result property="codes" column="codes"/>
+        <result property="codeName" column="code_name"/>
+        <result property="status" column="status"/>
+        <result property="editStatus" column="edit_status"/>
+        <result property="entryId" column="entry_id"/>
+        <result property="entryName" column="entry_name"/>
+        <result property="entryDt" column="entry_dt"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateDt" column="update_dt"/>
+    </resultMap>
+
+    <resultMap id="DTORM" type="com.skm.exa.persistence.dto.UserCodesDto" extends="RM">
+    </resultMap>
+    <!--代码分页查询-->
+    <select id="pageCodes" resultMap="DTORM">
+        SELECT
+        <include refid="codes"/>
+        FROM `administration_codes`
+        <where>
+            <if test="id != null">OR`id` = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codesLike)">OR `codes` LIKE "%"#{codesLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeNameLike)">OR `code_name` LIKE "%"#{codeNameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </select>
+    <!--添加代码-->
+    <sql id="add">
+        INSERT INTO `administration_codes`(
+            `codes`,
+            `code_name`,
+            `status`,
+            `edit_status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        )VALUE (
+            #{codes},
+            #{codeName},
+            #{status},
+            #{editStatus},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+
+    </sql>
+    <insert id="addCodes" useGeneratedKeys="true" keyProperty="id">
+          <include refid="add"/>
+    </insert>
+    <!--通过id获取详情-->
+    <select id="details" resultType="com.skm.exa.domain.bean.UserCodesBean">
+        SELECT
+        <include refid="codes"/>
+        FROM `administration_codes`
+       <where>
+           <if test="id != null"> AND `id` = #{id , jdbcType=BIGINT}</if>
+       </where>
+    </select>
+    <!--通过id修改数据-->
+    <update id="updateCodes" parameterType="com.skm.exa.domain.bean.UserCodesBean">
+        UPDATE `administration_codes`
+        SET
+            `codes`= #{codes},
+            `code_name` = #{codeName},
+            `status` = #{status},
+            `entry_id`= #{entryId},
+            `entry_name`= #{entryName},
+            `entry_dt`= #{entryDt},
+            `update_id`= #{updateId},
+            `update_name`= #{updateName},
+            `update_dt`= #{updateDt}
+        WHERE `id` = #{id}
+    </update>
+    <!--通过id删除-->
+    <delete id="deleteCodes">
+        DELETE FROM  `administration_codes`WHERE id = #{id}
+    </delete>
+    <!--更改状态-->
+    <update id="updateStatus" parameterType="com.skm.exa.domain.bean.UserCodesBean">
+        UPDATE `administration_codes`
+        SET
+        `status` = #{status}
+        WHERE `id` = #{id}
+    </update>
+
+    <!--更改可编辑状态-->
+    <update id="updateEditStatus" parameterType="com.skm.exa.domain.bean.UserCodesBean">
+        UPDATE `administration_codes`
+        SET
+        `edit_status` = #{editStatus}
+        WHERE `id` = #{id}
+    </update>
+</mapper>
