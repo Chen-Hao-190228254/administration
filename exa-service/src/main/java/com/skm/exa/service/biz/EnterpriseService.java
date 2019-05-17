@@ -12,6 +12,7 @@ import com.skm.exa.persistence.qo.EnterpriseQO;
 import com.skm.exa.service.BaseService;
 import com.skm.exa.service.biz.impl.EnterpriseServiceImpl;
 
+import java.io.File;
 import java.util.List;
 
 public interface EnterpriseService extends BaseService<EnterpriseBean> {
@@ -60,7 +61,7 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
      * 设置企业状态
      * @return
      */
-    EnterpriseDto setEnterpriseStatus();
+    EnterpriseDto setEnterpriseStatus(Long id);
 
 
 //------------------------图片获取--------------------------------------
@@ -80,6 +81,12 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
      * @return
      */
     List<EnterpriseDto> enterpriseImage(List<EnterpriseBean> enterpriseBeans );
+
+
+
+    Result addImage(Long enterpeiseId, File file);
+
+
 
 
     /**

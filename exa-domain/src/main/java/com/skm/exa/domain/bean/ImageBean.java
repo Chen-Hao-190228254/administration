@@ -23,7 +23,7 @@ public class ImageBean {
     /**
      * 图片大小
      */
-    private Long size;
+    private Double size;
 
     /**
      * 文件MD5数字唯一签名

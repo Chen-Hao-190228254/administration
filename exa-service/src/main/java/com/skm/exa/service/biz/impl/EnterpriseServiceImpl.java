@@ -1,5 +1,6 @@
 package com.skm.exa.service.biz.impl;
 
+import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +76,15 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      * @return
      */
     @Override
+    @Transactional
     public Result<EnterpriseDto> addEnterprise(EnterpriseSaveDto enterpriseSaveDto, UnifyAdmin unifyAdmin) {
+        EnterpriseBean enterpriseBean = BeanMapper.map(enterpriseSaveDto,EnterpriseBean.class);
+        if(enterpriseBean == null)
+            return Result.error(-1,"数据有误");
+        int is = dao.addEnterprise(enterpriseBean);
+        if(is<=0)
+            return Result.error(-1,"添加企业时失败");
+
         return null;
     }
 
@@ -110,7 +120,7 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      * @return
      */
     @Override
-    public EnterpriseDto setEnterpriseStatus() {
+    public EnterpriseDto setEnterpriseStatus(Long id) {
         return null;
     }
 
@@ -178,6 +188,22 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
         }
         return enterpriseDtos;
     }
+
+
+    /**
+     * 添加图片
+     * @param enterpeiseId
+     * @param file
+     * @return
+     */
+    public Result addImage(Long enterpeiseId, File file){
+        List<File> files = new ArrayList<>();
+        files.add(file);
+        Result result = commonService.addImage(enterpeiseId,files,"administration_enterprise");
+        return null;
+    }
+
+
 
 
     /**

@@ -27,6 +27,23 @@ public interface CommonDao{
 
 
     /**
+     * 添加图片
+     * @param imageBean
+     * @return
+     */
+    int addImage(List<ImageBean> imageBean);
+
+    /**
+     * 添加图片关联
+     * @param imageId
+     * @param correlationId
+     * @param correlationName
+     * @return
+     */
+    int addImageCorrelation(@Param("list")List<Long> imageId,@Param("correlationId")Long correlationId,@Param("correlationName") String correlationName);
+
+
+    /**
      * 删除图片
      * @param list 图片ID
      * @return

@@ -1,10 +1,8 @@
 package com.skm.exa.webapi.controller;
 
-import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
-import com.skm.exa.domain.bean.EnterpriseBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dto.EnterpriseDto;
@@ -115,6 +113,19 @@ public class EnterpriseController extends BaseController {
         if(i)
             return Result.success("删除成功");
         return Result.error(-1,"删除失败");
+    }
+
+
+    /**
+     * 删除企业
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "更改企业状态", notes = "更改企业状态/只能在禁用与启用的状态中切换")
+    @PutMapping("/deleteEnterprise")
+    public Result setEnterpriseStatus(@ApiParam("需要更改状态的企业的ID") @RequestParam("id") Long id){
+        EnterpriseDto enterpriseDto = enterpriseService.setEnterpriseStatus(id);
+        return null;
     }
 
 
