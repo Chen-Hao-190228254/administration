@@ -24,7 +24,7 @@ import java.util.List;
  * @author dhc
  * 2019-03-05 14:07
  */
-public class ServletUtils {
+public class ServletUtils {    //监听器工具
     private static final Logger LOG = LoggerFactory.getLogger(ServletUtils.class);
 
     /**
@@ -38,7 +38,7 @@ public class ServletUtils {
     @SuppressWarnings("unchecked")
     public static <T extends Number> T getNumberParam(ServletRequest request, String name) {
         String value = request.getParameter(name);
-        if (StringUtils.isNotBlank(value)) {
+        if (StringUtils.isNotBlank(value)) {    //blank 空
             try {
                 return (T) NumberFormat.getInstance().parse(value);
             } catch (ParseException e) {

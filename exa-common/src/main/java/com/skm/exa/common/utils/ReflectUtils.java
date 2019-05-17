@@ -38,7 +38,7 @@ public class ReflectUtils {
         Field field = getField(o, fieldName);
         if (field == null) return null;
 
-        boolean accessible = field.isAccessible();
+        boolean accessible = field.isAccessible();   //accessible 易接近的
         if (!accessible) field.setAccessible(true);
         Object value;
         try {

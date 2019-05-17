@@ -23,7 +23,7 @@ public interface BaseDao<T extends BaseBean> {
 
     /**
      * 根据条件查询对象列表
-     *
+     *      *
      * @param condition 查询条件对象
      * @return 对象列表
      */
