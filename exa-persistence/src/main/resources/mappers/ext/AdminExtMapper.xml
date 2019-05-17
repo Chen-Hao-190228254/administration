@@ -2,46 +2,196 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.skm.exa.persistence.dao.AdminDao">
-    <!--<sql id="Admin">-->
-        <!--`id`,-->
-        <!--`username`,-->
-        <!--`password`,-->
-        <!--`name`,-->
-        <!--`admin_role_code`,-->
-        <!--`phone`,-->
-        <!--`email`,-->
-        <!--`status`,-->
-        <!--`entry_id`,-->
-        <!--`entry_name`,-->
-        <!--`entry_dt`,-->
-        <!--`update_id`,-->
-        <!--`update_name`,-->
-        <!--`update_dt`-->
-    <!--</sql>-->
-
-    <!--<resultMap id="SS" extends="RM">-->
-        <!--<id property="id" column="id"/>-->
-        <!--<result property="username" column="username"/>-->
-        <!--<result property="password" column="password"/>-->
-        <!--<result property="name" column="name"/>-->
-        <!--<result property="adminRoleCode" column="admin_role_code"/>-->
-        <!--<result property="phone" column="phone"/>-->
-        <!--<result property="email" column="email"/>-->
-        <!--<result property="status" column="status"/>-->
-        <!--<result property="entryId" column="entry_id"/>-->
-        <!--<result property="entryName" column="entry_name"/>-->
-        <!--<result property="entryDt" column="entry_dt"/>-->
-        <!--<result property="updateId" column="update_id"/>-->
-        <!--<result property="updateName" column="update_name"/>-->
-        <!--<result property="updateDt" column="update_dt"/>-->
-    <!--</resultMap>-->
 
 
+
+<!--获得指定ID的管理员-->
+    <select id="getAdmin" resultMap="RM">
+        SELECT * FROM `administration_admin` WHERE `id` = #{id}
+    </select>
+
+<!--获得所有管理员列表-->
     <select id="getAdminList" resultMap="RM">
         SELECT * FROM `administration_admin`
     </select>
 
 
 
+
+
+<!--分页查询，可添加条件-->
+    <sql id="pageCondition">
+        <where>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">OR `username` LIKE "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">OR `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+
+    <select id="getAdminPage" resultMap="RM">
+        SELECT * FROM `administration_admin` <include refid="pageCondition"/>
+    </select>
+
+
+
+<!--添加管理员-->
+    <insert id="addAdmin" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `administration_admin`(
+            `username`,
+            `password`,
+            `name`,
+            `phone`,
+            `email`,
+            `status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        ) VALUES (
+            #{username},
+            #{password},
+            #{name},
+            #{phone},
+            #{email},
+            #{status},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+    </insert>
+
+
+
+    <update id="updateAdmin">
+        UPDATE `administration_admin`
+        SET
+            `username` = #{username},
+            `name` = #{name},
+            `phone` = #{phone},
+            `email` = #{email},
+            `status` = #{status},
+            `update_id` = #{updateId},
+            `update_name` = #{updateName},
+            `update_dt` = #{updateDt}
+            WHERE
+            `id` = #{id}
+    </update>
+
+
+
+    <update id="updatePassword">
+         UPDATE `administration_admin`
+        SET
+            `password` = #{password}
+            WHERE
+            `id` = #{adminId}
+    </update>
+
+
+    <update id="updateStatus">
+         UPDATE `administration_admin`
+        SET
+            `status` = #{status}
+            WHERE
+            `id` = #{id}
+    </update>
+
+
+
+
+
+<!--管理员角色操作mapper-->
+<!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+
+    <resultMap id="AdminRole" type="com.skm.exa.persistence.dto.AdminRoleDto">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="status" column="status"/>
+        <result property="entryId" column="entry_id"/>
+        <result property="entryName" column="entry_name"/>
+        <result property="entryDt" column="entry_dt"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateDt" column="update_dt"/>
+
+        <result property="adminId" column="admin_id"/>
+    </resultMap>
+
+
+
+<!--通过管理员ID，查询管理员权限-->
+    <select id="getAdminRoleAdminId" resultMap="AdminRole">
+        SELECT * FROM `administration_role` WHERE id IN (SELECT role_id FROM `administration_admin_role` WHERE `admin_id` = #{id})
+    </select>
+
+
+    <select id="getAdminRole" resultMap="AdminRole">
+        SELECT
+            r.`id`,
+            r.`code`,
+            r.`name`,
+            r.`status`,
+            r.`entry_id`,
+            r.`entry_name`,
+            r.`entry_dt`,
+            r.`update_id`,
+            r.`update_name`,
+            r.`update_dt`,
+            ar.`admin_id` admin_id
+        FROM
+          `administration_role` AS r,
+          `administration_admin_role` AS ar
+        WHERE r.`id` = ar.`role_id`
+          AND ar.`admin_id` IN (
+            <foreach collection="adminId" item="aId" separator=",">
+                #{aId}
+            </foreach>
+          )
+    </select>
+
+
+
+
+
+<!--添加管理员权限-->
+    <insert id="addAdminRole" >
+        INSERT INTO `administration_admin_role`(
+        `admin_id`,
+        `role_id`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
+        )VALUES
+        <foreach collection="roleBean" item="item" separator=",">
+            (
+            #{adminId},
+            #{item.id},
+            #{item.entryId},
+            #{item.entryName},
+            #{item.entryDt},
+            #{item.updateId},
+            #{item.updateName},
+            #{item.updateDt}
+            )
+        </foreach>
+    </insert>
+
+
+
+
+
+<!--删除管理员角色-->
+    <delete id="deleteAdminRole">
+        DELETE FROM `administration_admin_role` WHERE `admin_id` = #{adminId}
+    </delete>
 
 </mapper>

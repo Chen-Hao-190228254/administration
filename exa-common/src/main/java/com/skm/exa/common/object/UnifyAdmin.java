@@ -1,8 +1,10 @@
 package com.skm.exa.common.object;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class UnifyAdmin implements Serializable {
@@ -20,17 +22,13 @@ public class UnifyAdmin implements Serializable {
     /**
      * 用户账号密码
      */
+    @JsonIgnore
     private String password;
 
     /**
      * 用户名称
      */
     private String name;
-
-    /**
-     * 角色code
-     */
-    private String adminRoleCode;
 
     /**
      * 联系电话
@@ -47,4 +45,16 @@ public class UnifyAdmin implements Serializable {
      */
     private byte status;
 
+    /**
+     * 角色
+     */
+    List<UnifyRole> role;
+
+    /**
+     * 权限
+     */
+    List<UnifyAuthority> authority;
+
 }
+
+

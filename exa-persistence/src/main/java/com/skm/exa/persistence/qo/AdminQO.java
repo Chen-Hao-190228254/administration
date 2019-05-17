@@ -12,12 +12,14 @@ public class AdminQO extends AdminBean implements DynamicSearchable, Sortable {
     /**
      *编码条件搜索
      */
-    private String codeLike;
+    private String usernameLike;
 
     /**
      * 名称条件搜索
      */
     private String nameLike;
+
+
 
     /**
      * 搜索条件

@@ -3,6 +3,8 @@ package com.skm.exa.domain.bean;
 import com.skm.exa.domain.BaseBean;
 import lombok.Data;
 
+import java.util.List;
+
 
 @Data
 public class AdminBean extends BaseBean {
@@ -23,6 +25,7 @@ public class AdminBean extends BaseBean {
      */
     private String name;
 
+
     /**
      * 联系电话
      */
@@ -37,5 +40,7 @@ public class AdminBean extends BaseBean {
      * 用户状态
      */
     private byte status;
+
+
 
 }

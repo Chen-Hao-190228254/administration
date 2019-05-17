@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,18 +26,18 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 @Configurable
 @EnableWebSecurity
 @EnableRedisHttpSession
-//@EnableGlobalMethodSecurity(prePostEnabled=true)  // 支持类和方法的注解权限验证
+@EnableGlobalMethodSecurity(prePostEnabled=true)  // 支持类和方法的注解权限验证
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_URL = "/web/v1/login";
     private static final String LOGOUT_URL = "/web/v1/logout";
 
     private final AuthenticationHandler authenticationHandler = new AuthenticationHandler();
 
-    private final UserAuthenticationFilterAndProvider authenticationFilterAndProvider;
+    private final AdminAuthenticationFilterAndProvider authenticationFilterAndProvider;
 
     @Autowired
     public WebSecurityConfig(UnifyAdminService unifyAdminService) {
-        this.authenticationFilterAndProvider = new UserAuthenticationFilterAndProvider(unifyAdminService, LOGIN_URL);
+        this.authenticationFilterAndProvider = new AdminAuthenticationFilterAndProvider(unifyAdminService, LOGIN_URL);
     }
 
     @Bean
@@ -55,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().sessionCreationPolicy(SessionCreationPolicy.NEVER)
                 .and().exceptionHandling().authenticationEntryPoint(authenticationHandler).accessDeniedHandler(authenticationHandler)
                 .and().authorizeRequests().anyRequest().authenticated()
-//                .antMatchers("/web/v1/admin").hasRole("ADMIN")
+ //               .antMatchers("/web/v1/admin").hasRole("ADMIN")
                 .and().formLogin().loginProcessingUrl(LOGIN_URL).successHandler(authenticationHandler).failureHandler(authenticationHandler)
                 .and().addFilterAt(authenticationFilterAndProvider, UsernamePasswordAuthenticationFilter.class)
                 .logout().logoutUrl(LOGOUT_URL).logoutSuccessHandler(authenticationHandler);

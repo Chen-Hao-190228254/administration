@@ -1,8 +1,6 @@
 package com.skm.exa.webapi.conf.security;
 
-import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.object.UnifyUser;
-import com.skm.exa.common.service.UnifyAdminService;
 import com.skm.exa.common.service.UnifyUserService;
 import com.skm.exa.common.utils.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,15 +32,14 @@ import java.util.List;
  * @author dhc
  * 2019-03-05 16:19
  */
-public class UserAuthenticationFilterAndProvider extends AbstractAuthenticationProcessingFilter implements AuthenticationProvider {
+public class AdminAuthenticationFilterAndProvider extends AbstractAuthenticationProcessingFilter implements AuthenticationProvider {
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
-//    private UnifyUserService unifyUserService;
-    private UnifyAdminService unifyAdminService;
+    private UnifyUserService unifyUserService;
 
-    UserAuthenticationFilterAndProvider(UnifyAdminService unifyAdminService, String loginUrl) {
+    AdminAuthenticationFilterAndProvider(UnifyUserService unifyUserService, String loginUrl) {
         super(new AntPathRequestMatcher(loginUrl, HttpMethod.POST.name()));
-        this.unifyAdminService = unifyAdminService;
+        this.unifyUserService = unifyUserService;
     }
 
     // 获取用户输入的登录信息
@@ -73,7 +70,7 @@ public class UserAuthenticationFilterAndProvider extends AbstractAuthenticationP
         String username = token.getPrincipal().toString();
         String password = token.getCredentials().toString();
 
-        UnifyAdmin user = unifyAdminService.loadAdminByUsername(username);
+        UnifyUser user = unifyUserService.loadUserByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
@@ -86,7 +83,7 @@ public class UserAuthenticationFilterAndProvider extends AbstractAuthenticationP
         return new UsernamePasswordAuthenticationToken(user, password, authorities);
     }
 
-    private void checkPassword(UnifyAdmin admin, String password) {
+    private void checkPassword(UnifyUser admin, String password) {
         if (StringUtils.isBlank(password) || !PASSWORD_ENCODER.matches(password, admin.getPassword())) {
             throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }

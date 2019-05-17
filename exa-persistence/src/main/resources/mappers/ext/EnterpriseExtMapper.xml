@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.skm.exa.persistence.dao.EnterpriseDao">
+
+
+
+<!--获得所有企业-->
+    <select id="getEnterpriseList" resultMap="RM">
+        SELECT * FROM `administration_enterprise`
+    </select>
+
+
+<!--根据ID获取企业-->
+    <select id="getEnterprise" resultMap="RM">
+        SELECT * FROM `administration_enterprise` WHERE `id` = #{id}
+    </select>
+
+
+
+<!--分页查询企业，可加条件-->
+    <sql id="pageCondition">
+        <where>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">OR `code` LIKE "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">OR `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+    <select id="getEnterprisePage" resultMap="RM">
+        SELECT * FROM `administration_enterprise` <include refid="pageCondition"/>
+    </select>
+
+
+
+
+<!--添加企业-->
+    <insert id="addEnterprise" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `administration_enterprise`(
+            `name`,
+            `code`,
+            `location`,
+            `phone`,
+            `url`,
+            `technique`,
+            `area_id`,
+            `business_scope`,
+            `detail`,
+            `status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        ) VALUES (
+            #{name},
+            #{code},
+            #{location},
+            #{phone},
+            #{url},
+            #{technique},
+            #{areaId},
+            #{businessScope},
+            #{detail},
+            #{status},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+    </insert>
+
+
+
+
+<!--更新企业-->
+    <update id="updateEnterprise">
+         UPDATE `administration_enterprise`
+        SET
+            `name` = #{name},
+            `code` = #{code},
+            `location` = #{location},
+            `phone` = #{phone},
+            `url` = #{url},
+            `technique` = #{technique},
+            `area_id` = #{areaId},
+            `business_scope` = #{businessScope},
+            `detail` = #{detail},
+            `status` = #{status},
+            `update_id` = #{updateId},
+            `update_name` = #{updateName},
+            `update_dt` = #{updateDt}
+            WHERE
+            `id` = #{id}
+    </update>
+
+
+
+
+
+<!--删除企业-->
+    <delete id="deleteEnterprise">
+        DELETE FROM `administration_enterprise` WHERE `id` = #{id}
+    </delete>
+
+
+</mapper>

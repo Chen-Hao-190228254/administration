@@ -1,8 +1,10 @@
 package com.skm.exa.webapi;
 
 import com.skm.exa.common.object.UnifyAdmin;
+import com.skm.exa.common.object.UnifyUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author dhc
  * 2019-03-07 15:52
  */
+@CrossOrigin
 public abstract class BaseController {
 
     @Autowired

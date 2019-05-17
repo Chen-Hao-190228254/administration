@@ -44,6 +44,7 @@
         </dependency>
 
 
+
         <!--工具包-->
         <!--自动生成get set。。。-->
         <dependency>
@@ -51,8 +52,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-
-
 
 
 

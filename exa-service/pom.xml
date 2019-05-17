@@ -23,16 +23,12 @@
             <artifactId>lettuce-core</artifactId>
         </dependency>
 
-        <!--工具包-->
-        <!--自动生成get set。。。-->
+
+        <!--事务需要-->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
-
-
-
 
 
     </dependencies>
