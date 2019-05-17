@@ -28,8 +28,8 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 @EnableRedisHttpSession
 @EnableGlobalMethodSecurity(prePostEnabled=true)  // 支持类和方法的注解权限验证
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String LOGIN_URL = "/web/login";
-    private static final String LOGOUT_URL = "/web/logout";
+    private static final String LOGIN_URL = "/web/v1/login";
+    private static final String LOGOUT_URL = "/web/v1/logout";
 
     private final AuthenticationHandler authenticationHandler = new AuthenticationHandler();
 

@@ -1,5 +1,6 @@
 package com.skm.exa.common.object;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ public class UnifyAdmin implements Serializable {
     /**
      * 用户账号密码
      */
+    @JsonIgnore
     private String password;
 
     /**

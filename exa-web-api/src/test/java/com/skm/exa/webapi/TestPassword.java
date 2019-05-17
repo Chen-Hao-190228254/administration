@@ -1,5 +1,7 @@
 package com.skm.exa.webapi;
 
+import com.aliyun.oss.OSSClient;
+import com.skm.exa.common.object.AliyunOSSClientUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,7 +10,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.regex.Matcher;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 @RunWith(SpringRunner.class)
@@ -35,5 +41,35 @@ public class TestPassword {
         boolean isMatch = Pattern.matches(pattern, content);
         System.out.println("字符串中是否包含了 'runoob' 子字符串? " + isMatch);
 
+
+
     }
+
+
+    //测试
+    @Test
+    public void test1() {
+        //上传文件
+        String file="C:\\Users\\Chen Hao\\Pictures\\Camera Roll\\02_elephant_a_resized.jpg";
+        File filess=new File(file);
+        Map<String,String> map = AliyunOSSClientUtil.uploadObject2OSS(filess);
+        for(String s:map.keySet()){
+            System.out.println(map.get(s));
+        }
+
+    }
+
+
+
+
+    @Test
+    public void delete(){
+        Long s = 1000L;
+        System.out.println(s);
+    }
+
+
+
+
+
 }

@@ -85,7 +85,6 @@ public class AdminAuthenticationFilterAndProvider extends AbstractAuthentication
         // 添加用户角色权限
         List<GrantedAuthority> authorities = setAuthorities(unifyAdmin);
 
-        System.out.println("角色："+authorities.toString());
         return new UsernamePasswordAuthenticationToken(unifyAdmin, password, authorities);
     }
 

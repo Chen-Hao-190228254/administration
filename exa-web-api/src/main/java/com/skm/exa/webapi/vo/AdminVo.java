@@ -25,11 +25,6 @@ public class AdminVo implements Serializable {
     @ApiModelProperty(value = "管理员账号")
     private String username;
 
-    /**
-     * 用户账号密码
-     */
-    @ApiModelProperty(value = "管理员密码")
-    private String password;
 
     /**
      * 用户名称

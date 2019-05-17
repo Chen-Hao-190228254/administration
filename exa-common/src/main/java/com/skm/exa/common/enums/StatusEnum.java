@@ -3,7 +3,8 @@ package com.skm.exa.common.enums;
 public enum  StatusEnum {
 
     NORMAL("正常",1),
-    FORBIDDEN("禁用",0);
+    FORBIDDEN("禁用",0),
+    LOGOUT("注销",-1);
 
     private String name;
     private byte index;
