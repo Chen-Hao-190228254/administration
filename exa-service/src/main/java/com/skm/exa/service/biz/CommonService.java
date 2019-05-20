@@ -5,6 +5,7 @@ import com.skm.exa.domain.bean.AreaBean;
 import com.skm.exa.domain.bean.ImageBean;
 import com.skm.exa.domain.bean.StatusBean;
 import com.skm.exa.persistence.dto.ImageCorrelationDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -34,7 +35,14 @@ public interface CommonService {
 
 
 
-    Result addImage(Long id, List<File> file, String correlationTableName);
+    /**
+     * 添加图片
+     * @param correlationId
+     * @param files
+     * @param correlationTableName
+     * @return
+     */
+    Result addImage(Long correlationId, List<MultipartFile> files, String correlationTableName);
 
 
 

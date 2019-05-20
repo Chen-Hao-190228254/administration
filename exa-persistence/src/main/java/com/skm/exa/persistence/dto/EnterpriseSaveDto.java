@@ -1,6 +1,7 @@
 package com.skm.exa.persistence.dto;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
@@ -61,6 +62,6 @@ public class EnterpriseSaveDto {
     /**
      * 图片
      */
-    private File image;
+    private MultipartFile image;
 
 }

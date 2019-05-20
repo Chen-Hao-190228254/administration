@@ -11,6 +11,7 @@ import com.skm.exa.persistence.dto.EnterpriseUpdateDto;
 import com.skm.exa.persistence.qo.EnterpriseQO;
 import com.skm.exa.service.BaseService;
 import com.skm.exa.service.biz.impl.EnterpriseServiceImpl;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -84,7 +85,7 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
 
 
 
-    Result addImage(Long enterpeiseId, File file);
+    Result addImage(Long enterpeiseId, MultipartFile multipartFile);
 
 
 

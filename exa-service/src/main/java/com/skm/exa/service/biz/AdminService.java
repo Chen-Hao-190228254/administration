@@ -41,6 +41,13 @@ public interface AdminService extends BaseService<AdminBean> {
     Page<AdminDto> getAdminPage(PageParam<AdminQO> pageParam);
 
 
+    /**
+     * 根据账号判断该账号是否存在
+     * @param username
+     * @return
+     */
+    boolean getAdminUsername(String username);
+
 
     /**
      * 添加管理员

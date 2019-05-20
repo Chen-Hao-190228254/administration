@@ -90,6 +90,21 @@ public class AdminController extends BaseController {
 
 
     /**
+     * 根据账号判读该账号是否已经存在
+     * @param username
+     * @return
+     */
+    @ApiOperation(value = "根据账号判读该账号是否已经存在", notes = "根据账号判读该账号是否已经存在")
+    @GetMapping("/getAdminUsername/username")
+    public Result getAdminUsername(@ApiParam("需要按账号查找的账号") @RequestParam("username") String username){
+        boolean is = adminService.getAdminUsername(username);
+        return Result.success(is);
+    }
+
+
+
+
+    /**
      * 添加管理员
      * @param adminSaveVo
      * @return

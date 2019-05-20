@@ -1,7 +1,6 @@
 package com.skm.exa.webapi;
 
-import com.aliyun.oss.OSSClient;
-import com.skm.exa.common.object.AliyunOSSClientUtil;
+import com.skm.exa.common.utils.AliyunOSSClientUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,10 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 @RunWith(SpringRunner.class)

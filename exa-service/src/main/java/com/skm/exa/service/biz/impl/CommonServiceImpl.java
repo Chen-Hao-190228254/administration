@@ -1,7 +1,7 @@
 package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.enums.StatusEnum;
-import com.skm.exa.common.object.AliyunOSSClientUtil;
+import com.skm.exa.common.utils.AliyunOSSClientUtil;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.domain.bean.AreaBean;
 import com.skm.exa.domain.bean.ImageBean;
@@ -14,6 +14,7 @@ import com.skm.exa.service.biz.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -76,11 +77,11 @@ public class CommonServiceImpl implements CommonService {
      */
     @Override
     @Transactional
-    public Result addImage(Long correlationId, List<File> files, String correlationTableName) {
+    public Result<List<ImageBean>> addImage(Long correlationId, List<MultipartFile> files, String correlationTableName) {
         List<Map<String,String>> maps = new ArrayList<>();
         if(files == null || files.size()<=0)
-            return Result.success("文件为空");
-        for(File file:files){
+            return Result.error(-1,"文件为空");
+        for(MultipartFile file:files){
             Map<String,String> map = AliyunOSSClientUtil.uploadObject2OSS(file);
             if(map.containsKey("error"))
                 return Result.error(-1,"在图片上传Aliyun时发生错误");
@@ -97,15 +98,23 @@ public class CommonServiceImpl implements CommonService {
         int i = commonDao.addImage(imageBeans);
         if(i!=imageBeans.size())
             return Result.error(-1,"向数据库添加图片信息时发生错误");
-        List<Long> imageId = new ArrayList<>();
+        List<ImageCorrelationSaveDto> imageCorrelationSaveDtos = new ArrayList<>();
         for(ImageBean imageBean:imageBeans){
             ImageCorrelationSaveDto imageCorrelationSaveDto = new ImageCorrelationSaveDto();
             imageCorrelationSaveDto.setImageId(imageBean.getId());
             imageCorrelationSaveDto.setCorrelationId(correlationId);
-
+            imageCorrelationSaveDto.setCorrelationTableName(correlationTableName);
+            imageCorrelationSaveDtos.add(imageCorrelationSaveDto);
         }
-        return null;
+        if(imageCorrelationSaveDtos == null || imageCorrelationSaveDtos.size() == 0)
+            return Result.error(-1,"整合图片关联数据时发生错误");
+        int x = commonDao.addImageCorrelation(imageCorrelationSaveDtos);
+        if(x != imageCorrelationSaveDtos.size())
+            return Result.error(-1,"向数据库添加图片关联时发生错误");
+        return Result.success(imageBeans);
     }
+
+
 
     /**
      * 删除图片及关联
@@ -136,8 +145,6 @@ public class CommonServiceImpl implements CommonService {
                 AliyunOSSClientUtil.deleteFile(imageCorrelationDto.getName());
             }
         }
-
-
         return true;
     }
 }

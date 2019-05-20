@@ -80,11 +80,13 @@ public class EnterpriseController extends BaseController {
 
     @ApiOperation("添加企业")
     @PostMapping("/addEnterprise")
-    public Result addEnterprise(@ApiParam("需要添加的企业信息") @RequestBody EnterpriseSaveVo enterpriseSaveVo){
+    public Result<EnterpriseVo> addEnterprise(@ApiParam("需要添加的企业信息") @RequestBody EnterpriseSaveVo enterpriseSaveVo){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         EnterpriseSaveDto enterpriseSaveDto = BeanMapper.map(enterpriseSaveVo,EnterpriseSaveDto.class);
         Result<EnterpriseDto> enterpriseDto = enterpriseService.addEnterprise(enterpriseSaveDto,unifyAdmin);
-        return null;
+        Result<EnterpriseVo> result = BeanMapper.map(enterpriseDto,Result.class);
+        EnterpriseVo enterpriseVo = BeanMapper.map(enterpriseDto.getContent(),EnterpriseVo.class);
+        return result;
     }
 
 
@@ -117,7 +119,7 @@ public class EnterpriseController extends BaseController {
 
 
     /**
-     * 删除企业
+     * 更改企业状态
      * @param id
      * @return
      */

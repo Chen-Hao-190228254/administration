@@ -124,6 +124,20 @@ public class AdminServiceImpl extends BaseServiceImpl<AdminBean , AdminDao> impl
 
 
     /**
+     * 根据账号判读该账户是否存在
+     * @param username
+     * @return
+     */
+    @Override
+    public boolean getAdminUsername(String username) {
+        AdminQO adminQO = new AdminQO();
+        adminQO.setUsername(username);
+        boolean is = super.has(adminQO);
+        return is;
+    }
+
+
+    /**
      * 添加管理员
      * @param adminSaveDto
      * @return

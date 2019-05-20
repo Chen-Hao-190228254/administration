@@ -46,6 +46,41 @@
 
 
 
+<!--添加图片信息-->
+    <insert id="addImage" keyProperty="id" useGeneratedKeys="true">
+            INSERT INTO `administration_image` (
+                `name`,
+                `url`,
+                `size`,
+                `md5`
+            )VALUES
+            <foreach collection="list" item="image" separator=",">
+                (
+                #{image.name},
+                #{image.url},
+                #{image.size},
+                #{image.md5}
+                )
+            </foreach>
+    </insert>
+<!--添加图片的关联信息-->
+    <insert id="addImageCorrelation" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `administration_image_correlation` (
+        `correlation_id`,
+        `image_id`,
+        `correlation_table_name`
+        )VALUES
+        <foreach collection="list" item="image" separator=",">
+            (
+            #{image.correlationId},
+            #{image.imageId},
+            #{image.correlationTableName}
+            )
+        </foreach>
+    </insert>
+
+
+
 <!--删除图片-->
     <delete id="deleteImage">
         DELETE FROM `administration_image` WHERE `id` IN (
@@ -54,7 +89,7 @@
         </foreach>
         )
     </delete>
-
+<!--删除图片的关联信息-->
     <delete id="deleteImageCorrelation">
         DELETE FROM `administration_image_correlation`
         WHERE `correlation_table_name` = #{correlationTableName}

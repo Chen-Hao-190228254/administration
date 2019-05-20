@@ -3,6 +3,7 @@ package com.skm.exa.persistence.dao;
 import com.skm.exa.domain.bean.AreaBean;
 import com.skm.exa.domain.bean.ImageBean;
 import com.skm.exa.persistence.dto.ImageCorrelationDto;
+import com.skm.exa.persistence.dto.ImageCorrelationSaveDto;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -31,16 +32,14 @@ public interface CommonDao{
      * @param imageBean
      * @return
      */
-    int addImage(List<ImageBean> imageBean);
+    int addImage(@Param("list")List<ImageBean> imageBean);
 
     /**
      * 添加图片关联
-     * @param imageId
-     * @param correlationId
-     * @param correlationName
+     * @param list
      * @return
      */
-    int addImageCorrelation(@Param("list")List<Long> imageId,@Param("correlationId")Long correlationId,@Param("correlationName") String correlationName);
+    int addImageCorrelation(@Param("list")List<ImageCorrelationSaveDto> list);
 
 
     /**

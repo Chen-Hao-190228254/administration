@@ -1,4 +1,4 @@
-package com.skm.exa.common.object;
+package com.skm.exa.common.utils;
 
 
 import java.io.ByteArrayInputStream;
@@ -18,6 +18,7 @@ import com.aliyun.oss.model.Bucket;
 import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
+import org.springframework.web.multipart.MultipartFile;
 
 public class AliyunOSSClientUtil {
 
@@ -104,7 +105,7 @@ public class AliyunOSSClientUtil {
     }
 
     /**
-     * 上传图片至OSS
+     * 上传图片至OSS 传出File类型
      * @param file 上传文件（文件全路径如：D:\\image\\cake.jpg）
      * @return String 返回的唯一MD5数字签名
      * */
@@ -162,6 +163,76 @@ public class AliyunOSSClientUtil {
         map.put("error","上传失败");
         return map;
     }
+
+
+
+
+
+
+
+
+    /**
+     * 上传图片至OSS 传入MultipartFile类型
+     * @param file 上传文件（文件全路径如：D:\\image\\cake.jpg）
+     * @return String 返回的唯一MD5数字签名
+     * */
+    public static Map<String, String> uploadObject2OSS(MultipartFile file) {
+        OSSClient ossClient = getOSSClient();
+        try {
+            //以输入流的形式上传文件
+            InputStream is = file.getInputStream();
+            //上传后文件名称，随机生成
+            String fileName = generateRandomNames(file.getName());
+            //文件大小
+            Long fileSize = file.getSize();
+            //创建上传Object的Metadata
+            ObjectMetadata metadata = new ObjectMetadata();
+            //上传的文件的长度
+            metadata.setContentLength(is.available());
+            //指定该Object被下载时的网页的缓存行为
+            metadata.setCacheControl("no-cache");
+            //指定该Object下设置Header
+            metadata.setHeader("Pragma", "no-cache");
+            //指定该Object被下载时的内容编码格式
+            metadata.setContentEncoding("utf-8");
+            //文件的MIME，定义文件的类型及网页编码，决定浏览器将以什么形式、什么编码读取文件。如果用户没有指定则根据Key或文件名的扩展名生成，
+            //如果没有扩展名则填默认值application/octet-stream
+            metadata.setContentType(getContentType(fileName));
+            //指定该Object被下载时的名称（指示MINME用户代理如何显示附加的文件，打开或下载，及文件名称）
+            metadata.setContentDisposition("filename/filesize=" + fileName + "/" + fileSize + "Byte.");
+            //上传文件   (上传文件流的形式)
+            PutObjectResult putResult = ossClient.putObject(BACKET_NAME, FOLDER + fileName, is, metadata);
+            //解析结果
+            String md5key = putResult.getETag();
+
+
+
+
+            // 设置URL过期时间为100年 3600l* 1000*24*365*10*10
+            Date expiration = new Date(System.currentTimeMillis() + 3600L * 1000 * 24 * 365 * 10 * 10);
+            // 生成URL
+            URL url = ossClient.generatePresignedUrl(BACKET_NAME, FOLDER+fileName, expiration);
+
+
+            Long size = fileSize/1024/1024;
+            Map<String,String> map = new HashMap<>();
+            map.put("name",fileName);
+            map.put("md5key",md5key);
+            map.put("filesize",size.toString());
+            map.put("url",url.toString());
+            return map;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+//            System.out.println("上传阿里云OSS服务器异常." + e.getMessage());
+        }
+        Map<String,String> map = new HashMap<>();
+        map.put("error","上传失败");
+        return map;
+    }
+
+
+
 
     /**
      * 通过文件名判断并获取OSS服务文件上传时文件的contentType

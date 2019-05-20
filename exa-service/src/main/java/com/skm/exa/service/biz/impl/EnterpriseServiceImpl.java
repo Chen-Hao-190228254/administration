@@ -20,12 +20,10 @@ import com.skm.exa.service.biz.EnterpriseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, EnterpriseDao> implements EnterpriseService {
@@ -81,11 +79,27 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
         EnterpriseBean enterpriseBean = BeanMapper.map(enterpriseSaveDto,EnterpriseBean.class);
         if(enterpriseBean == null)
             return Result.error(-1,"数据有误");
+        enterpriseBean.setEntryId(unifyAdmin.getId());
+        enterpriseBean.setEntryName(unifyAdmin.getName());
+        enterpriseBean.setEntryDt(new Date());
+        enterpriseBean.setUpdateId(unifyAdmin.getId());
+        enterpriseBean.setUpdateName(unifyAdmin.getName());
+        enterpriseBean.setUpdateDt(new Date());
         int is = dao.addEnterprise(enterpriseBean);
         if(is<=0)
             return Result.error(-1,"添加企业时失败");
+        if(enterpriseBean.getId() == null)
+            return Result.error(-1,"企业添加之后返回的ID有误");
 
-        return null;
+        Result<List<ImageBean>> resultImages = addImage(enterpriseBean.getId(),enterpriseSaveDto.getImage());
+        if(resultImages.isSuccess()){
+            Result result = BeanMapper.map(resultImages,Result.class);
+            return result;
+        }
+        List<ImageBean> imageBeans = resultImages.getContent();
+        EnterpriseDto enterpriseDto = BeanMapper.map(enterpriseBean,EnterpriseDto.class);
+        enterpriseDto.setImageBeans(imageBeans);
+        return Result.success(enterpriseDto);
     }
 
     /**
@@ -121,8 +135,10 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      */
     @Override
     public EnterpriseDto setEnterpriseStatus(Long id) {
+
         return null;
     }
+
 
 
 //---------------------------------图片处理----------------------------------------------
@@ -193,14 +209,14 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
     /**
      * 添加图片
      * @param enterpeiseId
-     * @param file
+     * @param multipartFile
      * @return
      */
-    public Result addImage(Long enterpeiseId, File file){
-        List<File> files = new ArrayList<>();
-        files.add(file);
-        Result result = commonService.addImage(enterpeiseId,files,"administration_enterprise");
-        return null;
+    public Result<List<ImageBean>> addImage(Long enterpeiseId, MultipartFile multipartFile){
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(multipartFile);
+        Result<List<ImageBean>> result = commonService.addImage(enterpeiseId,files,"administration_enterprise");
+        return result;
     }
 
 
