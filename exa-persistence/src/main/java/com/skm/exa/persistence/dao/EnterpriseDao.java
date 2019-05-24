@@ -58,6 +58,13 @@ public interface EnterpriseDao extends BaseDao<EnterpriseBean> {
     int deleteEnterprise(Long id);
 
 
+    /**
+     * 更改企业状态
+     * @param id
+     * @param status
+     * @return
+     */
+    int setEnterpriseStatus(Long id,Byte status);
 
 
 }

@@ -39,6 +39,14 @@ public interface RoleDao extends BaseDao<RoleBean> {
     Page<RoleBean> getRolePage(PageParam<RoleQO> qo);
 
 
+    /**
+     * 根据code获得角色
+     * @param code
+     * @return
+     */
+    RoleBean getRoleCode(String code);
+
+
 
     /**
      * 添加角色   Service层还需要调用下面（添加角色权限）addRoleAuthority方法一起使用

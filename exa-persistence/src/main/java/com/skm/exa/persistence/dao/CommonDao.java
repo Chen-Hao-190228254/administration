@@ -1,9 +1,8 @@
 package com.skm.exa.persistence.dao;
 
 import com.skm.exa.domain.bean.AreaBean;
-import com.skm.exa.domain.bean.ImageBean;
-import com.skm.exa.persistence.dto.ImageCorrelationDto;
-import com.skm.exa.persistence.dto.ImageCorrelationSaveDto;
+import com.skm.exa.domain.bean.FileBean;
+import com.skm.exa.persistence.dto.FileCorrelationSaveDto;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -19,42 +18,54 @@ public interface CommonDao{
      */
     List<AreaBean> getAreaParentCode(Long code);
 
+
     /**
-     * 通过图片的ID获得图片的信息
+     * 获取文件
+     * @param correlationIds 关联的ID
+     * @param correlationTableName 关联的表名
+     * @return
+     */
+    List<FileBean> getFileList(List<Long> correlationIds,String correlationTableName);
+
+
+
+    /**
+     * 文件上传后向数据库添加上传文件的信息
+     * @param fileBeans
+     * @return
+     */
+    int uploadFiles(@Param("list")List<FileBean> fileBeans);
+
+
+
+    /**
+     * 文件上传后向数据库添加上传文件的信息
+     * @param fileBean
+     * @return
+     */
+    int uploadFile(FileBean fileBean);
+
+
+
+
+
+
+
+
+    /**
+     * 添加文件关联
      * @param list
      * @return
      */
-    List<ImageCorrelationDto> getImageList(@Param("list") List<Long> list,@Param("correlationTableName") String correlationTableName);
+    int addFileCorrelation(FileCorrelationSaveDto list);
 
 
     /**
-     * 添加图片
-     * @param imageBean
+     * 删除指定ID文件
+     * @param fileId 文件ID
      * @return
      */
-    int addImage(@Param("list")List<ImageBean> imageBean);
+    int deleteFile(@Param("list") List<Long> fileId);
 
-    /**
-     * 添加图片关联
-     * @param list
-     * @return
-     */
-    int addImageCorrelation(@Param("list")List<ImageCorrelationSaveDto> list);
-
-
-    /**
-     * 删除图片
-     * @param list 图片ID
-     * @return
-     */
-    int deleteImage(@Param("list") List<Long> list);
-
-    /**
-     * 删除图片关联数据
-     * @param list 关联ID
-     * @param correlationTableName
-     * @return
-     */
-    int deleteImageCorrelation(@Param("list") List<Long> list,@Param("correlationTableName") String correlationTableName);
 
 }

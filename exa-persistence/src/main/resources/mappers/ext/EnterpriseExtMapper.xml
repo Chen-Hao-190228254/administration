@@ -105,4 +105,16 @@
     </delete>
 
 
+
+
+<!--更改企业状态-->
+    <update id="setEnterpriseStatus">
+        UPDATE `administration_enterprise`
+        SET
+            `status` = #{status}
+        WHERE
+            `id` = #{id}
+
+    </update>
+
 </mapper>

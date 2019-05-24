@@ -182,7 +182,7 @@ public class AliyunOSSClientUtil {
             //以输入流的形式上传文件
             InputStream is = file.getInputStream();
             //上传后文件名称，随机生成
-            String fileName = generateRandomNames(file.getName());
+            String fileName = generateRandomNames(file.getOriginalFilename());
             //文件大小
             Long fileSize = file.getSize();
             //创建上传Object的Metadata
@@ -214,11 +214,10 @@ public class AliyunOSSClientUtil {
             URL url = ossClient.generatePresignedUrl(BACKET_NAME, FOLDER+fileName, expiration);
 
 
-            Long size = fileSize/1024/1024;
             Map<String,String> map = new HashMap<>();
             map.put("name",fileName);
             map.put("md5key",md5key);
-            map.put("filesize",size.toString());
+            map.put("filesize",fileSize.toString());
             map.put("url",url.toString());
             return map;
 
@@ -279,17 +278,18 @@ public class AliyunOSSClientUtil {
 
     /**
      * 原文件名传过来后生成随机名称
-     * @param autonym
+     * @param     filename
      * @return
      */
-    public static String generateRandomNames(String autonym){
+    public static String generateRandomNames(String filename){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         Date date = new Date();
         String str = simpleDateFormat.format(date);
         Random random = new Random();
         int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
         String r = str + rannum;
-        String name = r+autonym.substring(autonym.lastIndexOf("."));
+        System.out.println(filename);
+        String name = r+filename.substring(filename.lastIndexOf("."));
         return name;
     }
 

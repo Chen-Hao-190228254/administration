@@ -1,6 +1,6 @@
 package com.skm.exa.webapi.vo;
 
-import com.skm.exa.domain.bean.ImageBean;
+import com.skm.exa.domain.bean.FileBean;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -84,7 +84,7 @@ public class EnterpriseVo implements Serializable {
      * 公司logo
      */
     @ApiModelProperty(value = "公司logo")
-    private List<ImageBean> imageBeans;
+    private List<FileBean> imageBeans;
 
     /**
      * 添加人ID

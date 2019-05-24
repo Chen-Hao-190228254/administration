@@ -3,17 +3,17 @@ package com.skm.exa.service.biz;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.domain.bean.EnterpriseBean;
+import com.skm.exa.domain.bean.FileBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dto.EnterpriseDto;
 import com.skm.exa.persistence.dto.EnterpriseSaveDto;
 import com.skm.exa.persistence.dto.EnterpriseUpdateDto;
+import com.skm.exa.persistence.dto.FileCorrelationSaveDto;
 import com.skm.exa.persistence.qo.EnterpriseQO;
 import com.skm.exa.service.BaseService;
-import com.skm.exa.service.biz.impl.EnterpriseServiceImpl;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+
 import java.util.List;
 
 public interface EnterpriseService extends BaseService<EnterpriseBean> {
@@ -70,22 +70,26 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
 
     /**
      * 获取图片
-     * @param enterpriseBean
+     * @param enterpriseBean 需要获取图片的Bean
      * @return
      */
-    EnterpriseDto enterpriseImage(EnterpriseBean enterpriseBean);
+    EnterpriseDto getEnterpriseImage(EnterpriseBean enterpriseBean);
 
 
     /**
      * 获取图片
-     * @param enterpriseBeans
+     * @param enterpriseBeans 需要获取图片的List<Bean>
      * @return
      */
-    List<EnterpriseDto> enterpriseImage(List<EnterpriseBean> enterpriseBeans );
+    List<EnterpriseDto> getEnterpriseImage(List<EnterpriseBean> enterpriseBeans );
 
 
-
-    Result addImage(Long enterpeiseId, MultipartFile multipartFile);
+    /**
+     * 向数据库添加图片关联
+     * @param fileCorrelationSaveDtos
+     * @return
+     */
+    Result addImage(List<FileCorrelationSaveDto> fileCorrelationSaveDtos,Long enterpriseId);
 
 
 
@@ -96,4 +100,9 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
      * @return
      */
     boolean deleteImage(List<Long> list);
+
+
+
+    Result<List<FileBean>> updateImage(List<FileCorrelationSaveDto> fileCorrelationSaveDtos, Long enterpriseId);
+
 }

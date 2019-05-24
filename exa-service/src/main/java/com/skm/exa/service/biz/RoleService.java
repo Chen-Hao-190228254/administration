@@ -38,6 +38,17 @@ public interface RoleService {
      */
     Page<RoleDto> getRolePage(PageParam<RoleQO> qo);
 
+
+    /**
+     * 判定该角色是否存在
+     * @param code
+     * @return
+     */
+    Boolean getRoleCode(String code);
+
+
+
+
     /**
      * 添加角色
      * @param roleSaveDto

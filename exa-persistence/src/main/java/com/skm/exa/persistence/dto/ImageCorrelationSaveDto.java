@@ -5,6 +5,10 @@ import lombok.Data;
 @Data
 public class ImageCorrelationSaveDto {
 
+    /**
+     * ID
+     */
+    private Long id;
 
     /**
      * 关联ID
@@ -14,10 +18,15 @@ public class ImageCorrelationSaveDto {
     /**
      * 图片ID
      */
-    private Long imageId;
+    private Long fileId;
 
     /**
-     * 关联表面
+     * 关联表的名称
      */
     private String correlationTableName;
+
+    /**
+     * 适用于哪里
+     */
+    private String applyTo;
 }

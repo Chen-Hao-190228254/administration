@@ -1,5 +1,6 @@
 package com.skm.exa.webapi.controller;
 
+import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
@@ -150,10 +151,12 @@ public class AdminController extends BaseController {
     @ApiOperation(value = "更改管理员密码", notes = "更改管理员密码")
     @PutMapping("/updatePassword")
     public Result<Boolean> updatePassword(@ApiParam("需要更新的管理员的信息") @RequestBody PasswordUpdateVo password){
-        boolean i = password.getPassword().matches("^[\\w_.@]{5,20}$");
+        if(!password.getPassword1().equals(password.getPassword2()))
+            return Result.error(-1,"两次输入密码的不一致");
+        boolean i = password.getPassword1().matches("^[\\w_.@]{5,20}$");
         if(i){
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            return adminService.updatePassword(passwordEncoder.encode(password.getPassword()),password.getId());
+            return adminService.updatePassword(passwordEncoder.encode(password.getPassword1()),password.getId());
         }else {
             Result<Boolean> result = new Result<>(-1,"密码格式有误");
             result.setContent(false);
@@ -191,15 +194,7 @@ public class AdminController extends BaseController {
     @DeleteMapping("/deleteAdmin/id")
     public Result<Boolean> deleteAdmin(@ApiParam("需要删除管理员的ID") @RequestParam("id") Long id){
         boolean is = adminService.deleteAdmin(id);
-        if(is){
-            Result<Boolean> result = new Result<>(1,"删除成功");
-            result.setContent(is);
-            return result;
-        }else {
-            Result<Boolean> result = new Result<>(-1,"删除失败");
-            result.setContent(is);
-            return result;
-        }
+        return is ? Result.success() : Result.error(Msg.E40000);
     }
 
 

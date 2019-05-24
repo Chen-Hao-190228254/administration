@@ -23,6 +23,11 @@
     </select>
 
 
+<!--指定code 获得权限-->
+    <select id="getAuthorityCode" resultMap="RM">
+        SELECT * FROM `administration_authority` WHERE `code` = #{code}
+    </select>
+
 
     <update id="setStatus">
         UPDATE `administration_authority`

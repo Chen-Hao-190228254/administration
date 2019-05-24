@@ -62,11 +62,25 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleBean, RoleDao> implemen
     @Override
     public Page<RoleDto> getRolePage(PageParam<RoleQO> qo){
         Page<RoleBean> page = dao.getRolePage(qo);
-        List<RoleBean> list = page.getContent();
-        List<RoleDto> roleDtos = getRoleAuthority(list);
+        List<RoleBean> roleBeans = page.getContent();
+        List<RoleDto> roleDtos = getRoleAuthority(roleBeans);
         Page<RoleDto> roleDtoPage = BeanMapper.map(page,Page.class);
         roleDtoPage.setContent(roleDtos);
         return roleDtoPage;
+    }
+
+
+    /**
+     * 判断该角色是否存在
+     * @param code
+     * @return
+     */
+    @Override
+    public Boolean getRoleCode(String code) {
+        RoleBean roleBean = dao.getRoleCode(code);
+        if(roleBean != null)
+            return true;
+        return false;
     }
 
     /**

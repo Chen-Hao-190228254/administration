@@ -3,11 +3,16 @@ package com.skm.exa.persistence.dto;
 import lombok.Data;
 
 import java.io.File;
+import java.util.List;
 
 
 @Data
 public class EnterpriseUpdateDto {
 
+    /**
+     * 需要更新的ID
+     */
+    private Long id;
 
     /**
      * 公司名称
@@ -63,7 +68,7 @@ public class EnterpriseUpdateDto {
     /**
      * 图片
      */
-    private File image;
+    private List<FileCorrelationSaveDto> fileCorrelationSaveDtos;
 
 
 }

@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 
-@ApiModel("添加权限模型")
+@ApiModel("添加角色模型")
 @Data
 public class RoleSaveVo {
 

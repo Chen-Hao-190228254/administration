@@ -1,5 +1,6 @@
 package com.skm.exa.webapi.controller;
 
+import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
@@ -76,6 +77,24 @@ public class AuthorityController extends BaseController {
         return Result.success(page);
     }
 
+
+
+
+    /**
+     * 根据账号判读该权限是否已经存在
+     * @param code
+     * @return
+     */
+    @ApiOperation(value = "根据账号判读该权限是否已经存在", notes = "根据账号判读该权限是否已经存在")
+    @GetMapping("/getAuthorityCode/code")
+    public Result getAuthorityCode(@ApiParam("需要判定的权限CODE") @RequestParam("code") String code){
+        boolean is = authorityService.getAuthorityCode(code);
+        return Result.success(is);
+    }
+
+
+
+
     /**
      * 添加权限
      * @param authoritySaveVo
@@ -92,6 +111,8 @@ public class AuthorityController extends BaseController {
         result.setContent(authorityVo);
         return result;
     }
+
+
 
     /**
      * 更新权限
@@ -116,17 +137,9 @@ public class AuthorityController extends BaseController {
      */
     @ApiOperation(value = "删除权限", notes = "删除权限")
     @DeleteMapping("/deleteAuthority/id")
-    public Result<Boolean> deleteAuthority(@ApiParam("需要删除权限的ID") @RequestParam("id") Long id){
+    public Result deleteAuthority(@ApiParam("需要删除权限的ID") @RequestParam("id") Long id){
         boolean is = authorityService.deleteAuthority(id);
-        if(is){
-            Result<Boolean> result = new Result<>(1,"删除成功");
-            result.setContent(true);
-            return result;
-        }else {
-            Result<Boolean> result = new Result<>(-1,"删除失败");
-            result.setContent(false);
-            return result;
-        }
+        return is ? Result.success() : Result.error(Msg.E40000);
     }
 
 

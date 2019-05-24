@@ -1,6 +1,7 @@
 package com.skm.exa.webapi.controller;
 
 
+import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
@@ -77,17 +78,30 @@ public class RoleController extends BaseController {
         PageParam<RoleQO> param = new PageParam<>(pageParam.getPage(),pageParam.getSize());
         param.setCondition(qo);
         Page<RoleDto> roleBeanPage = roleService.getRolePage(param);
-
-
-
         List<RoleDto> roleDtos = roleBeanPage.getContent();
         List<RoleVo> roleVos = getListRoleVo(roleDtos);
-
-
-
         Page<RoleVo> roleVoPage = roleBeanPage.map(RoleDto.class,RoleVo.class);
+        roleVoPage.setContent(roleVos);
         return Result.success(roleVoPage);
     }
+
+
+
+
+    /**
+     * 根据账号判读该角色是否已经存在
+     * @param code
+     * @return
+     */
+    @ApiOperation(value = "根据账号判读该角色是否已经存在", notes = "根据账号判读该角色是否已经存在")
+    @GetMapping("/getRoleCode/code")
+    public Result getRoleCode(@ApiParam("需要判定的角色CODE") @RequestParam("code") String code){
+        boolean is = roleService.getRoleCode(code);
+        return Result.success(is);
+    }
+
+
+
 
     /**
      * 添加角色
@@ -135,15 +149,7 @@ public class RoleController extends BaseController {
     @DeleteMapping("/deleteRole/id")
     public Result<Boolean> deleteRole(@ApiParam("需要删除角色的ID") @RequestParam("id") Long id){
         boolean is = roleService.deleteRole(id);
-        if(is){
-            Result<Boolean> result = new Result<>(1,"删除成功");
-            result.setContent(true);
-            return result;
-        }else {
-            Result<Boolean> result = new Result<>(1,"删除成功");
-            result.setContent(true);
-            return result;
-        }
+        return is ? Result.success() : Result.error(Msg.E40000);
     }
 
 

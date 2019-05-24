@@ -4,19 +4,17 @@ import com.skm.exa.common.enums.StatusEnum;
 import com.skm.exa.common.utils.AliyunOSSClientUtil;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.domain.bean.AreaBean;
-import com.skm.exa.domain.bean.ImageBean;
+import com.skm.exa.domain.bean.FileBean;
 import com.skm.exa.domain.bean.StatusBean;
 
 import com.skm.exa.persistence.dao.CommonDao;
-import com.skm.exa.persistence.dto.ImageCorrelationDto;
-import com.skm.exa.persistence.dto.ImageCorrelationSaveDto;
+import com.skm.exa.persistence.dto.FileCorrelationSaveDto;
 import com.skm.exa.service.biz.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,93 +56,160 @@ public class CommonServiceImpl implements CommonService {
 
 
     /**
-     * 获得图片
-     * @param list
-     * @param correlationTableName
+     * 获得文件
+     * @param correlationId 关联的ID
+     * @param correlationTableName 关联的表名
      * @return
      */
     @Override
-    public List<ImageCorrelationDto> getImageList(List<Long> list,String correlationTableName) {
-        return commonDao.getImageList(list,correlationTableName);
+    public List<FileBean> getFileList(List<Long> correlationId,String correlationTableName) {
+        return commonDao.getFileList(correlationId,correlationTableName);
     }
 
+
     /**
-     * 添加图片
-     * @param correlationId
+     * 上传文件及往数据库添加上传后的文件详细
      * @param files
-     * @param correlationTableName
      * @return
      */
     @Override
-    @Transactional
-    public Result<List<ImageBean>> addImage(Long correlationId, List<MultipartFile> files, String correlationTableName) {
+    public Result<List<Long>> uploadFile(MultipartFile[] files) {
         List<Map<String,String>> maps = new ArrayList<>();
-        if(files == null || files.size()<=0)
+        if(files.length == 0 || files == null)
             return Result.error(-1,"文件为空");
         for(MultipartFile file:files){
+            if(file.isEmpty())
+                return Result.error(-1,"文件长传失败");
+            //往AliyunOSS上传文件、逐一上传
             Map<String,String> map = AliyunOSSClientUtil.uploadObject2OSS(file);
-            if(map.containsKey("error"))
-                return Result.error(-1,"在图片上传Aliyun时发生错误");
             maps.add(map);
         }
-        List<ImageBean> imageBeans = new ArrayList<>();
+        List<FileBean> fileBeans = new ArrayList<>();
         for(Map<String,String> map:maps){
-            ImageBean imageBean = new ImageBean();
-            imageBean.setName(map.get("name"));
-            imageBean.setUrl(map.get("url"));
-            imageBean.setMd5(map.get("md5key"));
-            imageBean.setSize(Double.parseDouble(map.get("filesize")));
+            FileBean fileBean = new FileBean();
+            fileBean.setName(map.get("name"));
+            fileBean.setUrl(map.get("url"));
+            fileBean.setMd5(map.get("md5key"));
+            fileBean.setSize(Double.parseDouble(map.get("filesize")));
+            fileBeans.add(fileBean);
         }
-        int i = commonDao.addImage(imageBeans);
-        if(i!=imageBeans.size())
+        if(fileBeans.size() == 0 || fileBeans == null)
+            return Result.error(-1,"向AliyunOSS添加文件时出错");
+
+        //往数据库添加上传后的文件详细
+        int i = commonDao.uploadFiles(fileBeans);
+        if(i!=fileBeans.size())
             return Result.error(-1,"向数据库添加图片信息时发生错误");
-        List<ImageCorrelationSaveDto> imageCorrelationSaveDtos = new ArrayList<>();
-        for(ImageBean imageBean:imageBeans){
-            ImageCorrelationSaveDto imageCorrelationSaveDto = new ImageCorrelationSaveDto();
-            imageCorrelationSaveDto.setImageId(imageBean.getId());
-            imageCorrelationSaveDto.setCorrelationId(correlationId);
-            imageCorrelationSaveDto.setCorrelationTableName(correlationTableName);
-            imageCorrelationSaveDtos.add(imageCorrelationSaveDto);
+        List<Long> imageIds = new ArrayList<>();
+        for(FileBean imageBean:fileBeans){
+            imageIds.add(imageBean.getId());
         }
-        if(imageCorrelationSaveDtos == null || imageCorrelationSaveDtos.size() == 0)
-            return Result.error(-1,"整合图片关联数据时发生错误");
-        int x = commonDao.addImageCorrelation(imageCorrelationSaveDtos);
-        if(x != imageCorrelationSaveDtos.size())
-            return Result.error(-1,"向数据库添加图片关联时发生错误");
-        return Result.success(imageBeans);
+        return Result.success(imageIds);
+    }
+
+
+    /**
+     * 上传文件及往数据库添加上传后的文件详细
+     * @param file
+     * @return
+     */
+    @Override
+    public Result<FileBean> uploadFile(MultipartFile file) {
+        Map<String,String> map = AliyunOSSClientUtil.uploadObject2OSS(file);
+        if(map == null || map.size() == 0)
+            return Result.error(-1,"向AliyunOSS添加文件时出错");
+        FileBean fileBean = new FileBean();
+        fileBean.setName(map.get("name"));
+        fileBean.setUrl(map.get("url"));
+        fileBean.setMd5(map.get("md5key"));
+        fileBean.setSize(Double.parseDouble(map.get("filesize")));
+        int i = commonDao.uploadFile(fileBean);
+        if(i<=0)
+            return Result.error(-1,"向数据库添加图片信息时发生错误");
+        return Result.success(fileBean);
+    }
+
+
+    /**
+     * 向数据库添加文件关联
+     * @param fileCorrelationSaveDtos
+     * @return
+     */
+    @Override
+    @Transactional
+    public Result addFileCorrelation(List<FileCorrelationSaveDto> fileCorrelationSaveDtos){
+        if(fileCorrelationSaveDtos.size() == 0 || fileCorrelationSaveDtos == null)
+            return Result.success("没有文件信息");
+        for(FileCorrelationSaveDto fileCorrelationSaveDto:fileCorrelationSaveDtos){
+            if(fileCorrelationSaveDto.getFileId() == null || fileCorrelationSaveDto.getFileId().size() == 0)
+                return Result.error(-1,"添加文件关联的时候，文件ID为空");
+            int i = commonDao.addFileCorrelation(fileCorrelationSaveDto);
+            if(i != fileCorrelationSaveDto.getFileId().size())
+                return Result.error(-1,"向数据库添加文件关联时发生错误");
+        }
+        return Result.success("向数据库添加文件关联成功");
     }
 
 
 
     /**
-     * 删除图片及关联
-     * @param id
-     * @param correlationTableName
+     * 删除AliyunOSS上的文件及数据库文件关联
+     * @param correlationId 要删除的文件的关联ID集合
+     * @param correlationTableName 要删除的关联表名称
      * @return
      */
     @Override
     @Transactional
-    public Boolean deleteImage(List<Long> id, String correlationTableName) {
-        List<ImageCorrelationDto> imageCorrelationDtos = getImageList(id,correlationTableName);
-        if(imageCorrelationDtos == null || imageCorrelationDtos.size() == 0)
+    public Boolean deleteFile(List<Long> correlationId, String correlationTableName) {
+        List<FileBean> fileBeans = getFileList(correlationId,correlationTableName);
+        if(fileBeans == null || fileBeans.size() == 0)
             return true;
-        List<Long> correlation = new ArrayList<>();
-        for(ImageCorrelationDto c:imageCorrelationDtos){
-            correlation.add(c.getId());
+        List<Long> fileId = new ArrayList<>();
+        for(FileBean fileBean:fileBeans){
+            fileId.add(fileBean.getId());
         }
-        int i = commonDao.deleteImage(correlation);
-        if(i != correlation.size())
+        int i = commonDao.deleteFile(fileId);
+        if(i != fileId.size())
             return false;
-        int s = commonDao.deleteImageCorrelation(id,correlationTableName);
-        if(s <= 0)
-            return false;
-
         //删除OSS上的图片
-        if(imageCorrelationDtos == null || imageCorrelationDtos.size() == 0){
-            for(ImageCorrelationDto imageCorrelationDto:imageCorrelationDtos){
-                AliyunOSSClientUtil.deleteFile(imageCorrelationDto.getName());
-            }
-        }
+        if(fileBeans != null && fileBeans.size() != 0)
+            deleteAliyunOSSFile(fileBeans);
         return true;
+    }
+
+    /**
+     * 删除AliyunOSS上的文件及数据库文件关联
+     * @param fileBeans 要删除的文件Beans
+     * @return
+     */
+    @Override
+    @Transactional
+    public Boolean deleteFile(List<FileBean> fileBeans) {
+        List<Long> fileIds = new ArrayList<>();
+        if (fileBeans == null && fileBeans.size() == 0)
+            return false;
+        if(fileBeans != null && fileBeans.size() != 0)
+            for(FileBean fileBean:fileBeans){
+                fileIds.add(fileBean.getId());
+            }
+        int is = commonDao.deleteFile(fileIds);
+        if(is<=0)
+            return false;
+        //删除OSS上的图片
+        if(fileBeans != null && fileBeans.size() != 0)
+            deleteAliyunOSSFile(fileBeans);
+        return true;
+    }
+
+
+    /**
+     * 删除阿里云OSS上的文件
+     * @param fileBeans 文件信息
+     */
+    public void deleteAliyunOSSFile(List<FileBean> fileBeans){
+        for(FileBean fileBean:fileBeans){
+            System.out.println("删除的图片信息："+fileBean.toString());
+            AliyunOSSClientUtil.deleteFile(fileBean.getName());
+        }
     }
 }

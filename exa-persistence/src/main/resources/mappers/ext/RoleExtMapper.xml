@@ -32,6 +32,13 @@
     </select>
 
 
+<!--指定code 获得角色-->
+    <select id="getRoleCode" resultMap="RM">
+        SELECT * FROM `administration_role` WHERE `code` = #{code}
+    </select>
+
+
+
 <!--添加角色-->
     <insert id="addRole" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `administration_role`(
@@ -139,6 +146,12 @@
         )
         AND aa.id = ara.`authority_id`
     </select>
+
+
+
+
+
+
 
 
 

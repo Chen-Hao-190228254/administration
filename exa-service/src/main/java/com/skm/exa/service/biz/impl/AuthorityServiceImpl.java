@@ -55,6 +55,19 @@ public class AuthorityServiceImpl extends BaseServiceImpl<AuthorityBean, Authori
     }
 
     /**
+     * 根据账号判读该权限是否已经存在
+     * @param code
+     * @return
+     */
+    @Override
+    public Boolean getAuthorityCode(String code) {
+        AuthorityBean authorityBean = dao.getAuthorityCode(code);
+        if(authorityBean != null)
+            return true;
+        return false;
+    }
+
+    /**
      * 添加权限
      * @param authorityBean
      * @return

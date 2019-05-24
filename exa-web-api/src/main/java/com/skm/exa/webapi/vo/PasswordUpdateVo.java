@@ -17,9 +17,22 @@ public class PasswordUpdateVo {
     private Long id;
 
 
+
+
+
     /**
      * 管理员账号密码
      */
     @ApiModelProperty("需要更新的管理员密码")
-    private String password;
+    private String password1;
+
+
+    /**
+     * 管理员账号密码
+     */
+    @ApiModelProperty("需要更新的管理员密码")
+    private String password2;
+
+
+
 }

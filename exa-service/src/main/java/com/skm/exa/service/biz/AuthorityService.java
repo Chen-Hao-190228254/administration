@@ -18,6 +18,8 @@ public interface AuthorityService {
 
     Page<AuthorityBean> getAuthorityPage(PageParam<AuthorityQO> pageParam);
 
+    Boolean getAuthorityCode(String code);
+
     Result<AuthorityBean> addAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
 
     Result<AuthorityBean> updateAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);

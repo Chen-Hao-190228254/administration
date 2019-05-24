@@ -17,28 +17,27 @@
 
 
 
-<!--获取图片-->
-    <resultMap id="image" type="com.skm.exa.persistence.dto.ImageCorrelationDto">
+<!--获取文件-->
+    <resultMap id="file" type="com.skm.exa.domain.bean.FileBean">
         <id property="id" column="id"/>
         <result property="correlationId" column="correlation_id"/>
         <result property="name" column="name"/>
         <result property="imageId" column="image_id"/>
         <result property="size" column="size"/>
         <result property="md5" column="md5"/>
+        <result property="correlationTableName" column="correlation_table_name"/>
+        <result property="correlationId" column="correlation_id"/>
+        <result property="applyTo" column="apply_to"/>
     </resultMap>
-    <select id="getImageList" resultMap="image">
+    <select id="getFileList" resultMap="file">
         SELECT
-          aic.`correlation_id`,
-          ai.`id`,
-          ai.`url`,
-          ai.`size`
+        *
         FROM
-          `administration_image_correlation` AS aic,
-          `administration_image` AS ai
-        WHERE aic.`correlation_table_name` = #{correlationTableName}
-          AND aic.`image_id` = ai.`id`
-          AND aic.`correlation_id` IN (
-        <foreach collection="list" item="id" separator=",">
+            `administration_image`
+        WHERE
+            `correlation_table_name` = #{correlationTableName}
+        AND `correlation_id` IN (
+        <foreach collection="correlationIds" item="id" separator=",">
             #{id}
         </foreach>
         )
@@ -46,59 +45,50 @@
 
 
 
-<!--添加图片信息-->
-    <insert id="addImage" keyProperty="id" useGeneratedKeys="true">
-            INSERT INTO `administration_image` (
-                `name`,
-                `url`,
-                `size`,
-                `md5`
-            )VALUES
-            <foreach collection="list" item="image" separator=",">
-                (
-                #{image.name},
-                #{image.url},
-                #{image.size},
-                #{image.md5}
-                )
-            </foreach>
+<!--添加文件信息-->
+    <insert id="uploadFile" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `administration_image` (`name`, `url`, `size`, `md5`)
+        VALUES(
+           #{name},
+           #{url},
+           #{size},
+           #{md5}
+           )
     </insert>
+
+
 <!--添加图片的关联信息-->
-    <insert id="addImageCorrelation" keyProperty="id" useGeneratedKeys="true">
-        INSERT INTO `administration_image_correlation` (
-        `correlation_id`,
-        `image_id`,
-        `correlation_table_name`
-        )VALUES
-        <foreach collection="list" item="image" separator=",">
-            (
-            #{image.correlationId},
-            #{image.imageId},
-            #{image.correlationTableName}
+    <insert id="addFileCorrelation" keyProperty="id" useGeneratedKeys="true">
+        UPDATE
+            `administration_image`
+        SET
+            `correlation_table_name` = #{correlationTableName},
+            `correlation_id` = #{correlationId},
+            `apply_to` = #{applyTo}
+        WHERE `id` IN(
+                <foreach collection="fileId" item="id" index="index" separator=",">
+                    #{id}
+                </foreach>
             )
-        </foreach>
+
     </insert>
 
 
 
-<!--删除图片-->
-    <delete id="deleteImage">
+
+
+
+<!--删除文件-->
+    <delete id="deleteFile">
         DELETE FROM `administration_image` WHERE `id` IN (
         <foreach collection="list" item="id" separator=",">
             #{id}
         </foreach>
         )
     </delete>
-<!--删除图片的关联信息-->
-    <delete id="deleteImageCorrelation">
-        DELETE FROM `administration_image_correlation`
-        WHERE `correlation_table_name` = #{correlationTableName}
-        AND `correlation_id`
-        IN (
-        <foreach collection="list" item="id" separator=",">
-            #{id}
-        </foreach>
-        )
-    </delete>
+
+
+
+
 
 </mapper>
