@@ -26,11 +26,11 @@ public interface UserCodesService extends BaseService<UserCodesBean> {
 
     /**
      * 通过id获取数据
-     * @param userCodesBean
+     * @param
      * @param id
      * @return
      */
-    UserCodesBean details(UserCodesBean userCodesBean , Long id);
+    UserCodesBean details( Long id);
 
     /**
      * 通过id修改数据
@@ -42,11 +42,11 @@ public interface UserCodesService extends BaseService<UserCodesBean> {
 
     /**
      * 通过id删除
-     * @param userCodesBean
+     * @param
      * @param id
      * @return
      */
-    Integer deleteCodes(UserCodesBean userCodesBean ,Long id);
+    Integer deleteCodes(Long id);
 
     /**
      * 更改状态

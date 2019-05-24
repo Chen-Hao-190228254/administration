@@ -22,12 +22,7 @@ import java.util.Date;
 
 
 @Service
-public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , UserManagementDao> implements UserManagementService , UnifyUserService {
-    @Override   //loadUserByUsername  按用户名加载用户
-    public UnifyUser loadUserByUsername(String username) {
-
-        return null;
-    }
+public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , UserManagementDao> implements UserManagementService {
 
     /**
      *  UserManagement 分页查询
@@ -87,15 +82,15 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
 
     /**
      * 通过id删除
-     * @param userManagementBean
+     * @param
      * @param id
      * @return
      */
     @Override
-    public Integer delete(UserManagementBean userManagementBean, Long id) {
+    public Integer delete( Long id) {
         UserManagementBean bean = dao.detailsManagement(id);
         if (bean.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
-            return dao.deleteManagement(userManagementBean, id);
+            return dao.deleteManagement(id);
         }
             return null;
     }
@@ -107,7 +102,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
      * @return
      */
     @Override
-    public UserManagementBean details(UserManagementBean userManagementBean ,Long id ) {
+    public UserManagementBean details(Long id ) {
          UserManagementBean  beans = dao.detailsManagement(id);
             return beans;
     }

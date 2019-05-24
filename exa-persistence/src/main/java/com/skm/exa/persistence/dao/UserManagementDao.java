@@ -35,11 +35,11 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
 
    /**
     * 通过id删除用户
-    * @param userManagementBeanClass
+    * @param
     * @param id
     * @return
     */
-   Integer deleteManagement(UserManagementBean userManagementBeanClass,@Param("id") Long id);
+   Integer deleteManagement(Long id);
 
    /**
     * 通过id 查询
@@ -47,7 +47,7 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
     * @param id
     * @return
     */
-   UserManagementBean detailsManagement(@Param("id") Long id );
+   UserManagementBean detailsManagement(Long id );
    /**
     * 通过id 更改角色状态
     * @param userManagementBean

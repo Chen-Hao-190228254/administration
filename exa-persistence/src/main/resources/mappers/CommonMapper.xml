@@ -26,6 +26,7 @@
         <result property="size" column="size"/>
         <result property="md5" column="md5"/>
     </resultMap>
+
     <select id="getImageList" resultMap="image">
         SELECT
           aic.`correlation_id`,

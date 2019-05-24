@@ -53,6 +53,41 @@
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)">OR `enterprise_name` LIKE "%"#{enterpriseNameLike, jdbcType=VARCHAR}"%"</if>
         </where>
     </select>
+
+    <!--高级搜索-->
+    <sql id="selectData">
+        `id`,
+        `enterprise_name`,
+        `title`,
+        `technological_type`,
+        `topic_type`,
+        `entry_dt`
+    </sql>
+    <resultMap id="SE" type="com.skm.exa.domain.bean.QuestionBankBean">
+        <id property="id" column="id"/>
+        <result property="enterpriseName" column="enterprise_name"/>
+        <result property="title" column="title"/>
+        <result property="technologicalType" column="technological_type"/>
+        <result property="entryDt" column="entry_dt"/>
+    </resultMap>
+    <resultMap id="RE" type="com.skm.exa.persistence.dto.QuestionBankDto" extends="SE">
+    </resultMap>
+    <!--高级搜索-->
+    <select id="selectQuestionPage" resultMap="RE">
+        SELECT
+        <include refid="selectData"/>
+        FROM `administration_question_bank`
+        <where>
+            <if test="id != null">OR`id` = #{id ,jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technologicalTypeLike)">OR `technological_type` LIKE "%"#{technologicalTypeLike, jdbcType=BIGINT}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(topicTypeLike)">OR `topic_type` LIKE "%"#{topicTypeLike, jdbcType=BIGINT}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)">OR `enterprise_name` LIKE "%"#{enterpriseNameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(titleLike)">OR `title` LIKE "%"#{titleLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(entryDt)">OR `entry_dt` >= "%"#{startDt, jdbcType=DATE}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(entryDt)">OR `entry_dt` &lt;= "%"#{endDt, jdbcType=DATE}"%"</if>
+        </where>
+    </select>
+
     <sql id="question">
         INSERT INTO `administration_question_bank`(
             `enterprise_id`,
@@ -129,8 +164,88 @@
         SET `status` = #{status}
         WHERE `id` = #{id}
     </update>
-
+    <!--输入id删除数据-->
     <delete id="delete">
         DELETE FROM `administration_question_bank` WHERE `id` = #{id}
     </delete>
+    <!--更新数据-->
+    <update id="updateQuestion">
+        UPDATE `administration_question_bank`
+        SET
+            `enterprise_id`= #{enterpriseId},
+            `enterprise_name` = #{enterpriseName},
+            `title` = #{title},
+            `technological_type` = #{technologicalType},
+            `topic_type`= #{topicType},
+            `topic_details` = #{topicDetails},
+            `option_codes` = #{optionCodes},
+            `label`= #{label},
+            `answer` = #{answer},
+            `entry_id` = #{entryId},
+            `entry_name` = #{entryName},
+            `entry_dt`= #{entryDt},
+            `update_id`= #{updateId},
+            `update_name` = #{updateName},
+            `update_dt` = #{updateDt}
+        WHERE `id` = #{id}
+    </update>
+
+    <sql id="type">
+        `id`,
+        `programme`,
+        `arithmetic`,
+        `database`,
+        `optimize`
+
+    </sql>
+
+
+
+    <!--.........................-->
+    <sql id="BankType">
+        `id`,
+        `type`,
+        `bank_technological_type`
+    </sql>
+    <!--获取所有技术类型-->
+    <select id="selectBankType" resultType="com.skm.exa.domain.bean.BankOptionBean">
+        SELECT
+        <include refid="BankType"/>
+        FROM `administration_question_technological_type`
+    </select>
+
+    <!--通过id获取技术类型-->
+    <select id="selectBank" resultType="com.skm.exa.domain.bean.BankOptionBean">
+      SELECT
+          aqb.`id` ,
+	      aqb.`technological_type` ,
+	      aqtt.`type`,
+          aqtt.`bank_technological_type`
+      FROM
+          `administration_question_technological_type` AS aqtt,
+          `administration_question_bank`AS aqb
+      WHERE
+          aqb.`id` = #{id} AND
+          aqb.`technological_type` = aqtt.`type`
+
+    </select>
+
+    <!--获取所有问题类型-->
+    <select id="selectQuestionType" resultType="com.skm.exa.domain.bean.QuestionTypeBean">
+      SELECT * FROM `administration_question_topic_type`
+    </select>
+
+    <select id="selectTopicType" resultType="com.skm.exa.domain.bean.QuestionTypeBean">
+        SELECT
+          aqb.`id` ,
+	      aqb.`topic_type` ,
+	      aqtt.`type`,
+	      aqtt.`bank_topic_type`
+	    FROM
+          `administration_question_topic_type` AS aqtt,
+          `administration_question_bank`AS aqb
+        WHERE
+          aqb.`id` = #{id} AND
+          aqtt.`type` = aqb.`topic_type`
+    </select>
 </mapper>

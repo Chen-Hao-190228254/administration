@@ -1,8 +1,6 @@
 package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.object.UnifyAdmin;
-import com.skm.exa.common.object.UnifyUser;
-import com.skm.exa.common.service.UnifyUserService;
 import com.skm.exa.domain.bean.UserCodesBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
@@ -18,11 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao> implements UserCodesService , UnifyUserService {
-    @Override
-    public UnifyUser loadUserByUsername(String username) {
-        return null;
-    }
+public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao> implements UserCodesService {
 
     /**
      * 代码分页
@@ -54,12 +48,12 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
 
     /**
      * 通过id获取数据
-     * @param userCodesBean
+     * @param
      * @param id
      * @return
      */
     @Override
-    public UserCodesBean details(UserCodesBean userCodesBean, Long id) {
+    public UserCodesBean details(Long id) {
             return dao.details(id);
 
     }
@@ -87,18 +81,17 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
                 return null;
             }
         }
-
         return null;
     }
 
     /**
      * 通过id删除
-     * @param userCodesBean
+     * @param
      * @param id
      * @return
      */
     @Override
-    public Integer deleteCodes(UserCodesBean userCodesBean, Long id) {
+    public Integer deleteCodes( Long id) {
         return dao.deleteCodes(id);
     }
 
@@ -137,7 +130,6 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
         if (bean.getEditStatus() != null){
            if (bean.getEditStatus() == UserCodesEditStatusEnum.EDIT.getValue()){
                userCodesBean.setEditStatus((long) 1);
-               System.out.println("到达这里");
                return dao.updateEditStatus(userCodesBean);
            }
             if (bean.getEditStatus() == UserCodesEditStatusEnum.NO_EDIT.getValue()){

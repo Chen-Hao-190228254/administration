@@ -14,7 +14,14 @@
 
 
     <dependencies>
-
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
 
         <!--工具包-->
         <!--自动生成get set。。。-->

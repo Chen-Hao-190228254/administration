@@ -77,8 +77,7 @@ public class UserCodesController extends BaseController {
     public Result details(@ApiParam("通过id查询")@RequestParam ("getId") Long id){
         UserCodesBean userCodesBean = new UserCodesBean();
         userCodesBean.setId(id);
-        System.out.println(id.toString());
-        UserCodesBean details = userCodesService.details(userCodesBean ,id);
+        UserCodesBean details = userCodesService.details(id);
         UserCodesVO codesVO = BeanMapper.map(details,UserCodesVO.class );
         return Result.success(codesVO) ;
     }
@@ -107,7 +106,7 @@ public class UserCodesController extends BaseController {
     public Result deleteCodes(@ApiParam("通过id删除")@RequestParam ("getId") Long id){
         UserCodesBean userCodesBean = new UserCodesBean();
         userCodesBean.setId(id);
-        Integer codesBean = userCodesService.deleteCodes(userCodesBean,id );
+        Integer codesBean = userCodesService.deleteCodes(id);
         UserCodesVO userCodesVO = BeanMapper.map(codesBean, UserCodesVO.class);
         return Result.success(userCodesVO);
     }

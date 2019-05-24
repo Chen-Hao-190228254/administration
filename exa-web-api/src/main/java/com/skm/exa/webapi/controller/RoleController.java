@@ -56,7 +56,7 @@ public class RoleController extends BaseController {
     @ApiOperation(value = "获得所有管理员信息", notes = "获得所有管理员信息")
     @GetMapping("/getRoleList")
     public Result<List<RoleVo>> getRoleList(){
-        List<RoleDto> roleDtos = roleService.getRoleList();;
+        List<RoleDto> roleDtos = roleService.getRoleList();
         return Result.success(getListRoleVo(roleDtos));
 
     }

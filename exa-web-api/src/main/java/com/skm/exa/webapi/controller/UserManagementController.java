@@ -98,10 +98,8 @@ public class UserManagementController extends BaseController {
     public Result<UserManagementDeleteVO> delete (@ApiParam("通过id删除用户")@RequestParam ("id") Long id){
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
-        Integer delete = userManagementService.delete(userManagementBean,id );
-        System.out.println("到达这里");
+        Integer delete = userManagementService.delete(id);
         UserManagementDeleteVO userManagementDeleteVO = BeanMapper.map(delete,UserManagementDeleteVO.class );
-
         return Result.success(userManagementDeleteVO);
     }
 
@@ -115,7 +113,7 @@ public class UserManagementController extends BaseController {
     public Result details(@ApiParam("通过id查询")@RequestParam ("id") Long id){
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
-        UserManagementBean details = userManagementService.details(userManagementBean ,id);
+        UserManagementBean details = userManagementService.details(id);
         UserManagementVO userManagementVO = BeanMapper.map(details,UserManagementVO.class );
         return Result.success(userManagementVO) ;
     }

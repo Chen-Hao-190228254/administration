@@ -29,7 +29,7 @@ public interface UserCodesDao extends BaseDao<UserCodesBean> {
      * @param id
      * @return
      */
-    UserCodesBean details(@Param("id") Long  id);
+    UserCodesBean details(Long  id);
 
     /**
      * 修改数据
@@ -43,7 +43,7 @@ public interface UserCodesDao extends BaseDao<UserCodesBean> {
      * @param id
      * @return
      */
-    Integer deleteCodes(@Param("id") Long id);
+    Integer deleteCodes(Long id);
 
     /**
      * 更改状态

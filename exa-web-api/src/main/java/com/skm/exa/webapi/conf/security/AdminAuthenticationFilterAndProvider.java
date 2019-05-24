@@ -1,6 +1,8 @@
 package com.skm.exa.webapi.conf.security;
 
+import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.object.UnifyUser;
+import com.skm.exa.common.service.UnifyAdminService;
 import com.skm.exa.common.service.UnifyUserService;
 import com.skm.exa.common.utils.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,11 +37,11 @@ import java.util.List;
 public class AdminAuthenticationFilterAndProvider extends AbstractAuthenticationProcessingFilter implements AuthenticationProvider {
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
-    private UnifyUserService unifyUserService;
+    private UnifyAdminService unifyAdminService;
 
-    AdminAuthenticationFilterAndProvider(UnifyUserService unifyUserService, String loginUrl) {
+    AdminAuthenticationFilterAndProvider(UnifyAdminService unifyAdminService, String loginUrl) {
         super(new AntPathRequestMatcher(loginUrl, HttpMethod.POST.name()));
-        this.unifyUserService = unifyUserService;
+        this.unifyAdminService = unifyAdminService;
     }
 
     // 获取用户输入的登录信息
@@ -70,7 +72,7 @@ public class AdminAuthenticationFilterAndProvider extends AbstractAuthentication
         String username = token.getPrincipal().toString();
         String password = token.getCredentials().toString();
 
-        UnifyUser user = unifyUserService.loadUserByUsername(username);
+        UnifyAdmin user = unifyAdminService.loadAdminByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
@@ -83,7 +85,7 @@ public class AdminAuthenticationFilterAndProvider extends AbstractAuthentication
         return new UsernamePasswordAuthenticationToken(user, password, authorities);
     }
 
-    private void checkPassword(UnifyUser admin, String password) {
+    private void checkPassword(UnifyAdmin admin, String password) {
         if (StringUtils.isBlank(password) || !PASSWORD_ENCODER.matches(password, admin.getPassword())) {
             throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }
