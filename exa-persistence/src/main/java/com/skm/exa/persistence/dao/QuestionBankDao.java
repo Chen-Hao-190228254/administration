@@ -7,8 +7,10 @@ import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.BaseDao;
 import com.skm.exa.persistence.dto.QuestionBankDto;
+import com.skm.exa.persistence.dto.QuestionQueryDto;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
 import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
+
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
      * @param qoPageParam
      * @return
      */
-    Page<QuestionBankDto> selectQuestionPage(PageParam<QuestionQueryLikeQO> qoPageParam);
+    Page<QuestionQueryDto> selectQuestionPage(PageParam<QuestionQueryLikeQO> qoPageParam);
 
     /**
      * 添加题库
@@ -36,17 +38,17 @@ public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
 
     /**
      * 题目详情
-     * @param id
+     * @param questionBankBean
      * @return
      */
-    QuestionBankBean questionDetails(Long id);
+    QuestionBankBean questionDetails(QuestionBankBean questionBankBean);
 
     /**
      * 通过id获取所有数据
-     * @param id
+     * @param
      * @return
      */
-    QuestionBankBean details( Long id);
+    QuestionBankBean details(QuestionBankBean questionBankBean);
 
     /**
      * 通过id更改状态

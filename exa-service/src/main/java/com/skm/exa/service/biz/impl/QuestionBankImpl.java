@@ -1,6 +1,7 @@
 package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.object.UnifyAdmin;
+import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.BankOptionBean;
 import com.skm.exa.domain.bean.QuestionBankBean;
 import com.skm.exa.domain.bean.QuestionTypeBean;
@@ -10,13 +11,13 @@ import com.skm.exa.mybatis.enums.QuestionStatusEnum;
 import com.skm.exa.mybatis.enums.QuestionTechnologicalTypeEnum;
 import com.skm.exa.persistence.dao.QuestionBankDao;
 import com.skm.exa.persistence.dto.QuestionBankDto;
+import com.skm.exa.persistence.dto.QuestionQueryDto;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
 import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
 import com.skm.exa.service.BaseServiceImpl;
 import com.skm.exa.service.biz.QuestionBankService;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,7 +39,7 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      * @return
      */
     @Override
-    public Page<QuestionBankDto> selectPage(PageParam<QuestionQueryLikeQO> qoPageParam) {
+    public Page<QuestionQueryDto> selectPage(PageParam<QuestionQueryLikeQO> qoPageParam) {
         return dao.selectQuestionPage(qoPageParam);
     }
 
@@ -52,12 +53,8 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
     public QuestionBankBean addQuestion(QuestionBankBean questionBankBean, UnifyAdmin unifyAdmin) {
         if(questionBankBean.getTechnologicalType() > 0 && questionBankBean.getTechnologicalType() <= 4 ){
             if (questionBankBean.getTopicType() > 0 && questionBankBean.getTopicType() <= 4 ){
-                questionBankBean.setEntryId(unifyAdmin.getId());
-                questionBankBean.setEntryName(unifyAdmin.getName());
-                questionBankBean.setEntryDt(new Date());
-                questionBankBean.setUpdateId(unifyAdmin.getId());
-                questionBankBean.setUpdateName(unifyAdmin.getName());
-                questionBankBean.setUpdateDt(new Date());
+                SetCommonElement setCommonElement = new SetCommonElement();
+                setCommonElement.setAdd(questionBankBean,unifyAdmin );
                 dao.addQuestion(questionBankBean);
                 return questionBankBean;
             }
@@ -68,24 +65,24 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
     /**
      * 题目详情
      * @param
-     * @param id
+     * @param questionBankBean
      * @return
      */
     @Override
-    public QuestionBankBean questionDetails( Long id) {
-        QuestionBankBean bankBean = dao.questionDetails(id);
+    public QuestionBankBean questionDetails( QuestionBankBean questionBankBean ) {
+        QuestionBankBean bankBean = dao.questionDetails(questionBankBean);
         return bankBean ;
     }
 
     /**
      * 通过id获取所有数据
      * @param
-     * @param id
+     * @param
      * @return
      */
     @Override
-    public QuestionBankBean details(Long id) {
-        return dao.details(id);
+    public QuestionBankBean details(QuestionBankBean questionBankBean) {
+        return dao.details(questionBankBean);
     }
 
     /**
@@ -96,7 +93,7 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      */
     @Override
     public QuestionBankBean updateStatus(QuestionBankBean questionBankBean, Long id) {
-        QuestionBankBean bean =dao.details(id);
+        QuestionBankBean bean =dao.details(questionBankBean);
         if (bean.getStatus() != null){
             if (bean.getStatus() == QuestionStatusEnum.NORMAL.getValue()){
                 questionBankBean.setStatus((long) 1);
@@ -114,18 +111,19 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
 
     /**
      * 输入id删除数据
-     * @param id
+     * @param questionBankBean
      * @return
      */
     @Override
-    public Integer delete(Long id) {
-        QuestionBankBean bankBean  = dao.details(id);
+    public boolean delete(QuestionBankBean questionBankBean) {
+        QuestionBankBean bankBean  = dao.details(questionBankBean);
         if (bankBean.getStatus() == QuestionStatusEnum.NORMAL.getValue()){
-            return dao.delete(id);
+            dao.delete(bankBean.getId());
+            return true ;
         }else if (bankBean.getStatus() == QuestionStatusEnum.FORBIDDEN.getValue()){
-            return null;
+            return false;
         }
-        return null;
+        return true;
     }
 
     /**
@@ -135,26 +133,22 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      * @return
      */
     @Override
-    public Integer updateQuestion(QuestionBankBean questionBankBean ,UnifyAdmin unifyAdmin) {
-        QuestionBankBean bean = dao.details(questionBankBean.getId());
+    public boolean updateQuestion(QuestionBankBean questionBankBean ,UnifyAdmin unifyAdmin) {
+        QuestionBankBean bean = dao.details(questionBankBean);
         if (bean.getStatus() == QuestionStatusEnum.NORMAL.getValue()){
             if (questionBankBean.getTechnologicalType() > 0 && questionBankBean.getTechnologicalType() <= 4 ){
                 if (questionBankBean.getTopicType() > 0 && questionBankBean.getTopicType() <= 4){
-                    questionBankBean.setEntryId(unifyAdmin.getId());
-                    questionBankBean.setEntryName(unifyAdmin.getName());
-                    questionBankBean.setEntryDt(new Date());
-                    questionBankBean.setUpdateId(unifyAdmin.getId());
-                    questionBankBean.setUpdateName(unifyAdmin.getName());
-                    questionBankBean.setUpdateDt(new Date());
-                    Integer bankBean = dao.updateQuestion(questionBankBean);
-                    return bankBean;
+                    SetCommonElement setCommonElement = new SetCommonElement();
+                    setCommonElement.setupdate(questionBankBean,unifyAdmin );
+                    dao.updateQuestion(questionBankBean);
+                    return true;
                 }
             }
 
         }else {
-            return null;
+            return false;
         }
-        return null;
+        return false;
     }
 
     /**
@@ -170,12 +164,12 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
     /**
      * 通过id获取技术类型
      * @param bankOptionBean
-     * @param id
+     * @param
      * @return
      */
     @Override
-    public List<BankOptionBean> selectBank(BankOptionBean bankOptionBean, Long id) {
-        QuestionBankBean bean = dao.details(bankOptionBean.getId()); //查询当前id获取的数据
+    public List<BankOptionBean> selectBank(BankOptionBean bankOptionBean,QuestionBankBean questionBankBean) {
+        QuestionBankBean bean = dao.details(questionBankBean ); //查询当前id获取的数据
         List<BankOptionBean> bankOptionBeanList = dao.selectBankType(bankOptionBean);   //查询当前所有技术类型
         for (BankOptionBean option: bankOptionBeanList){
             option.getType();
@@ -216,12 +210,12 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
     /**
      * 通过id获取问题类型
      * @param questionTypeBean
-     * @param id
+     * @param
      * @return
      */
     @Override
-    public List<QuestionTypeBean> selectTopicType(QuestionTypeBean questionTypeBean , Long id) {
-        QuestionBankBean bean  = dao.details(questionTypeBean.getId());
+    public List<QuestionTypeBean> selectTopicType(QuestionTypeBean questionTypeBean ,QuestionBankBean questionBankBean) {
+        QuestionBankBean bean  = dao.details(questionBankBean);
         List<QuestionTypeBean> list = dao.selectQuestionType(questionTypeBean);
         for (QuestionTypeBean typeBean : list){
             typeBean.getType();

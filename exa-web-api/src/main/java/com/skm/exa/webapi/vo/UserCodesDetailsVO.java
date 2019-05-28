@@ -1,10 +1,12 @@
 package com.skm.exa.webapi.vo;
 
 import com.skm.exa.domain.BaseBean;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@ApiModel(value = "代码管理详情VO")
 public class UserCodesDetailsVO extends BaseBean {
     @ApiModelProperty(value = "id")
     private Long id ; //id

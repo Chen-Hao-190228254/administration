@@ -1,6 +1,7 @@
 package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.object.UnifyAdmin;
+import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.UserCodesBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
@@ -12,8 +13,6 @@ import com.skm.exa.persistence.qo.UserCodesLikeQO;
 import com.skm.exa.service.BaseServiceImpl;
 import com.skm.exa.service.biz.UserCodesService;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Service
 public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao> implements UserCodesService {
@@ -36,12 +35,8 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
      */
     @Override
     public UserCodesBean add(UserCodesBean userCodesBean, UnifyAdmin unifyAdmin) {
-        userCodesBean.setEntryId(unifyAdmin.getId());
-        userCodesBean.setEntryName(unifyAdmin.getName());
-        userCodesBean.setEntryDt(new Date());
-        userCodesBean.setUpdateId(unifyAdmin.getId());
-        userCodesBean.setUpdateName(unifyAdmin.getName());
-        userCodesBean.setUpdateDt(new Date());
+        SetCommonElement setCommonElement = new SetCommonElement();
+        setCommonElement.setAdd(userCodesBean,unifyAdmin );
         dao.addCodes(userCodesBean);
         return userCodesBean;
     }
@@ -49,12 +44,12 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
     /**
      * 通过id获取数据
      * @param
-     * @param id
+     * @param userCodesBean
      * @return
      */
     @Override
-    public UserCodesBean details(Long id) {
-            return dao.details(id);
+    public UserCodesBean details(UserCodesBean userCodesBean ) {
+            return dao.details(userCodesBean);
 
     }
 
@@ -66,15 +61,11 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
      */
     @Override
     public UserCodesBean update(UserCodesBean userCodesBean, UnifyAdmin unifyAdmin) {
-        UserCodesBean bean = dao.details(userCodesBean.getId());
+        UserCodesBean bean = dao.details(userCodesBean);
         if (bean.getEditStatus() != null){
             if (bean.getEditStatus() == UserCodesEditStatusEnum.EDIT.getValue() ){
-                userCodesBean.setEntryId(unifyAdmin.getId());
-                userCodesBean.setEntryName(unifyAdmin.getName());
-                userCodesBean.setEntryDt(new Date());
-                userCodesBean.setUpdateId(unifyAdmin.getId());
-                userCodesBean.setUpdateName(unifyAdmin.getName());
-                userCodesBean.setUpdateDt(new Date());
+                SetCommonElement setCommonElement = new SetCommonElement();
+                setCommonElement.setupdate(userCodesBean,unifyAdmin );
                 dao.updateCodes(userCodesBean);
                 return userCodesBean;
             }else {
@@ -91,8 +82,9 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
      * @return
      */
     @Override
-    public Integer deleteCodes( Long id) {
-        return dao.deleteCodes(id);
+    public boolean deleteCodes( Long id) {
+        dao.deleteCodes(id);
+        return true;
     }
 
     /**
@@ -103,11 +95,10 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
      */
     @Override
     public Integer updateStatus(UserCodesBean userCodesBean ,Long id) {
-        UserCodesBean bean = dao.details(id);
+        UserCodesBean bean = dao.details(userCodesBean);
         if (bean.getStatus() != null ){
             if (bean.getStatus() == UserCodesStatus.NORMAL.getValue()){
                 userCodesBean.setStatus((long) 1);
-                System.out.println(userCodesBean.getStatus().toString());
                 return dao.updateStatus(userCodesBean);
             }
             if(bean.getStatus() == UserCodesStatus.FORBIDDEN.getValue()){
@@ -126,7 +117,7 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
      */
     @Override
     public Integer updateEditStatus(UserCodesBean userCodesBean, Long id) {
-        UserCodesBean bean = dao.details(id);
+        UserCodesBean bean = dao.details(userCodesBean);
         if (bean.getEditStatus() != null){
            if (bean.getEditStatus() == UserCodesEditStatusEnum.EDIT.getValue()){
                userCodesBean.setEditStatus((long) 1);

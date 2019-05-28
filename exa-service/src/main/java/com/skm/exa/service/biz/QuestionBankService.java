@@ -8,6 +8,7 @@ import com.skm.exa.domain.bean.QuestionTypeBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dto.QuestionBankDto;
+import com.skm.exa.persistence.dto.QuestionQueryDto;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
 import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
 import com.skm.exa.service.BaseService;
@@ -27,7 +28,7 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
      * @param qoPageParam
      * @return
      */
-    Page<QuestionBankDto> selectPage(PageParam<QuestionQueryLikeQO> qoPageParam);
+    Page<QuestionQueryDto> selectPage(PageParam<QuestionQueryLikeQO> qoPageParam);
     /**
      * 添加题库
      * @param questionBankBean
@@ -39,18 +40,18 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
     /**
      * 题目详情
      * @param
-     * @param id
+     * @param questionBankBean
      * @return
      */
-    QuestionBankBean questionDetails( Long id);
+    QuestionBankBean questionDetails( QuestionBankBean questionBankBean);
 
     /**
-     * 获取所有数据
+     * 通过id所有数据
      * @param
-     * @param id
+     * @param
      * @return
      */
-    QuestionBankBean details(Long id);
+    QuestionBankBean details( QuestionBankBean questionBankBean  );
 
     /**
      * 通过id更改状态
@@ -62,10 +63,10 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
 
     /**
      * 输入id删除数据
-     * @param id
+     * @param questionBankBean
      * @return
      */
-    Integer delete(Long id);
+    boolean delete(QuestionBankBean  questionBankBean );
 
     /**
      * 更新数据
@@ -73,7 +74,7 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
      * @param unifyAdmin
      * @return
      */
-   Integer updateQuestion(QuestionBankBean questionBankBean,UnifyAdmin unifyAdmin);
+   boolean updateQuestion(QuestionBankBean questionBankBean,UnifyAdmin unifyAdmin);
 
     /**
      * 获取所有技术类型
@@ -88,7 +89,7 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
      * @param id
      * @return
      */
-    List<BankOptionBean> selectBank(BankOptionBean bankOptionBean, Long id);
+    List<BankOptionBean> selectBank(BankOptionBean bankOptionBean,QuestionBankBean questionBankBean);
 
     /**
      * 获取所有问题类型
@@ -100,8 +101,8 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
     /**
      * 通过id获取问题类型
      * @param questionTypeBean
-     * @param id
+     * @param
      * @return
      */
-    List<QuestionTypeBean> selectTopicType(QuestionTypeBean questionTypeBean,Long id);
+    List<QuestionTypeBean> selectTopicType(QuestionTypeBean questionTypeBean,QuestionBankBean questionBankBean);
 }

@@ -37,18 +37,18 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
     /**
      *  通过id删除用户
      * @param
-     * @param id
+     * @param userManagementBean
      * @return
      */
-    Integer delete(Long id);
+    boolean delete(UserManagementBean userManagementBean);
 
     /**
      * 通过id获取数据
      * @param
-     * @param id
+     * @param userManagementBean
      * @return
      */
-    UserManagementBean details( Long id );
+    UserManagementBean details( UserManagementBean userManagementBean );
     /**
      * 更改用户状态
      * @param userManagementBean

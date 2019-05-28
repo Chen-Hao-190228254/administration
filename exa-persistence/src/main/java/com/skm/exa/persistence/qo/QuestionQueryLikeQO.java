@@ -1,10 +1,13 @@
 package com.skm.exa.persistence.qo;
 
-import com.skm.exa.domain.BaseBean;
+
 import com.skm.exa.domain.bean.QuestionBankBean;
 import com.skm.exa.mybatis.*;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+
 
 import java.util.Date;
 import java.util.List;
@@ -26,4 +29,5 @@ public class QuestionQueryLikeQO extends QuestionBankBean implements DynamicSear
     private List<SearchConditionGroup> searchConditionGroups;  //搜索条件组
     @ApiModelProperty(value = "种类")
     private Sort sort;   //种类
+
 }

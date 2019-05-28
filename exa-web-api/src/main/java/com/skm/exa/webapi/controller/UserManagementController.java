@@ -18,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "用户管理" ,description = "用户管理接口")
@@ -65,6 +66,7 @@ public class UserManagementController extends BaseController {
      * @param userManagementSaveVO
      * @return
      */
+    @Transactional
     @PostMapping("add")
     @ApiOperation(notes = "添加用户",value = "添加用户")
     public Result<UserManagementBean> add (@ApiParam("添加用户")@RequestBody UserManagementSaveVO userManagementSaveVO){
@@ -79,6 +81,7 @@ public class UserManagementController extends BaseController {
      * @param userManagementUpdateVO
      * @return
      */
+    @Transactional
     @PostMapping("updateManagement")
     @ApiOperation(notes = "更新用户",value = "更新用户")
     public Result<UserManagementBean> update(@ApiParam("更新用户")@RequestBody UserManagementUpdateVO userManagementUpdateVO){
@@ -93,12 +96,13 @@ public class UserManagementController extends BaseController {
      * @param id
      * @return
      */
+    @Transactional
     @PostMapping("deleteManagement")
     @ApiOperation(notes = "通过id删除用户",value = "通过id删除用户")
     public Result<UserManagementDeleteVO> delete (@ApiParam("通过id删除用户")@RequestParam ("id") Long id){
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
-        Integer delete = userManagementService.delete(id);
+        boolean delete = userManagementService.delete(userManagementBean);
         UserManagementDeleteVO userManagementDeleteVO = BeanMapper.map(delete,UserManagementDeleteVO.class );
         return Result.success(userManagementDeleteVO);
     }
@@ -111,10 +115,10 @@ public class UserManagementController extends BaseController {
     @PostMapping("details")
     @ApiOperation(notes = "通过id查询",value = "通过id查询")
     public Result details(@ApiParam("通过id查询")@RequestParam ("id") Long id){
-        UserManagementBean userManagementBean = new UserManagementBean();
-        userManagementBean.setId(id);
-        UserManagementBean details = userManagementService.details(id);
-        UserManagementVO userManagementVO = BeanMapper.map(details,UserManagementVO.class );
+        UserManagementBean bean = new UserManagementBean();
+        bean.setId(id);
+        UserManagementBean userManagementBean = userManagementService.details(bean);
+        UserManagementVO userManagementVO = BeanMapper.map(userManagementBean,UserManagementVO.class );
         return Result.success(userManagementVO) ;
     }
 

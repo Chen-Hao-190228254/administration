@@ -22,6 +22,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "代码管理" ,description = "代码管理接口")
@@ -58,6 +59,7 @@ public class UserCodesController extends BaseController {
      * @param userCodesSaveVO
      * @return
      */
+    @Transactional
     @PostMapping("/add")
     @ApiOperation(notes = "添加代码",value = "添加代码")
     public Result<UserCodesBean> add (@ApiParam( name = "添加代码")@RequestBody UserCodesSaveVO userCodesSaveVO){
@@ -72,12 +74,13 @@ public class UserCodesController extends BaseController {
      * @param id
      * @return
      */
+    @Transactional
     @PostMapping("details")
     @ApiOperation(notes = "通过id查询",value = "通过id查询")
     public Result details(@ApiParam("通过id查询")@RequestParam ("getId") Long id){
         UserCodesBean userCodesBean = new UserCodesBean();
         userCodesBean.setId(id);
-        UserCodesBean details = userCodesService.details(id);
+        UserCodesBean details = userCodesService.details(userCodesBean);
         UserCodesVO codesVO = BeanMapper.map(details,UserCodesVO.class );
         return Result.success(codesVO) ;
     }
@@ -87,6 +90,7 @@ public class UserCodesController extends BaseController {
      * @param userCodesUpdateVO
      * @return
      */
+    @Transactional
     @PostMapping("/update")
     @ApiOperation(notes = "通过id修改数据",value = "通过id修改数据")
     public Result<UserCodesBean> updateCodes(@ApiParam("通过id修改数据")@RequestBody UserCodesUpdateVO userCodesUpdateVO){
@@ -101,12 +105,13 @@ public class UserCodesController extends BaseController {
      * @param id
      * @return
      */
+    @Transactional
     @PostMapping("/delete")
     @ApiOperation(notes = "通过id删除" ,value = "通过id删除")
     public Result deleteCodes(@ApiParam("通过id删除")@RequestParam ("getId") Long id){
         UserCodesBean userCodesBean = new UserCodesBean();
         userCodesBean.setId(id);
-        Integer codesBean = userCodesService.deleteCodes(id);
+        boolean codesBean = userCodesService.deleteCodes(id);
         UserCodesVO userCodesVO = BeanMapper.map(codesBean, UserCodesVO.class);
         return Result.success(userCodesVO);
     }

@@ -63,14 +63,15 @@
         `topic_type`,
         `entry_dt`
     </sql>
-    <resultMap id="SE" type="com.skm.exa.domain.bean.QuestionBankBean">
+
+    <resultMap id="RE" type="com.skm.exa.persistence.dto.QuestionQueryDto">
         <id property="id" column="id"/>
-        <result property="enterpriseName" column="enterprise_name"/>
         <result property="title" column="title"/>
         <result property="technologicalType" column="technological_type"/>
-        <result property="entryDt" column="entry_dt"/>
-    </resultMap>
-    <resultMap id="RE" type="com.skm.exa.persistence.dto.QuestionBankDto" extends="SE">
+        <result property="enterpriseName" column="enterprise_name"/>
+        <result property="topicType" column="technological_type"/>
+        <result property="startDt" column="entry_dt"/>
+        <result property="endDt" column="entry_dt"/>
     </resultMap>
     <!--高级搜索-->
     <select id="selectQuestionPage" resultMap="RE">
@@ -79,12 +80,12 @@
         FROM `administration_question_bank`
         <where>
             <if test="id != null">OR`id` = #{id ,jdbcType=BIGINT}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technologicalTypeLike)">OR `technological_type` LIKE "%"#{technologicalTypeLike, jdbcType=BIGINT}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(topicTypeLike)">OR `topic_type` LIKE "%"#{topicTypeLike, jdbcType=BIGINT}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)">OR `enterprise_name` LIKE "%"#{enterpriseNameLike, jdbcType=VARCHAR}"%"</if>
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(titleLike)">OR `title` LIKE "%"#{titleLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(entryDt)">OR `entry_dt` >= "%"#{startDt, jdbcType=DATE}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(entryDt)">OR `entry_dt` &lt;= "%"#{endDt, jdbcType=DATE}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technologicalTypeLike)">OR `technological_type` LIKE "%"#{technologicalTypeLike, jdbcType=BIGINT}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)"> OR `enterprise_name` LIKE "%"#{enterpriseNameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(topicTypeLike)">OR `title` LIKE "%"#{topicTypeLike, jdbcType=BIGINT}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(startDtLike)">OR `entry_dt` LIKE "%"#{startDtLike, jdbcType=DATE}"%" >= </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(endDtLike)">OR `entry_dt` LIKE &lt;= "%"#{endDtLike, jdbcType=DATE}"%"</if>
         </where>
     </select>
 

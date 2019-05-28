@@ -3,6 +3,7 @@ package com.skm.exa.service.biz.impl;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.object.UnifyUser;
 import com.skm.exa.common.service.UnifyUserService;
+import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.UserManagementBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
@@ -12,6 +13,7 @@ import com.skm.exa.persistence.dto.UserManagementDto;
 import com.skm.exa.persistence.qo.UserManagementLikeQO;
 import com.skm.exa.service.BaseServiceImpl;
 import com.skm.exa.service.biz.UserManagementService;
+import org.omg.CORBA.UNKNOWN;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,12 +47,8 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     @Override
     @Transactional
     public UserManagementBean add(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
-        userManagementBean.setEntryId(unifyAdmin.getId());
-        userManagementBean.setEntryName(unifyAdmin.getName());
-        userManagementBean.setEntryDt(new Date());
-        userManagementBean.setUpdateId(unifyAdmin.getId());
-        userManagementBean.setUpdateName(unifyAdmin.getName());
-        userManagementBean.setUpdateDt(new Date());
+        SetCommonElement setCommonElement = new SetCommonElement();
+        setCommonElement.setAdd(userManagementBean, unifyAdmin);
         dao.addManagement(userManagementBean);
         return userManagementBean;
     }
@@ -65,46 +63,42 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     @Override
     @Transactional
     public UserManagementBean update(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
-        UserManagementBean  beans = dao.detailsManagement(userManagementBean.getId());
+        UserManagementBean  beans = dao.detailsManagement(userManagementBean);
         if (beans.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
-            userManagementBean.setEntryId(unifyAdmin.getId());
-            userManagementBean.setEntryName(unifyAdmin.getName());
-            userManagementBean.setEntryDt(new Date());
-            userManagementBean.setUpdateId(unifyAdmin.getId());
-            userManagementBean.setUpdateName(unifyAdmin.getName());
-            userManagementBean.setUpdateDt(new Date());
+           SetCommonElement setCommonElement = new SetCommonElement() ;
+           setCommonElement.setupdate(userManagementBean,unifyAdmin );
             dao.updateManagement(userManagementBean);
             return userManagementBean;
         }
-
             return null;
     }
 
     /**
      * 通过id删除
      * @param
-     * @param id
+     * @param userManagementBean
      * @return
      */
     @Override
-    public Integer delete( Long id) {
-        UserManagementBean bean = dao.detailsManagement(id);
+    public boolean  delete(UserManagementBean userManagementBean ) {
+        UserManagementBean bean = dao.detailsManagement(userManagementBean);
+        bean.getStatus();
         if (bean.getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
-            return dao.deleteManagement(id);
+            dao.deleteManagement(userManagementBean);
+            return true ;
         }
-            return null;
+            return false;
     }
 
     /**
      * 通过id获取数据
      * @param
-     * @param id
+     * @param userManagementBean
      * @return
      */
     @Override
-    public UserManagementBean details(Long id ) {
-         UserManagementBean  beans = dao.detailsManagement(id);
-            return beans;
+    public UserManagementBean details(UserManagementBean userManagementBean ) {
+            return dao.detailsManagement(userManagementBean);
     }
 
     /***
@@ -141,7 +135,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
      */
     @Override
     public UserManagementBean updatePassword(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
-        UserManagementBean bean = dao.detailsManagement(userManagementBean.getId());
+        UserManagementBean bean = dao.detailsManagement(userManagementBean);
         if (bean .getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
             dao.updatePassword(userManagementBean);
             return userManagementBean;

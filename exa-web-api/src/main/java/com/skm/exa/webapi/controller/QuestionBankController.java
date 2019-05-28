@@ -10,6 +10,7 @@ import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.mybatis.SearchConditionGroup;
 import com.skm.exa.persistence.dto.QuestionBankDto;
+import com.skm.exa.persistence.dto.QuestionQueryDto;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
 import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
 import com.skm.exa.service.biz.QuestionBankService;
@@ -18,9 +19,16 @@ import com.skm.exa.webapi.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Api(tags = "问题管理" ,description = "问题管理")
@@ -32,24 +40,24 @@ public class QuestionBankController extends BaseController {
 
     /**
      * 问题管理分页模糊搜索
-     * @param pageParam
+     * @param param
      * @return
      */
-    @PostMapping("page")
+    @PostMapping("/page")
     @ApiOperation(value = "模糊分页查询" ,notes = "输入数据迷糊查询")
-    public Result<Page<QuestionBankVO>> page(@ApiParam("输入数据") @RequestBody PageParam<QuestionBankQueryVO> pageParam){
-        QuestionBankQueryVO bankQueryVO = pageParam.getCondition();
+    public Result<Page<QuestionBankBean>> page(@ApiParam("param") @RequestBody PageParam<QuestionBankQueryVO> param){
+        QuestionBankQueryVO bankQueryVO = param.getCondition();
         QuestionBankLikeQO qo = new QuestionBankLikeQO();
         qo.addSearchConditionGroup(SearchConditionGroup
                 .buildMultiColumnsSearch(bankQueryVO.getKeyword()));
-        PageParam<QuestionBankLikeQO> qoPageParam = new PageParam<>(pageParam.getPage() ,pageParam.getSize());
+        PageParam<QuestionBankLikeQO> qoPageParam = new PageParam<>(param.getPage() ,param.getSize());
         qoPageParam.setCondition(qo);
         qo.setEnterpriseNameLike(bankQueryVO.getKeyword());
         qo.setTitleLike(bankQueryVO.getKeyword());
         qo.setLabelLike(bankQueryVO.getKeyword());
         Page<QuestionBankDto> beanPage = questionBankService.page(qoPageParam);
-        Page<QuestionBankVO> voPage = beanPage.map(QuestionBankDto.class, QuestionBankVO.class);
-        return Result.success(voPage) ;
+        Page<QuestionBankBean> bankBeanPage = beanPage.map(QuestionBankDto.class, QuestionBankBean.class);
+        return Result.success(bankBeanPage) ;
     }
 
     /**
@@ -68,10 +76,16 @@ public class QuestionBankController extends BaseController {
         likeQO.setTechnologicalTypeLike(queryVO.getTechnologicalType());
         likeQO.setTopicTypeLike(queryVO.getTopicType());
         likeQO.setTitleLike(queryVO.getTitle());
-        likeQO.setStartDtLike(queryVO.getStartDt());
-        likeQO.setEndDtLike(queryVO.getEndDt());
-        Page<QuestionBankDto> bankDtoPage = questionBankService.selectPage(qoPage);
-        Page<QuestionBankVO> bankVOPage =bankDtoPage.map(QuestionBankDto.class,QuestionBankVO.class );
+      //  做时间格式处理 @JsonFormat(pattern = DATE_FORMAT)
+        SimpleDateFormat sdf= new SimpleDateFormat("yyyy-MM-dd");
+        likeQO.setStartDtLike(Date.from(Instant.parse(sdf.format(queryVO.getStartDt()))));
+        likeQO.setEndDtLike(Date.from(Instant.parse(sdf.format(queryVO.getEndDt()))));
+        System.out.println(likeQO.getStartDtLike());
+       /* likeQO.setStartDtLike(queryVO.getStartDt());
+        likeQO.setEndDtLike(queryVO.getEndDt());*/
+        Page<QuestionQueryDto> bankDtoPage = questionBankService.selectPage(qoPage);
+        Page<QuestionBankVO> bankVOPage =bankDtoPage.map(QuestionQueryDto.class,QuestionBankVO.class );
+        System.out.println(likeQO.getStartDtLike().toString());
         return Result.success(bankVOPage);
     }
 
@@ -80,6 +94,7 @@ public class QuestionBankController extends BaseController {
      * @param saveVO
      * @return
      */
+    @Transactional
     @PostMapping("addQuestion")
     @ApiOperation(value = "添加题库" , notes = "输入数据保存在数据库")
     public Result<QuestionBankBean> addQuestion(@ApiParam("添加题库")@RequestBody QuestionBankSaveVO saveVO){
@@ -99,7 +114,7 @@ public class QuestionBankController extends BaseController {
     public Result questionDetails(@ApiParam("题目详情")@RequestParam("getId") Long id){
         QuestionBankBean bankBean = new QuestionBankBean();
         bankBean.setId(id);
-        QuestionBankBean questionBankBean = questionBankService.questionDetails(id);
+        QuestionBankBean questionBankBean = questionBankService.questionDetails(bankBean);
         QuestionBankDetailsVO detailsVO = BeanMapper.map(questionBankBean,QuestionBankDetailsVO.class );
         return Result.success(detailsVO);
     }
@@ -109,14 +124,15 @@ public class QuestionBankController extends BaseController {
      * @param id
      * @return
      */
+    @Transactional
     @PostMapping("details")
     @ApiOperation(value = "通过id获取所有数据" , notes = "输入id获取数据库所有数据")
     public Result details (@ApiParam("通过id获取所有数据")@RequestParam ("getId") Long id){
         QuestionBankBean bean = new QuestionBankBean();
         bean.setId(id);
-        QuestionBankBean bankBean = questionBankService.details(id );
+        QuestionBankBean bankBean = questionBankService.details(bean);
         QuestionBankVO vo = BeanMapper.map(bankBean,QuestionBankVO.class );
-        System.out.println(vo.getStatus().toString());
+        System.out.println(vo.toString());
         return Result.success(vo);
     }
 
@@ -125,6 +141,7 @@ public class QuestionBankController extends BaseController {
      * @param id
      * @return
      */
+    @Transactional
     @PostMapping("updateStatus")
     @ApiOperation(value = "通过id更改状态" , notes = "输入id更改状态")
     public Result updateStatus(@ApiParam("输入id更改状态")@RequestParam("getId") Long id){
@@ -141,12 +158,13 @@ public class QuestionBankController extends BaseController {
      * @param id
      * @return
      */
+    @Transactional
     @ApiOperation(value = "通过id删除数据" ,notes = "输入id删除数据")
     @PostMapping("delete")
     public Result<QuestionBankDeleteVo> delete(@ApiParam("输入id删除数据")@RequestParam("getID") Long id){
         QuestionBankBean bean = new QuestionBankBean();
         bean.setId(id);
-        Integer bankBean = questionBankService.delete(id);
+        boolean bankBean = questionBankService.delete(bean);
         QuestionBankDeleteVo deleteVo = BeanMapper.map(bankBean, QuestionBankDeleteVo.class);
         return Result.success(deleteVo);
     }
@@ -156,12 +174,13 @@ public class QuestionBankController extends BaseController {
       * @param updateVO
      * @return
      */
+    @Transactional
     @ApiOperation(value = "更新数据" ,notes = "更新数据")
     @PostMapping("updateQuestion")
     public Result<QuestionBankUpdateVO> updateQuestion(@ApiParam("更新数据")@RequestBody QuestionBankUpdateVO updateVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         QuestionBankBean bankBean = BeanMapper.map(updateVO, QuestionBankBean.class);
-        Integer result = questionBankService.updateQuestion( bankBean ,unifyAdmin);
+        boolean result = questionBankService.updateQuestion( bankBean ,unifyAdmin);
         QuestionBankUpdateVO vo = BeanMapper.map(result,QuestionBankUpdateVO.class );
         return Result.success(vo);
     }
@@ -188,9 +207,10 @@ public class QuestionBankController extends BaseController {
     @PostMapping("selectBank")
     public Result selectBank(@ApiParam("输入id获取技术类型")@RequestParam("getId") Long id){
         BankOptionBean bankOptionBean = new BankOptionBean();
+        QuestionBankBean questionBankBean = new QuestionBankBean();
+        questionBankBean.setId(id);
         bankOptionBean.setId(id);
-        List<BankOptionBean> option = questionBankService.selectBank(bankOptionBean,id);
-        System.out.println(option.toString());
+        List<BankOptionBean> option = questionBankService.selectBank(bankOptionBean,questionBankBean);
         return Result.success(option);
     }
 
@@ -215,8 +235,10 @@ public class QuestionBankController extends BaseController {
     @PostMapping("selectTopicType")
     public Result selectTopicType(@ApiParam("输入id获取问题类型")@RequestParam("getId") Long id){
         QuestionTypeBean bean = new QuestionTypeBean();
+        QuestionBankBean questionBankBean = new QuestionBankBean();
+        questionBankBean.setId(id);
         bean.setId(id);
-        List<QuestionTypeBean> typeBean = questionBankService.selectTopicType(bean ,id);
+        List<QuestionTypeBean> typeBean = questionBankService.selectTopicType(bean ,questionBankBean);
         return Result.success(typeBean);
     }
 
