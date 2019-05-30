@@ -20,13 +20,13 @@ public interface AuthorityService {
 
     Boolean getAuthorityCode(String code);
 
-    Result<AuthorityBean> addAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
+    Boolean addAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
 
-    Result<AuthorityBean> updateAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
+    Boolean updateAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
 
     Boolean deleteAuthority(Long id);
 
-    Result<AuthorityBean> setStatus(Long id);
+    Boolean setStatus(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
 
 
 }

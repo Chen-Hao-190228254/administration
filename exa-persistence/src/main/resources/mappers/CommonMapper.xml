@@ -17,7 +17,34 @@
 
 
 
-<!--获取文件-->
+<!--。。。。。。。。。。。。。文件处理。。。。。。。。。。。。-->
+
+<!--循环处理-->
+    <sql id="foreachId">
+        (
+        <foreach collection="fileIds" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </sql>
+    <sql id="foreachCorrelationId">
+        (
+        <foreach collection="correlationIds" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </sql>
+    <sql id="foreachApplyTo">
+        (
+        <foreach collection="applyTos" item="string" separator=",">
+            #{string}
+        </foreach>
+        )
+    </sql>
+
+
+
+<!--结果映射-->
     <resultMap id="file" type="com.skm.exa.domain.bean.FileBean">
         <id property="id" column="id"/>
         <result property="correlationId" column="correlation_id"/>
@@ -29,61 +56,63 @@
         <result property="correlationId" column="correlation_id"/>
         <result property="applyTo" column="apply_to"/>
     </resultMap>
-    <select id="getFileList" resultMap="file">
+
+<!--获取文件-->
+    <sql id="getFileListCondition">
+        <where>
+            <if test="fileIds != null">AND `id` IN <include refid="foreachId"/> </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(correlationTableName)">AND `correlation_table_name` = #{correlationTableName} </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(correlationIds)">AND `correlation_id` IN <include refid="foreachCorrelationId"/> </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(applyTos)">AND `apply_to` IN <include refid="foreachApplyTo"/></if>
+        </where>
+    </sql>
+    <select id="getFileListMessage" resultMap="file">
         SELECT
         *
         FROM
-            `administration_image`
-        WHERE
-            `correlation_table_name` = #{correlationTableName}
-        AND `correlation_id` IN (
-        <foreach collection="correlationIds" item="id" separator=",">
-            #{id}
-        </foreach>
-        )
+            `administration_file`
+        <include refid="getFileListCondition"/>
     </select>
 
 
 
 <!--添加文件信息-->
-    <insert id="uploadFile" keyProperty="id" useGeneratedKeys="true">
-        INSERT INTO `administration_image` (`name`, `url`, `size`, `md5`)
-        VALUES(
-           #{name},
-           #{url},
-           #{size},
-           #{md5}
-           )
+    <insert id="addFileMessage">
+        INSERT INTO
+            `administration_file`
+                (
+                `name`,
+                `url`,
+                `size`,
+                `md5`,
+                `correlation_table_name`,
+                `correlation_id`,
+                `apply_to`
+                )
+        VALUES
+            <foreach collection="fileSaveDtos" item="fileSaveDto" separator=",">
+                (
+                #{fileSaveDto.name},
+                #{fileSaveDto.url},
+                #{fileSaveDto.size},
+                #{fileSaveDto.md5},
+                #{fileSaveDto.correlationTableName},
+                #{fileSaveDto.correlationId},
+                #{fileSaveDto.applyTo}
+                )
+            </foreach>
     </insert>
 
-
-<!--添加图片的关联信息-->
-    <insert id="addFileCorrelation" keyProperty="id" useGeneratedKeys="true">
-        UPDATE
-            `administration_image`
-        SET
-            `correlation_table_name` = #{correlationTableName},
-            `correlation_id` = #{correlationId},
-            `apply_to` = #{applyTo}
-        WHERE `id` IN(
-                <foreach collection="fileId" item="id" index="index" separator=",">
-                    #{id}
-                </foreach>
-            )
-
-    </insert>
-
-
-
-
-
+    
 
 <!--删除文件-->
-    <delete id="deleteFile">
-        DELETE FROM `administration_image` WHERE `id` IN (
-        <foreach collection="list" item="id" separator=",">
-            #{id}
-        </foreach>
+    <delete id="deleteFileMessage">
+        DELETE FROM
+            `administration_file`
+        WHERE `id` IN(
+            <foreach collection="fileIds" item="fileId" separator=",">
+                #{fileId}
+            </foreach>
         )
     </delete>
 

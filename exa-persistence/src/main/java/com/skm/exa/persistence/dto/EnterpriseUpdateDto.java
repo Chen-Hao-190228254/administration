@@ -68,7 +68,14 @@ public class EnterpriseUpdateDto {
     /**
      * 图片
      */
-    private List<FileCorrelationSaveDto> fileCorrelationSaveDtos;
+    private List<FileUpdateDto> fileUpdateDtos;
 
 
+    public EnterpriseUpdateDto() {
+    }
+
+    public EnterpriseUpdateDto(Long id, Byte status) {
+        this.id = id;
+        this.status = status;
+    }
 }

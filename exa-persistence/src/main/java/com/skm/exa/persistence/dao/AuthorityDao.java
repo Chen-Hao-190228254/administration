@@ -11,17 +11,5 @@ import java.util.List;
 public interface AuthorityDao extends BaseDao<AuthorityBean> {
 
 
-    List<AuthorityBean> getAuthorityList();
-
-
-
-    Page<AuthorityBean> getAuthorityPage(PageParam<?> pageParam);
-
-
-    AuthorityBean getAuthorityCode(String code);
-
-
-    int setStatus(@Param("id") Long id, @Param("status") Byte status);
-
 
 }

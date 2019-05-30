@@ -6,10 +6,7 @@ import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
-import com.skm.exa.persistence.dto.EnterpriseDto;
-import com.skm.exa.persistence.dto.EnterpriseSaveDto;
-import com.skm.exa.persistence.dto.EnterpriseUpdateDto;
-import com.skm.exa.persistence.dto.FileCorrelationSaveDto;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.persistence.qo.EnterpriseQO;
 import com.skm.exa.service.biz.EnterpriseService;
 import com.skm.exa.webapi.BaseController;
@@ -54,7 +51,7 @@ public class EnterpriseController extends BaseController {
     public Result<EnterpriseVo> getEnterprise(@ApiParam("需要获取企业的ID") @RequestParam("id") Long id){
         EnterpriseDto enterpriseDto = enterpriseService.getEnterprise(id);
         if(enterpriseDto == null)
-            return Result.error(-1,"数据库不存在该ID，请重新输入");
+            return Result.error(Msg.E40016);
         EnterpriseVo enterpriseVo = BeanMapper.map(enterpriseDto,EnterpriseVo.class);
         return Result.success(enterpriseVo);
     }
@@ -81,30 +78,23 @@ public class EnterpriseController extends BaseController {
 
     @ApiOperation("添加企业")
     @PostMapping("/addEnterprise")
-    public Result<EnterpriseVo> addEnterprise(@ApiParam("需要添加的企业信息") @RequestBody EnterpriseSaveVo enterpriseSaveVo){
-        UnifyAdmin unifyAdmin = getCurrentAdmin();
+    public Result addEnterprise(@ApiParam("需要添加的企业信息") @RequestBody EnterpriseSaveVo enterpriseSaveVo){
         EnterpriseSaveDto enterpriseSaveDto = BeanMapper.map(enterpriseSaveVo,EnterpriseSaveDto.class);
-        enterpriseSaveDto.setFileCorrelationSaveDtos(BeanMapper.mapList(enterpriseSaveVo.getFileCorrelationSaveVos(), FileCorrelationSaveVo.class, FileCorrelationSaveDto.class));
-        Result<EnterpriseDto> enterpriseDto = enterpriseService.addEnterprise(enterpriseSaveDto,unifyAdmin);
-        Result<EnterpriseVo> result = BeanMapper.map(enterpriseDto,Result.class);
-        EnterpriseVo enterpriseVo = BeanMapper.map(enterpriseDto.getContent(),EnterpriseVo.class);
-        result.setContent(enterpriseVo);
-        return result;
+        enterpriseSaveDto.setFileSaveDtos(BeanMapper.mapList(enterpriseSaveVo.getFileSaveVos(), FileSaveVo.class, FileSaveDto.class));
+        boolean is = enterpriseService.addEnterprise(enterpriseSaveDto,getCurrentAdmin());
+        return is? Result.success():Result.error(Msg.E40019);
     }
 
 
 
     @ApiOperation("更新企业")
     @PutMapping("/updateEnterprise")
-    public Result<EnterpriseVo> updateEnterprise(@ApiParam("需要更新的企业信息") @RequestBody EnterpriseUpdateVo enterpriseUpdateVo) {
+    public Result updateEnterprise(@ApiParam("需要更新的企业信息") @RequestBody EnterpriseUpdateVo enterpriseUpdateVo) {
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         EnterpriseUpdateDto enterpriseUpdateDto = BeanMapper.map(enterpriseUpdateVo, EnterpriseUpdateDto.class);
-        enterpriseUpdateDto.setFileCorrelationSaveDtos(BeanMapper.mapList(enterpriseUpdateVo.getFileCorrelationSaveVos(), FileCorrelationSaveVo.class, FileCorrelationSaveDto.class));
-        Result<EnterpriseDto> enterpriseDto = enterpriseService.updateEnterprise(enterpriseUpdateDto, unifyAdmin);
-        Result<EnterpriseVo> result = BeanMapper.map(enterpriseDto, Result.class);
-        EnterpriseVo enterpriseVo = BeanMapper.map(enterpriseDto.getContent(), EnterpriseVo.class);
-        result.setContent(enterpriseVo);
-        return result;
+        enterpriseUpdateDto.setFileUpdateDtos(BeanMapper.mapList(enterpriseUpdateVo.getFileUpdateVos(), FileUpdateVo.class, FileUpdateDto.class));
+        boolean is = enterpriseService.updateEnterprise(enterpriseUpdateDto, unifyAdmin);
+        return is? Result.success():Result.error(Msg.E40023);
     }
 
 
@@ -119,23 +109,20 @@ public class EnterpriseController extends BaseController {
     @DeleteMapping("/deleteEnterprise")
     public Result deleteEnterprise(@ApiParam("需要删除企业的ID") @RequestParam("id") Long id){
         boolean i = enterpriseService.deleteEnterprise(id);
-        return i? Result.success("删除成功"):Result.error(Msg.E40000);
+        return i? Result.success():Result.error(Msg.E40022);
     }
 
 
     /**
      * 更改企业状态
-     * @param id
+     * @param setStatusVo
      * @return
      */
     @ApiOperation(value = "更改企业状态", notes = "更改企业状态/只能在禁用与启用的状态中切换")
     @PutMapping("/deleteEnterprise")
-    public Result setEnterpriseStatus(@ApiParam("需要更改状态的企业的ID") @RequestParam("id") Long id){
-        EnterpriseDto enterpriseDto = enterpriseService.setEnterpriseStatus(id);
-        if(enterpriseDto == null)
-            return Result.error(-1,"数据库不存在该ID，请重新输入");
-        EnterpriseVo enterpriseVo = BeanMapper.map(enterpriseDto,EnterpriseVo.class);
-        return Result.success(enterpriseVo);
+    public Result setEnterpriseStatus(@ApiParam("需要更改状态的企业的ID") @RequestBody SetStatusVo setStatusVo){
+        boolean is = enterpriseService.updateEnterprise(new EnterpriseUpdateDto(setStatusVo.getId(),setStatusVo.getStatus()),getCurrentAdmin());
+        return is? Result.success():Result.error(Msg.E40023);
     }
 
 

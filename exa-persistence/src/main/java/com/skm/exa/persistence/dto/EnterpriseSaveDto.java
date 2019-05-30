@@ -65,6 +65,6 @@ public class EnterpriseSaveDto {
     /**
      * 图片
      */
-    private List<FileCorrelationSaveDto> fileCorrelationSaveDtos;
+    private List<FileSaveDto> fileSaveDtos;
 
 }

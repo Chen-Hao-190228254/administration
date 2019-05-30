@@ -17,12 +17,6 @@ public class AdminUpdateVo {
     private Long id;
 
 
-    /**
-     * 管理员账号名称
-     */
-    @ApiModelProperty("更新后的管理员账号")
-    private String username;
-
 
     /**
      * 管理员名称

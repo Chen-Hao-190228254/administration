@@ -77,7 +77,7 @@ public class EnterpriseSaveVo {
      * 图片
      */
     @ApiModelProperty("图片")
-    private List<FileCorrelationSaveVo> fileCorrelationSaveVos;
+    private List<FileSaveVo> fileSaveVos;
 
 
 }

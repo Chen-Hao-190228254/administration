@@ -1,14 +1,12 @@
-package com.skm.exa.domain.bean;
+package com.skm.exa.persistence.dto;
+
 
 import lombok.Data;
 
-@Data
-public class FileBean {
+import java.util.List;
 
-    /**
-     * 文件ID
-     */
-    private Long id;
+@Data
+public class FileSaveDto {
 
     /**
      * 文件名称
@@ -45,13 +43,4 @@ public class FileBean {
      */
     private String applyTo;
 
-    public FileBean() {
-    }
-
-    public FileBean(String name, String url, Double size, String md5) {
-        this.name = name;
-        this.url = url;
-        this.size = size;
-        this.md5 = md5;
-    }
 }

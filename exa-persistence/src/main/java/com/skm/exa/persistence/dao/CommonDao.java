@@ -2,10 +2,10 @@ package com.skm.exa.persistence.dao;
 
 import com.skm.exa.domain.bean.AreaBean;
 import com.skm.exa.domain.bean.FileBean;
-import com.skm.exa.persistence.dto.FileCorrelationSaveDto;
-import org.springframework.data.repository.query.Param;
+import com.skm.exa.persistence.dto.FileSaveDto;
+import com.skm.exa.persistence.dto.FileSelectDto;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
@@ -21,51 +21,28 @@ public interface CommonDao{
 
     /**
      * 获取文件
-     * @param correlationIds 关联的ID
-     * @param correlationTableName 关联的表名
+     * @param fileSelectDto  选填
      * @return
      */
-    List<FileBean> getFileList(List<Long> correlationIds,String correlationTableName);
-
-
-
-    /**
-     * 文件上传后向数据库添加上传文件的信息
-     * @param fileBeans
-     * @return
-     */
-    int uploadFiles(@Param("list")List<FileBean> fileBeans);
-
-
-
-    /**
-     * 文件上传后向数据库添加上传文件的信息
-     * @param fileBean
-     * @return
-     */
-    int uploadFile(FileBean fileBean);
-
-
-
-
+    List<FileBean> getFileListMessage(FileSelectDto fileSelectDto);
 
 
 
 
     /**
      * 添加文件关联
-     * @param list
+     * @param fileSaveDtos
      * @return
      */
-    int addFileCorrelation(FileCorrelationSaveDto list);
+    int addFileMessage(@Param("fileSaveDtos") List<FileSaveDto> fileSaveDtos);
 
 
     /**
-     * 删除指定ID文件
-     * @param fileId 文件ID
+     * 删除文件
+     * @param fileIds 文件ID集合
      * @return
      */
-    int deleteFile(@Param("list") List<Long> fileId);
+    int deleteFileMessage(@Param("fileIds")List<Long> fileIds);
 
 
 }

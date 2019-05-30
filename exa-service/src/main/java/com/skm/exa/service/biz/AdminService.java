@@ -55,7 +55,7 @@ public interface AdminService extends BaseService<AdminBean> {
      * @param unifyAdmin
      * @return
      */
-    Result<AdminDto> addAdmin(AdminSaveDto adminSaveDto, UnifyAdmin unifyAdmin);
+    Boolean addAdmin(AdminSaveDto adminSaveDto, UnifyAdmin unifyAdmin);
 
 
     /**
@@ -64,24 +64,7 @@ public interface AdminService extends BaseService<AdminBean> {
      * @param unifyAdmin
      * @return
      */
-    Result<AdminDto> updateAdmin(AdminUpdateDto adminUpdateDto, UnifyAdmin unifyAdmin);
-
-
-    /**
-     * 更新管理员密码
-     * @param password
-     * @return
-     */
-    Result updatePassword(String password,Long adminId);
-
-
-    /**
-     * 更新管理员状态
-     * @param id
-     * @return
-     */
-    Result<AdminDto> updateStatus(Long id);
-
+    Boolean updateAdmin(AdminUpdateDto adminUpdateDto, UnifyAdmin unifyAdmin);
 
 
     /**
@@ -118,7 +101,7 @@ public interface AdminService extends BaseService<AdminBean> {
      * @param unifyAdmin
      * @return
      */
-    Result<List<RoleBean>> addAdminRole(List<Long> roleId, Long adminId, UnifyAdmin unifyAdmin);
+    Boolean addAdminRole(List<Long> roleId, Long adminId, UnifyAdmin unifyAdmin);
 
 
     /**
@@ -128,7 +111,7 @@ public interface AdminService extends BaseService<AdminBean> {
      * @param unifyAdmin
      * @return
      */
-    Result<List<RoleBean>> updateAdminRole(List<Long> roleId,Long adminId,UnifyAdmin unifyAdmin);
+    Boolean updateAdminRole(List<Long> roleId,Long adminId,UnifyAdmin unifyAdmin);
 
 
 

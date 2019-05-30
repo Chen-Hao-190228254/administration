@@ -5,7 +5,9 @@ import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
+import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.AuthorityBean;
+import com.skm.exa.domain.bean.RoleBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dto.RoleDto;
@@ -46,6 +48,8 @@ public class RoleController extends BaseController {
     @GetMapping("/getRole/id")
     public Result<RoleVo> getRole(@ApiParam("需要获取角色的ID") @RequestParam("id") Long id){
         RoleDto roleDto = roleService.getRole(id);
+        if(roleDto == null)
+            return Result.error(Msg.E40016);
         return Result.success(getRoleVo(roleDto));
     }
 
@@ -71,17 +75,13 @@ public class RoleController extends BaseController {
     @ApiOperation(value = "分页查询角色", notes = "分页查询角色")
     @PostMapping("/getRolePage")
     public Result<Page<RoleVo>> getRolePage(@ApiParam("分页及条件信息")@RequestBody PageParam<QueryVo> pageParam){
-        QueryVo queryVo = pageParam.getCondition();
-        RoleQO qo = new RoleQO();
-        qo.setCodeLike(queryVo.getKey());
-        qo.setNameLike(queryVo.getKey());
-        PageParam<RoleQO> param = new PageParam<>(pageParam.getPage(),pageParam.getSize());
-        param.setCondition(qo);
+        //搜索条件
+        RoleQO qo = new RoleQO(pageParam.getCondition().getKey(),pageParam.getCondition().getKey());
+        //分页条件
+        PageParam<RoleQO> param = new PageParam<>(pageParam.getPage(),pageParam.getSize(),qo);
         Page<RoleDto> roleBeanPage = roleService.getRolePage(param);
-        List<RoleDto> roleDtos = roleBeanPage.getContent();
-        List<RoleVo> roleVos = getListRoleVo(roleDtos);
         Page<RoleVo> roleVoPage = roleBeanPage.map(RoleDto.class,RoleVo.class);
-        roleVoPage.setContent(roleVos);
+        roleVoPage.setContent(getListRoleVo(roleBeanPage.getContent()));
         return Result.success(roleVoPage);
     }
 
@@ -110,14 +110,12 @@ public class RoleController extends BaseController {
      */
     @ApiOperation(value = "添加角色", notes = "添加角色")
     @PostMapping("/addRole")
-    public Result<RoleVo> addRole(@ApiParam("需要添加角色的信息") @RequestBody RoleSaveVo roleSaveVo){
-        UnifyAdmin unifyAdmin = getCurrentAdmin();
-        RoleSaveDto roleSaveDto = BeanMapper.map(roleSaveVo,RoleSaveDto.class);
-        Result<RoleDto> roleDtoResult = roleService.addRole(roleSaveDto, unifyAdmin);
-        Result<RoleVo> roleVoResult = BeanMapper.map(roleDtoResult,Result.class);
-        RoleVo roleVo = getRoleVo(roleDtoResult.getContent());
-        roleVoResult.setContent(roleVo);
-        return roleVoResult;
+    public Result addRole(@ApiParam("需要添加角色的信息") @RequestBody RoleSaveVo roleSaveVo){
+        if(roleService.getRoleCode(roleSaveVo.getCode()))
+            return Result.error(Msg.E40018);
+        boolean is = roleService.addRole(BeanMapper.map(roleSaveVo,RoleSaveDto.class), getCurrentAdmin());
+        return is? Result.success():Result.error(Msg.E40019);
+
     }
 
 
@@ -128,15 +126,13 @@ public class RoleController extends BaseController {
      */
     @ApiOperation(value = "更新角色", notes = "更新角色")
     @PutMapping("/updateRole")
-    public Result<RoleVo> updateRole(@ApiParam("需要更新角色的信息") @RequestBody RoleUpdateVo roleUpdateVo){
-        UnifyAdmin unifyAdmin = getCurrentAdmin();
+    public Result updateRole(@ApiParam("需要更新角色的信息") @RequestBody RoleUpdateVo roleUpdateVo){
+        if(!roleService.getRole(roleUpdateVo.getId()).getCode().equals(roleUpdateVo.getCode()))
+            if(roleService.getRoleCode(roleUpdateVo.getCode()))
+                return Result.error(Msg.E40018);
         RoleUpdateDto roleUpdateDto = BeanMapper.map(roleUpdateVo,RoleUpdateDto.class);
-        Result<RoleDto> roleDtoResult = roleService.updateRole(roleUpdateDto,unifyAdmin);
-        RoleVo roleVo = getRoleVo(roleDtoResult.getContent());
-        Result<RoleVo> result = BeanMapper.map(roleDtoResult,Result.class);
-        result.setContent(roleVo);
-        return result;
-
+        boolean is = roleService.updateRole(roleUpdateDto,getCurrentAdmin());
+        return is? Result.success() : Result.error(Msg.E40023);
     }
 
 
@@ -149,25 +145,20 @@ public class RoleController extends BaseController {
     @DeleteMapping("/deleteRole/id")
     public Result<Boolean> deleteRole(@ApiParam("需要删除角色的ID") @RequestParam("id") Long id){
         boolean is = roleService.deleteRole(id);
-        return is ? Result.success() : Result.error(Msg.E40000);
+        return is ? Result.success() : Result.error(Msg.E40022);
     }
 
 
     /**
      * 更改角色状态
-     * @param id
+     * @param setStatusVo
      * @return
      */
     @ApiOperation(value = "更改角色状态", notes = "更改角色状态")
     @PutMapping("/setStatus/id")
-    public Result<RoleVo> setStatus(@ApiParam("需要更改角色状态的ID") @RequestParam("id") Long id){
-        Result<RoleDto> roleDtoResult = roleService.setStatus(id);
-        Result<RoleVo> result = BeanMapper.map(roleDtoResult,Result.class);
-        if(result.getContent() ==null)
-            return result;
-        RoleVo roleVo = getRoleVo(roleDtoResult.getContent());
-        result.setContent(roleVo);
-        return result;
+    public Result setStatus(@ApiParam("需要更新的信息") @RequestBody SetStatusVo setStatusVo){
+        boolean is = roleService.setStatus(BeanMapper.map(setStatusVo, RoleBean.class),getCurrentAdmin());
+        return is? Result.success() : Result.error(Msg.E40023);
     }
 
 
@@ -201,6 +192,8 @@ public class RoleController extends BaseController {
      * @return
      */
      public RoleVo getRoleVo(RoleDto roleDto){
+         if(roleDto == null)
+             return null;
          RoleVo roleVo = BeanMapper.map(roleDto,RoleVo.class);
          roleVo.setAuthorityVos(BeanMapper.mapList(roleDto.getAuthorityBeans(), AuthorityBean.class, AuthorityVo.class));
          return roleVo;
