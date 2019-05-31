@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-@ApiModel
+@ApiModel("输入条件搜索")
 public class QuestionQueryVO  {
     @ApiModelProperty(value = "技术类型")
     private Long technologicalType;
@@ -18,8 +18,8 @@ public class QuestionQueryVO  {
     private String enterpriseName;
     @ApiModelProperty(value = "标题")
     private String title;
-    @ApiModelProperty(value = "", example = "2019-01-10")
+    @ApiModelProperty(value = "开始时间")
     private Date startDt;
-    @ApiModelProperty(value = "", example = "2019-5-28")
+    @ApiModelProperty(value = "结束时间")
     private Date endDt;
 }

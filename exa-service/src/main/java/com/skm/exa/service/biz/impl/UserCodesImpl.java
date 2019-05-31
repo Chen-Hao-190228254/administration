@@ -90,44 +90,26 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
     /**
      * 更改状态
      * @param userCodesBean
-     * @param id
+     * @param
      * @return
      */
     @Override
-    public Integer updateStatus(UserCodesBean userCodesBean ,Long id) {
-        UserCodesBean bean = dao.details(userCodesBean);
-        if (bean.getStatus() != null ){
-            if (bean.getStatus() == UserCodesStatus.NORMAL.getValue()){
-                userCodesBean.setStatus((long) 1);
-                return dao.updateStatus(userCodesBean);
-            }
-            if(bean.getStatus() == UserCodesStatus.FORBIDDEN.getValue()){
-                userCodesBean.setStatus((long) 0 );
-                return dao.updateStatus(userCodesBean);
-            }
-        }
-                return null;
+    public UserCodesBean updateStatus(UserCodesBean userCodesBean ) {
+        dao.updateStatus(userCodesBean);
+            return userCodesBean ;
+
+
     }
 
     /**
      * 更改可编辑状态
      * @param userCodesBean
-     * @param id
+     * @param userCodesBean
      * @return
      */
     @Override
-    public Integer updateEditStatus(UserCodesBean userCodesBean, Long id) {
-        UserCodesBean bean = dao.details(userCodesBean);
-        if (bean.getEditStatus() != null){
-           if (bean.getEditStatus() == UserCodesEditStatusEnum.EDIT.getValue()){
-               userCodesBean.setEditStatus((long) 1);
-               return dao.updateEditStatus(userCodesBean);
-           }
-            if (bean.getEditStatus() == UserCodesEditStatusEnum.NO_EDIT.getValue()){
-                userCodesBean.setEditStatus((long) 0);
-                return dao.updateEditStatus(userCodesBean);
-            }
-        }
-        return null;
+    public UserCodesBean updateEditStatus(UserCodesBean userCodesBean) {
+        dao.updateEditStatus(userCodesBean);
+        return userCodesBean;
     }
 }

@@ -1,8 +1,8 @@
 package com.skm.exa.mybatis.enums;
 
 public enum UserCodesStatus {
-    NORMAL(0),/*正常*/
-    FORBIDDEN(1);/*禁用*/
+    NORMAL(1),/*正常*/
+    FORBIDDEN(0);/*禁用*/
     private int value;
 
     UserCodesStatus(int value) {

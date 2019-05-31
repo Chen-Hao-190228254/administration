@@ -13,10 +13,7 @@ import com.skm.exa.persistence.dto.UserCodesDto;
 import com.skm.exa.persistence.qo.UserCodesLikeQO;
 import com.skm.exa.service.biz.UserCodesService;
 import com.skm.exa.webapi.BaseController;
-import com.skm.exa.webapi.vo.UserCodesQueryVO;
-import com.skm.exa.webapi.vo.UserCodesSaveVO;
-import com.skm.exa.webapi.vo.UserCodesUpdateVO;
-import com.skm.exa.webapi.vo.UserCodesVO;
+import com.skm.exa.webapi.vo.*;
 import io.swagger.annotations.Api;
 
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +36,7 @@ public class UserCodesController extends BaseController {
      */
     @PostMapping("/page")
     @ApiOperation(notes = "分页模糊查询获取代码管理",value = "分页模糊查询获取代码管理")
-    public Result<Page<UserCodesVO>>  pageResult (@ApiParam("分页模糊查询获取代码管理")
+    public Result<Page<UserCodesVO>>  pageResult (@ApiParam("queryVOPageParam")
                                                           @RequestBody PageParam<UserCodesQueryVO> queryVOPageParam){
         UserCodesQueryVO userCodesQueryVO = queryVOPageParam.getCondition();
         UserCodesLikeQO userCodesLikeQO = new UserCodesLikeQO();
@@ -62,7 +59,7 @@ public class UserCodesController extends BaseController {
     @Transactional
     @PostMapping("/add")
     @ApiOperation(notes = "添加代码",value = "添加代码")
-    public Result<UserCodesBean> add (@ApiParam( name = "添加代码")@RequestBody UserCodesSaveVO userCodesSaveVO){
+    public Result<UserCodesBean> add (@ApiParam( name = "userCodesSaveVO")@RequestBody UserCodesSaveVO userCodesSaveVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         UserCodesBean userCodesBean = BeanMapper.map(userCodesSaveVO,UserCodesBean.class );
         userCodesBean = userCodesService.add(userCodesBean, unifyAdmin);
@@ -75,9 +72,9 @@ public class UserCodesController extends BaseController {
      * @return
      */
     @Transactional
-    @PostMapping("details")
+    @PostMapping("/details")
     @ApiOperation(notes = "通过id查询",value = "通过id查询")
-    public Result details(@ApiParam("通过id查询")@RequestParam ("getId") Long id){
+    public Result details(@ApiParam("id")@RequestParam ("getId") Long id){
         UserCodesBean userCodesBean = new UserCodesBean();
         userCodesBean.setId(id);
         UserCodesBean details = userCodesService.details(userCodesBean);
@@ -93,7 +90,7 @@ public class UserCodesController extends BaseController {
     @Transactional
     @PostMapping("/update")
     @ApiOperation(notes = "通过id修改数据",value = "通过id修改数据")
-    public Result<UserCodesBean> updateCodes(@ApiParam("通过id修改数据")@RequestBody UserCodesUpdateVO userCodesUpdateVO){
+    public Result<UserCodesBean> updateCodes(@ApiParam("userCodesUpdateVO")@RequestBody UserCodesUpdateVO userCodesUpdateVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         UserCodesBean userCodesBean = BeanMapper.map(userCodesUpdateVO,UserCodesBean.class );
         userCodesBean = userCodesService.update(userCodesBean,unifyAdmin );
@@ -108,7 +105,7 @@ public class UserCodesController extends BaseController {
     @Transactional
     @PostMapping("/delete")
     @ApiOperation(notes = "通过id删除" ,value = "通过id删除")
-    public Result deleteCodes(@ApiParam("通过id删除")@RequestParam ("getId") Long id){
+    public Result deleteCodes(@ApiParam("id")@RequestParam ("getId") Long id){
         UserCodesBean userCodesBean = new UserCodesBean();
         userCodesBean.setId(id);
         boolean codesBean = userCodesService.deleteCodes(id);
@@ -119,31 +116,29 @@ public class UserCodesController extends BaseController {
 
     /**
      * 更改状态
-     * @param id
+     * @param vo
      * @return
      */
-    @PostMapping("updateStatus")
+    @PostMapping("/updateStatus")
     @ApiOperation(notes = "更改状态" ,value = "更改状态")
-    public UserCodesBean updateStatus(@ApiParam("更改状态")@RequestParam ("getId") Long id){
-        UserCodesBean userCodesBean = new UserCodesBean();
-        userCodesBean.setId(id);
-        Integer bean = userCodesService.updateStatus(userCodesBean,id);
-        UserCodesVO userCodesVO = BeanMapper.map(bean, UserCodesVO.class);
-        return userCodesVO;
+    public Result updateStatus(@ApiParam("vo") @RequestBody UserCodesUpdateStatusVo vo){
+        UserCodesBean userCodesBean = BeanMapper.map(vo,UserCodesBean.class );
+        UserCodesBean  updateStatus = userCodesService.updateStatus(userCodesBean);
+        UserCodesUpdateStatusVo statusVo = BeanMapper.map(updateStatus,UserCodesUpdateStatusVo.class );
+        return Result.success(statusVo);
     }
 
     /***
      * 更改可编辑状态
-     * @param id
+     * @param vo
      * @return
      */
-    @PostMapping("updateEditStatus")
+    @PostMapping("/updateEditStatus")
     @ApiOperation(notes = "更改可编辑状态" , value= "更改可编辑状态")
-    public UserCodesBean updateEditStatus( @ApiParam("更改可编辑状态")@RequestParam("getId") Long id){
-        UserCodesBean userCodesBean = new UserCodesBean();
-        userCodesBean.setId(id);
-        Integer bean = userCodesService.updateEditStatus(userCodesBean,id );
-        UserCodesVO userCodesVO = BeanMapper.map(bean,UserCodesVO.class );
-        return userCodesVO;
+    public Result updateEditStatus( @ApiParam("vo")@RequestBody UserCodesUpdateEditStatusVo vo){
+        UserCodesBean userCodesBean = BeanMapper.map(vo,UserCodesBean.class );
+        UserCodesBean bean = userCodesService.updateEditStatus(userCodesBean );
+        UserCodesUpdateEditStatusVo userCodesVO = BeanMapper.map(bean,UserCodesUpdateEditStatusVo.class );
+        return Result.success(userCodesVO);
     }
 }

@@ -26,6 +26,6 @@ public class QuestionBankDeleteVo {
     private String label;
     @ApiModelProperty(value = "问题解答")
     private String answer;
-    @ApiModelProperty(value = "状态")
+    @ApiModelProperty(value = "状态 0禁用 ：1 正常 ")
     private Long status;
 }

@@ -1,8 +1,8 @@
 package com.skm.exa.service.biz;
 
-import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
-import com.skm.exa.domain.bean.BankOptionBean;
+import com.skm.exa.domain.bean.OptionCodesBean;
+import com.skm.exa.domain.bean.TechnologicalTypeBean;
 import com.skm.exa.domain.bean.QuestionBankBean;
 import com.skm.exa.domain.bean.QuestionTypeBean;
 import com.skm.exa.mybatis.Page;
@@ -56,10 +56,10 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
     /**
      * 通过id更改状态
      * @param questionBankBean
-     * @param id
+     * @param questionBankBean
      * @return
      */
-    QuestionBankBean updateStatus(QuestionBankBean questionBankBean ,Long id);
+    QuestionBankBean updateStatus(QuestionBankBean questionBankBean);
 
     /**
      * 输入id删除数据
@@ -74,22 +74,22 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
      * @param unifyAdmin
      * @return
      */
-   boolean updateQuestion(QuestionBankBean questionBankBean,UnifyAdmin unifyAdmin);
+   QuestionBankBean updateQuestion(QuestionBankBean questionBankBean,UnifyAdmin unifyAdmin);
 
     /**
      * 获取所有技术类型
-     * @param bankOptionBean
+     * @param technologicalTypeBean
      * @return
      */
-    List<BankOptionBean> selectBankType(BankOptionBean bankOptionBean);
+    List<TechnologicalTypeBean> selectBankType(TechnologicalTypeBean technologicalTypeBean);
 
     /**
      * 通过id获取技术类型
-     * @param bankOptionBean
-     * @param id
+     * @param technologicalTypeBean
+     * @param
      * @return
      */
-    List<BankOptionBean> selectBank(BankOptionBean bankOptionBean,QuestionBankBean questionBankBean);
+    List<TechnologicalTypeBean> selectBank(TechnologicalTypeBean technologicalTypeBean, QuestionBankBean questionBankBean);
 
     /**
      * 获取所有问题类型
@@ -105,4 +105,28 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
      * @return
      */
     List<QuestionTypeBean> selectTopicType(QuestionTypeBean questionTypeBean,QuestionBankBean questionBankBean);
+
+    /**
+     * 选择题，单选题，添加选项
+     * @param optionCodesBean
+     * @param questionBankBean
+     * @param unifyAdmin
+     * @return
+     */
+    OptionCodesBean addBankOption (OptionCodesBean optionCodesBean ,QuestionBankBean questionBankBean, UnifyAdmin unifyAdmin);
+
+    /**
+     * 删除选项
+     * @param optionCodesBean
+     * @param questionBankBean
+     * @return
+     */
+    boolean deleteBankOption(OptionCodesBean optionCodesBean ,QuestionBankBean questionBankBean);
+
+    /**
+     * 查询选项
+     * @param optionCodesBean
+     * @return
+     */
+    List<OptionCodesBean> selectBankOption(OptionCodesBean optionCodesBean);
 }

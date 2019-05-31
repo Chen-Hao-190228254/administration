@@ -4,9 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 
 public enum QuestionStatusEnum {
     @ApiModelProperty(value = "正常")
-    NORMAL(0),
+    NORMAL(1),
     @ApiModelProperty(value = "禁用")
-    FORBIDDEN(1);
+    FORBIDDEN(0);
 
     private int value;
 

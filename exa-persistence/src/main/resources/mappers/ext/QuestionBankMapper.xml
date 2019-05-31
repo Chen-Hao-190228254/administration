@@ -56,20 +56,42 @@
 
     <!--高级搜索-->
     <sql id="selectData">
-        `id`,
+         `id`,
+        `enterprise_id`,
         `enterprise_name`,
         `title`,
         `technological_type`,
         `topic_type`,
-        `entry_dt`
+        `topic_details`,
+        `option_codes`,
+        `label`,
+        `answer`,
+        `status`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
     </sql>
 
     <resultMap id="RE" type="com.skm.exa.persistence.dto.QuestionQueryDto">
         <id property="id" column="id"/>
+        <result property="enterpriseId" column="enterprise_id"/>
+        <result property="enterpriseName" column="enterprise_name"/>
         <result property="title" column="title"/>
         <result property="technologicalType" column="technological_type"/>
-        <result property="enterpriseName" column="enterprise_name"/>
-        <result property="topicType" column="technological_type"/>
+        <result property="topicType" column="topic_type"/>
+        <result property="topicDetails" column="topic_details"/>
+        <result property="optionCodes" column="option_codes"/>
+        <result property="label" column="label"/>
+        <result property="answer" column="answer"/>
+        <result property="status" column="status"/>
+        <result property="entryId" column="entry_id"/>
+        <result property="entryName" column="entry_name"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateDt" column="update_dt"/>
         <result property="startDt" column="entry_dt"/>
         <result property="endDt" column="entry_dt"/>
     </resultMap>
@@ -79,13 +101,13 @@
         <include refid="selectData"/>
         FROM `administration_question_bank`
         <where>
-            <if test="id != null">OR`id` = #{id ,jdbcType=BIGINT}</if>
+            <if test="id != null">OR `id` = #{id ,jdbcType=BIGINT}</if>
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(titleLike)">OR `title` LIKE "%"#{titleLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technologicalTypeLike)">OR `technological_type` LIKE "%"#{technologicalTypeLike, jdbcType=BIGINT}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)"> OR `enterprise_name` LIKE "%"#{enterpriseNameLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(topicTypeLike)">OR `title` LIKE "%"#{topicTypeLike, jdbcType=BIGINT}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(startDtLike)">OR `entry_dt` LIKE "%"#{startDtLike, jdbcType=DATE}"%" >= </if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(endDtLike)">OR `entry_dt` LIKE &lt;= "%"#{endDtLike, jdbcType=DATE}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)">OR `enterprise_name` LIKE "%"#{enterpriseNameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technologicalTypeLike)">OR `technological_type` = #{technologicalTypeLike, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(topicTypeLike)">OR `topic_type` = #{topicTypeLike, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(startDtLike)">OR `entry_dt` = #{startDtLike, jdbcType=DATE}  </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(endDtLike)">OR `entry_dt` = #{endDtLike, jdbcType=DATE}</if>
         </where>
     </select>
 
@@ -182,25 +204,11 @@
             `option_codes` = #{optionCodes},
             `label`= #{label},
             `answer` = #{answer},
-            `entry_id` = #{entryId},
-            `entry_name` = #{entryName},
-            `entry_dt`= #{entryDt},
             `update_id`= #{updateId},
             `update_name` = #{updateName},
             `update_dt` = #{updateDt}
         WHERE `id` = #{id}
     </update>
-
-    <sql id="type">
-        `id`,
-        `programme`,
-        `arithmetic`,
-        `database`,
-        `optimize`
-
-    </sql>
-
-
 
     <!--.........................-->
     <sql id="BankType">
@@ -209,14 +217,14 @@
         `bank_technological_type`
     </sql>
     <!--获取所有技术类型-->
-    <select id="selectBankType" resultType="com.skm.exa.domain.bean.BankOptionBean">
+    <select id="selectBankType" resultType="com.skm.exa.domain.bean.TechnologicalTypeBean">
         SELECT
         <include refid="BankType"/>
         FROM `administration_question_technological_type`
     </select>
 
     <!--通过id获取技术类型-->
-    <select id="selectBank" resultType="com.skm.exa.domain.bean.BankOptionBean">
+    <select id="selectBank" resultType="com.skm.exa.domain.bean.TechnologicalTypeBean">
       SELECT
           aqb.`id` ,
 	      aqb.`technological_type` ,
@@ -248,5 +256,45 @@
         WHERE
           aqb.`id` = #{id} AND
           aqtt.`type` = aqb.`topic_type`
+    </select>
+
+    <!--多选或者单选时添加选项-->
+    <sql id="optionCodes">
+        INSERT INTO `administration_question_bank_option`(
+            `code`,
+            `bank_option_codes`,
+            `content`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        )VALUE (
+            #{code},
+            #{bankOptionCodes},
+            #{content},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )<!--WHERE administration_question_bank.`option_codes` = administration_question_bank_option.`code`-->
+    </sql>
+    <insert id="addOptionCodes">
+          <include refid="optionCodes"/>
+    </insert>
+    <!--删除选项-->
+    <delete id="deleteOptionCodes">
+        DELETE FROM `administration_question_bank_option`
+        WHERE
+         `code` = #{code} AND
+         `bank_option_codes` = #{bankOptionCodes}
+
+    </delete>
+    <!--查询选项-->
+    <select id="selectOptionCodes" resultType="com.skm.exa.domain.bean.OptionCodesBean">
+        SELECT * FROM `administration_question_bank_option` WHERE `code` = #{code}
     </select>
 </mapper>

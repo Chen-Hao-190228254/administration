@@ -51,16 +51,16 @@ public interface UserCodesService extends BaseService<UserCodesBean> {
     /**
      * 更改状态
      * @param userCodesBean
-     * @param id
+     * @param
      * @return
      */
-    Integer updateStatus(UserCodesBean userCodesBean ,Long id);
+    UserCodesBean updateStatus(UserCodesBean userCodesBean );
 
     /**
      * 更改可编辑状态
      * @param userCodesBean
-     * @param id
+     * @param
      * @return
      */
-    Integer updateEditStatus(UserCodesBean userCodesBean ,Long id);
+    UserCodesBean updateEditStatus(UserCodesBean userCodesBean);
 }

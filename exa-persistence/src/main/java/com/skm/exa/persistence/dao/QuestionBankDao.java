@@ -1,6 +1,7 @@
 package com.skm.exa.persistence.dao;
 
-import com.skm.exa.domain.bean.BankOptionBean;
+import com.skm.exa.domain.bean.OptionCodesBean;
+import com.skm.exa.domain.bean.TechnologicalTypeBean;
 import com.skm.exa.domain.bean.QuestionBankBean;
 import com.skm.exa.domain.bean.QuestionTypeBean;
 import com.skm.exa.mybatis.Page;
@@ -13,6 +14,7 @@ import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
 
 
 import java.util.List;
+import java.util.ListResourceBundle;
 
 public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
     /**
@@ -73,17 +75,17 @@ public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
 
     /**
      * 获取所有技术类型
-     * @param bankOptionBean
+     * @param technologicalTypeBean
      * @return
      */
-    List<BankOptionBean> selectBankType(BankOptionBean bankOptionBean);
+    List<TechnologicalTypeBean> selectBankType(TechnologicalTypeBean technologicalTypeBean);
 
     /**
      * 通过id获取技术类型
-     * @param bankOptionBean
+     * @param technologicalTypeBean
      * @return
      */
-    List<BankOptionBean> selectBank(BankOptionBean bankOptionBean);
+    List<TechnologicalTypeBean> selectBank(TechnologicalTypeBean technologicalTypeBean);
 
     /**
      * 获取所有问题类型
@@ -98,4 +100,25 @@ public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
      * @return
      */
     List<QuestionTypeBean> selectTopicType(QuestionTypeBean questionTypeBean);
+
+    /**
+     * 选择题，单选题，添加选项
+     * @param optionCodesBean
+     * @return
+     */
+    Integer addOptionCodes(OptionCodesBean optionCodesBean);
+
+    /**
+     * 删除选项
+     * @param optionCodesBean
+     * @return
+     */
+    boolean deleteOptionCodes(OptionCodesBean optionCodesBean);
+
+    /**
+     * 查询选项
+     * @param optionCodesBean
+     * @return
+     */
+    List<OptionCodesBean> selectOptionCodes(OptionCodesBean optionCodesBean);
 }
