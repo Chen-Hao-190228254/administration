@@ -43,7 +43,7 @@ public class RoleVo implements Serializable {
      * 权限
      */
     @ApiModelProperty("角色权限列表")
-    List<AuthorityVo> AuthorityVos;
+    List<AuthorityVo> authorityVos;
 
     /**
      * 添加人ID

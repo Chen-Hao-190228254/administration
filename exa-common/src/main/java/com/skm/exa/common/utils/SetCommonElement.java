@@ -6,6 +6,7 @@ import com.skm.exa.domain.BaseBean;
 import java.util.Date;
 
 public class SetCommonElement {
+
     public <T extends BaseBean> T setAdd(T bean, UnifyAdmin unifyAdmin){
         bean.setEntryId(unifyAdmin.getId());
         bean.setEntryName(unifyAdmin.getName());

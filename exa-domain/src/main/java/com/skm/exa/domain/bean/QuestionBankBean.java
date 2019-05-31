@@ -1,7 +1,7 @@
 package com.skm.exa.domain.bean;
 
 import com.skm.exa.domain.BaseBean;
-
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data

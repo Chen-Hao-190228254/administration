@@ -38,12 +38,23 @@ public interface RoleService {
      */
     Page<RoleDto> getRolePage(PageParam<RoleQO> qo);
 
+
+    /**
+     * 判定该角色是否存在
+     * @param code
+     * @return
+     */
+    Boolean getRoleCode(String code);
+
+
+
+
     /**
      * 添加角色
      * @param roleSaveDto
      * @return
      */
-    Result<RoleDto> addRole(RoleSaveDto roleSaveDto, UnifyAdmin unifyAdmin);
+    Boolean addRole(RoleSaveDto roleSaveDto, UnifyAdmin unifyAdmin);
 
     /**
      * 更新角色
@@ -51,7 +62,7 @@ public interface RoleService {
      * @param unifyAdmin
      * @return
      */
-    Result<RoleDto> updateRole(RoleUpdateDto roleUpdateDto, UnifyAdmin unifyAdmin);
+    Boolean updateRole(RoleUpdateDto roleUpdateDto, UnifyAdmin unifyAdmin);
 
     /**
      * 删除角色
@@ -62,10 +73,10 @@ public interface RoleService {
 
     /**
      * 更改权限状态
-     * @param id
+     * @param roleBean
      * @return
      */
-    Result<RoleDto> setStatus(Long id);
+    Boolean setStatus(RoleBean roleBean, UnifyAdmin unifyAdmin);
 
 
 
@@ -99,7 +110,7 @@ public interface RoleService {
      * @param unifyAdmin
      * @return
      */
-    Result<List<AuthorityBean>> addRoleAuthority(List<Long> authorityId, Long roleId, UnifyAdmin unifyAdmin);
+    Boolean addRoleAuthority(List<Long> authorityId, Long roleId, UnifyAdmin unifyAdmin);
 
 
 
@@ -110,7 +121,7 @@ public interface RoleService {
      * @param unifyAdmin
      * @return
      */
-    Result<List<AuthorityBean>> updateRoleAuthority(List<Long> authorityId,Long roleId,UnifyAdmin unifyAdmin);
+    Boolean updateRoleAuthority(List<Long> authorityId,Long roleId,UnifyAdmin unifyAdmin);
 
 
     Boolean deleteRoleAuthority(Long roleId);

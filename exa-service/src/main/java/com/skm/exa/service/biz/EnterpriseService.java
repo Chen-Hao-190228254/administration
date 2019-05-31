@@ -1,18 +1,14 @@
 package com.skm.exa.service.biz;
 
-import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.domain.bean.EnterpriseBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
-import com.skm.exa.persistence.dto.EnterpriseDto;
-import com.skm.exa.persistence.dto.EnterpriseSaveDto;
-import com.skm.exa.persistence.dto.EnterpriseUpdateDto;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.persistence.qo.EnterpriseQO;
 import com.skm.exa.service.BaseService;
-import com.skm.exa.service.biz.impl.EnterpriseServiceImpl;
 
-import java.io.File;
+
 import java.util.List;
 
 public interface EnterpriseService extends BaseService<EnterpriseBean> {
@@ -42,13 +38,13 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
      * 添加企业
      * @return
      */
-    Result<EnterpriseDto> addEnterprise(EnterpriseSaveDto enterpriseSaveDto, UnifyAdmin unifyAdmin);
+    Boolean addEnterprise(EnterpriseSaveDto enterpriseSaveDto, UnifyAdmin unifyAdmin);
 
     /**
      * 更新企业
      * @return
      */
-    Result<EnterpriseDto> updateEnterprise(EnterpriseUpdateDto enterpriseUpdateDto,UnifyAdmin unifyAdmin);
+    Boolean updateEnterprise(EnterpriseUpdateDto enterpriseUpdateDto,UnifyAdmin unifyAdmin);
 
     /**
      * 删除企业
@@ -57,11 +53,6 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
     Boolean deleteEnterprise(Long id);
 
 
-    /**
-     * 设置企业状态
-     * @return
-     */
-    EnterpriseDto setEnterpriseStatus(Long id);
 
 
 //------------------------图片获取--------------------------------------
@@ -69,30 +60,43 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
 
     /**
      * 获取图片
-     * @param enterpriseBean
+     * @param enterpriseBean 需要获取图片的Bean
      * @return
      */
-    EnterpriseDto enterpriseImage(EnterpriseBean enterpriseBean);
+    EnterpriseDto getEnterpriseImageMessage(EnterpriseBean enterpriseBean);
 
 
     /**
      * 获取图片
-     * @param enterpriseBeans
+     * @param enterpriseBeans 需要获取图片的List<Bean>
      * @return
      */
-    List<EnterpriseDto> enterpriseImage(List<EnterpriseBean> enterpriseBeans );
+    List<EnterpriseDto> getEnterpriseImageMessage(List<EnterpriseBean> enterpriseBeans );
 
 
-
-    Result addImage(Long enterpeiseId, File file);
+    /**
+     * 向数据库添加图片信息
+     * @param fileSaveDtos
+     * @return
+     */
+    Boolean addImageMessage(List<FileSaveDto> fileSaveDtos, Long enterpriseId);
 
 
 
 
     /**
      * 删除照片及关联
-     * @param list
+     * @param fileDeleteDto
      * @return
      */
-    boolean deleteImage(List<Long> list);
+    Boolean deleteImageMessage(FileDeleteDto fileDeleteDto);
+
+
+    /**
+     * 更新图片
+     * @param fileUpdateDtos
+     * @return
+     */
+    Boolean updateImageMessage(List<FileUpdateDto> fileUpdateDtos);
+
 }

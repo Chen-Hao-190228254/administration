@@ -5,10 +5,18 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.File;
+import java.util.List;
 
 @ApiModel("更新企业模板")
 @Data
 public class EnterpriseUpdateVo {
+
+
+    /**
+     * 需要更新的ID
+     */
+    @ApiModelProperty("需要更新的ID")
+    private Long id;
 
 
     /**
@@ -76,6 +84,6 @@ public class EnterpriseUpdateVo {
      * 图片
      */
     @ApiModelProperty("图片")
-    private File image;
+    private List<FileUpdateVo> fileUpdateVos;
 
 }

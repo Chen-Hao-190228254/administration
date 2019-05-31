@@ -1,11 +1,11 @@
 package com.skm.exa.persistence.dao;
 
 import com.skm.exa.domain.bean.AreaBean;
-import com.skm.exa.domain.bean.ImageBean;
-import com.skm.exa.persistence.dto.ImageCorrelationDto;
-import org.springframework.data.repository.query.Param;
+import com.skm.exa.domain.bean.FileBean;
+import com.skm.exa.persistence.dto.FileSaveDto;
+import com.skm.exa.persistence.dto.FileSelectDto;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
@@ -18,44 +18,31 @@ public interface CommonDao{
      */
     List<AreaBean> getAreaParentCode(Long code);
 
-    /**
-     * 通过图片的ID获得图片的信息
-     * @param list
-     * @return
-     */
-    List<ImageCorrelationDto> getImageList(@Param("list") List<Long> list,@Param("correlationTableName") String correlationTableName);
-
 
     /**
-     * 添加图片
-     * @param imageBean
+     * 获取文件
+     * @param fileSelectDto  选填
      * @return
      */
-    int addImage(List<ImageBean> imageBean);
+    List<FileBean> getFileListMessage(FileSelectDto fileSelectDto);
 
-    /**
-     * 添加图片关联
-     * @param imageId
-     * @param correlationId
-     * @param correlationName
-     * @return
-     */
-    int addImageCorrelation(@Param("list")List<Long> imageId,@Param("correlationId")Long correlationId,@Param("correlationName") String correlationName);
+
 
 
     /**
-     * 删除图片
-     * @param list 图片ID
+     * 添加文件关联
+     * @param fileSaveDtos
      * @return
      */
-    int deleteImage(@Param("list") List<Long> list);
+    int addFileMessage(@Param("fileSaveDtos") List<FileSaveDto> fileSaveDtos);
+
 
     /**
-     * 删除图片关联数据
-     * @param list 关联ID
-     * @param correlationTableName
+     * 删除文件
+     * @param fileIds 文件ID集合
      * @return
      */
-    int deleteImageCorrelation(@Param("list") List<Long> list,@Param("correlationTableName") String correlationTableName);
+    int deleteFileMessage(@Param("fileIds")List<Long> fileIds);
+
 
 }

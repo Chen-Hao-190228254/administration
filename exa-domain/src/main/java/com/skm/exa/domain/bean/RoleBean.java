@@ -24,4 +24,8 @@ public class RoleBean extends BaseBean {
     private byte status;
 
 
+
+
+
+
 }

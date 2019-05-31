@@ -29,7 +29,7 @@
     </resultMap>
 
 
-
+<!--根据条件查询，如果添加为null就会获得所有权限-->
     <sql id="searchCondition">
         <where>
             <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
@@ -39,18 +39,16 @@
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">AND `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
         </where>
     </sql>
-
-
     <select id="select" resultMap="RM">
         SELECT
-        <include refid="columns"/>
+        *
         FROM `administration_authority`
         <include refid="searchCondition"/>
     </select>
 
 
 
-
+<!--根据ID查询权限-->
     <select id="get" resultMap="RM">
         SELECT
         <include refid="columns"/>
@@ -59,9 +57,20 @@
     </select>
 
 
+<!--分页查询，可添加条件-->
+    <sql id="pageCondition">
+        <where>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">OR `code` LIKE "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">OR `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+    <select id="selectPage" resultMap="RM">
+        SELECT * FROM `administration_authority` <include refid="pageCondition"/>
+    </select>
 
 
 
+<!--添加权限-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `administration_authority`(
             `code`,
@@ -87,23 +96,24 @@
     </insert>
 
 
-
+<!--更新权限-->
     <update id="update" useGeneratedKeys="true" keyProperty="id">
         UPDATE `administration_authority`
-        SET
-            `code` = #{code},
-            `name` = #{name},
-            `status` = #{status},
-            `update_id` = #{updateId},
-            `update_name` = #{updateName},
-            `update_dt` = #{updateDt}
-            WHERE
+            <set>
+                <if test="code != null">`code` = #{code},</if>
+                <if test="name != null">`name` = #{name},</if>
+                <if test="status != null">`status` = #{status},</if>
+                <if test="updateId != null">`update_id` = #{updateId},</if>
+                <if test="updateName != null">`update_name` = #{updateName},</if>
+                <if test="updateDt != null">`update_dt` = #{updateDt}</if>
+            </set>
+        WHERE
             `id` = #{id}
     </update>
 
 
 
-
+<!--删除权限-->
     <delete id="delete">
         DELETE FROM `administration_authority` WHERE `id` = #{id}
     </delete>

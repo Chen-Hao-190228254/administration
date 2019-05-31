@@ -18,13 +18,15 @@ public interface AuthorityService {
 
     Page<AuthorityBean> getAuthorityPage(PageParam<AuthorityQO> pageParam);
 
-    Result<AuthorityBean> addAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
+    Boolean getAuthorityCode(String code);
 
-    Result<AuthorityBean> updateAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
+    Boolean addAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
+
+    Boolean updateAuthority(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
 
     Boolean deleteAuthority(Long id);
 
-    Result<AuthorityBean> setStatus(Long id);
+    Boolean setStatus(AuthorityBean authorityBean, UnifyAdmin unifyAdmin);
 
 
 }

@@ -16,62 +16,6 @@ public interface AdminDao extends BaseDao<AdminBean> {
 
 
 
-
-
-
-
-
-    /**
-     * 根据管理员ID获得管理员
-     * @param id
-     * @return
-     */
-    AdminBean getAdmin(Long id);
-
-
-    /**
-     * 获得所有的管理员列表
-     * @return
-     */
-    List<AdminBean> getAdminList();
-
-
-    /**
-     * 分页查询，可加条件
-     * @param param
-     * @return
-     */
-    Page<AdminBean> getAdminPage(PageParam<AdminQO> param);
-
-
-    /**
-     * 添加管理员
-     * @param adminBean
-     * @return
-     */
-    int addAdmin(AdminBean adminBean);
-
-
-    /**
-     * 更新管理员
-     * @param adminBean
-     * @return
-     */
-    int updateAdmin(AdminBean adminBean);
-
-    /**
-     * 更改管理员密码
-     * @param password
-     * @param adminId
-     * @return
-     */
-    int updatePassword(String password, Long adminId);
-
-
-    int updateStatus(@Param("id")Long id,@Param("status")Byte status);
-
-
-
 //<-----------------------管理员角色的获取及操作---------------------------->
 
 

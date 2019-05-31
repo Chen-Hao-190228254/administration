@@ -1,8 +1,6 @@
 package com.skm.exa.webapi.conf.security;
 
-import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.object.UnifyUser;
-import com.skm.exa.common.service.UnifyAdminService;
 import com.skm.exa.common.service.UnifyUserService;
 import com.skm.exa.common.utils.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,7 +37,7 @@ public class AdminAuthenticationFilterAndProvider extends AbstractAuthentication
 
     private UnifyAdminService unifyAdminService;
 
-    AdminAuthenticationFilterAndProvider(UnifyAdminService unifyAdminService, String loginUrl) {
+    AdminAuthenticationFilterAndProvider(UnifyUserService unifyUserService, String loginUrl) {
         super(new AntPathRequestMatcher(loginUrl, HttpMethod.POST.name()));
         this.unifyAdminService = unifyAdminService;
     }
@@ -72,17 +70,18 @@ public class AdminAuthenticationFilterAndProvider extends AbstractAuthentication
         String username = token.getPrincipal().toString();
         String password = token.getCredentials().toString();
 
-        UnifyAdmin user = unifyAdminService.loadAdminByUsername(username);
+        UnifyUser user = unifyUserService.loadUserByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }
+
         // 检查密码是否匹配
-        checkPassword(user, password);
+        checkPassword(unifyAdmin, password);
 
         // 添加用户角色权限
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        List<GrantedAuthority> authorities = setAuthorities(unifyAdmin);
 
-        return new UsernamePasswordAuthenticationToken(user, password, authorities);
+        return new UsernamePasswordAuthenticationToken(unifyAdmin, password, authorities);
     }
 
     private void checkPassword(UnifyAdmin admin, String password) {
@@ -120,4 +119,20 @@ public class AdminAuthenticationFilterAndProvider extends AbstractAuthentication
             this.verificationCode = verificationCode;
         }
     }
+
+
+
+    public List<GrantedAuthority> setAuthorities(UnifyAdmin unifyAdmin){
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for(UnifyRole unifyRole:unifyAdmin.getRole()){
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_"+unifyRole.getCode());
+            authorities.add(grantedAuthority);
+        }
+        for(UnifyAuthority unifyAuthority:unifyAdmin.getAuthority()){
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(unifyAuthority.getCode());
+            authorities.add(grantedAuthority);
+        }
+        return authorities;
+    }
+
 }

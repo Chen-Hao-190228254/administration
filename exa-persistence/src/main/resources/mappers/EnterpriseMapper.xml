@@ -25,4 +25,107 @@
     </resultMap>
 
 
+
+
+<!--获得所有企业-->
+    <sql id="selectCondition">
+        <where>
+            <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(name)">AND `name` = "%"#{name, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">AND `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(code)">AND `code` = "%"#{code, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+    <select id="select" resultMap="RM">
+        SELECT * FROM `administration_enterprise` <include refid="selectCondition"/>
+    </select>
+
+
+<!--根据ID获取企业-->
+    <select id="get" resultMap="RM">
+        SELECT * FROM `administration_enterprise` WHERE `id` = #{id}
+    </select>
+
+
+
+<!--分页查询企业，可加条件-->
+    <sql id="pageCondition">
+        <where>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">OR `code` LIKE "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">OR `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+    <select id="selectPage" resultMap="RM">
+        SELECT * FROM `administration_enterprise` <include refid="pageCondition"/>
+    </select>
+
+
+
+<!--添加企业-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `administration_enterprise`(
+            `name`,
+            `code`,
+            `location`,
+            `phone`,
+            `url`,
+            `technique`,
+            `area_id`,
+            `business_scope`,
+            `detail`,
+            `status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        ) VALUES (
+            #{name},
+            #{code},
+            #{location},
+            #{phone},
+            #{url},
+            #{technique},
+            #{areaId},
+            #{businessScope},
+            #{detail},
+            #{status},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+    </insert>
+
+
+    <!--更新企业-->
+    <update id="update">
+         UPDATE `administration_enterprise`
+        SET
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(name)"> `name` = #{name},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(code)"> `code` = #{code},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(location)"> `location` = #{location},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(phone)"> `phone` = #{phone},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(url)"> `url` = #{url},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technique)"> `technique` = #{technique},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(areaId)"> `area_id` = #{areaId},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(businessScope)"> `business_scope` = #{businessScope},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(detail)"> `detail` = #{detail},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(status)"> `status` = #{status},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(updateId)"> `update_id` = #{updateId},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(updateName)"> `update_name` = #{updateName},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(updateDt)"> `update_dt` = #{updateDt}</if>
+            WHERE
+            `id` = #{id}
+    </update>
+
+
+    <!--删除企业-->
+    <delete id="delete">
+        DELETE FROM `administration_enterprise` WHERE `id` = #{id}
+    </delete>
+
 </mapper>

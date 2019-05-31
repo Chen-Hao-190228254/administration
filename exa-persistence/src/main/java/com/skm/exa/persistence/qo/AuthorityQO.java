@@ -36,5 +36,16 @@ public class AuthorityQO extends AuthorityBean implements DynamicSearchable, Sor
      */
     private Sort sort;
 
+    public AuthorityQO(String codeLike, String nameLike) {
+        this.codeLike = codeLike;
+        this.nameLike = nameLike;
+    }
+
+    public AuthorityQO() {
+    }
+
+    public AuthorityQO(String code){
+        setCode(code);
+    }
 
 }

@@ -17,54 +17,97 @@
 
 
 
-<!--获取图片-->
-    <resultMap id="image" type="com.skm.exa.persistence.dto.ImageCorrelationDto">
+<!--。。。。。。。。。。。。。文件处理。。。。。。。。。。。。-->
+
+<!--循环处理-->
+    <sql id="foreachId">
+        (
+        <foreach collection="fileIds" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </sql>
+    <sql id="foreachCorrelationId">
+        (
+        <foreach collection="correlationIds" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </sql>
+    <sql id="foreachApplyTo">
+        (
+        <foreach collection="applyTos" item="string" separator=",">
+            #{string}
+        </foreach>
+        )
+    </sql>
+
+
+
+<!--结果映射-->
+    <resultMap id="file" type="com.skm.exa.domain.bean.FileBean">
         <id property="id" column="id"/>
         <result property="correlationId" column="correlation_id"/>
         <result property="name" column="name"/>
         <result property="imageId" column="image_id"/>
         <result property="size" column="size"/>
         <result property="md5" column="md5"/>
+        <result property="correlationTableName" column="correlation_table_name"/>
+        <result property="correlationId" column="correlation_id"/>
+        <result property="applyTo" column="apply_to"/>
     </resultMap>
-
     <select id="getImageList" resultMap="image">
         SELECT
-          aic.`correlation_id`,
-          ai.`id`,
-          ai.`url`,
-          ai.`size`
+        *
         FROM
-          `administration_image_correlation` AS aic,
-          `administration_image` AS ai
-        WHERE aic.`correlation_table_name` = #{correlationTableName}
-          AND aic.`image_id` = ai.`id`
-          AND aic.`correlation_id` IN (
-        <foreach collection="list" item="id" separator=",">
-            #{id}
-        </foreach>
-        )
+            `administration_file`
+        <include refid="getFileListCondition"/>
     </select>
 
 
 
-<!--删除图片-->
-    <delete id="deleteImage">
-        DELETE FROM `administration_image` WHERE `id` IN (
-        <foreach collection="list" item="id" separator=",">
-            #{id}
-        </foreach>
+<!--添加文件信息-->
+    <insert id="addFileMessage">
+        INSERT INTO
+            `administration_file`
+                (
+                `name`,
+                `url`,
+                `size`,
+                `md5`,
+                `correlation_table_name`,
+                `correlation_id`,
+                `apply_to`
+                )
+        VALUES
+            <foreach collection="fileSaveDtos" item="fileSaveDto" separator=",">
+                (
+                #{fileSaveDto.name},
+                #{fileSaveDto.url},
+                #{fileSaveDto.size},
+                #{fileSaveDto.md5},
+                #{fileSaveDto.correlationTableName},
+                #{fileSaveDto.correlationId},
+                #{fileSaveDto.applyTo}
+                )
+            </foreach>
+    </insert>
+
+
+
+<!--删除文件-->
+    <delete id="deleteFileMessage">
+        DELETE FROM
+            `administration_file`
+        WHERE `id` IN(
+            <foreach collection="fileIds" item="fileId" separator=",">
+                #{fileId}
+            </foreach>
         )
     </delete>
 
-    <delete id="deleteImageCorrelation">
-        DELETE FROM `administration_image_correlation`
-        WHERE `correlation_table_name` = #{correlationTableName}
-        AND `correlation_id`
-        IN (
-        <foreach collection="list" item="id" separator=",">
-            #{id}
-        </foreach>
-        )
-    </delete>
+
+
+
 
 </mapper>

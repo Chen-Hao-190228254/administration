@@ -35,7 +35,18 @@
     </resultMap>
 
 
-    <sql id="test">
+
+
+
+<!--获得指定ID的管理员-->
+    <select id="get" resultMap="RM">
+        SELECT * FROM `administration_admin` WHERE `id` = #{id}
+    </select>
+
+
+
+<!--根据条件查询，如果添加为null就会获得所有权限-->
+    <sql id="condition">
         <where>
             <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(username)">AND `username` = #{username, jdbcType=VARCHAR}</if>
@@ -44,17 +55,83 @@
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">AND `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
         </where>
     </sql>
-
-
-
     <select id="select" resultMap="RM">
         SELECT
         <include refid="columns"/>
         FROM `administration_admin`
-        <include refid="test"/>
+        <include refid="condition"/>
     </select>
 
 
+<!--分页查询，可添加条件-->
+    <sql id="pageCondition">
+        <where>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(usernameLike)">OR `username` LIKE "%"#{usernameLike, jdbcType=VARCHAR}"%"</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">OR `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
+        </where>
+    </sql>
+    <select id="selectPage" resultMap="RM">
+        SELECT * FROM `administration_admin` <include refid="pageCondition"/>
+    </select>
+
+
+
+
+<!--添加管理员-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `administration_admin`(
+            `username`,
+            `password`,
+            `name`,
+            `phone`,
+            `email`,
+            `status`,
+            `entry_id`,
+            `entry_name`,
+            `entry_dt`,
+            `update_id`,
+            `update_name`,
+            `update_dt`
+        ) VALUES (
+            #{username},
+            #{password},
+            #{name},
+            #{phone},
+            #{email},
+            #{status},
+            #{entryId},
+            #{entryName},
+            #{entryDt},
+            #{updateId},
+            #{updateName},
+            #{updateDt}
+        )
+    </insert>
+
+
+
+<!--更新管理员-->
+
+    <update id="update">
+        UPDATE `administration_admin`
+            <set>
+                <if test="username != null">`username` = #{username},</if>
+                <if test="password != null">`password` = #{password},</if>
+                <if test="name != null">`name` = #{name},</if>
+                <if test="phone != null">`phone` = #{phone},</if>
+                <if test="email != null">`email` = #{email},</if>
+                <if test="status != null">`status` = #{status},</if>
+                <if test="updateId != null">`update_id` = #{updateId},</if>
+                <if test="updateName != null">`update_name` = #{updateName},</if>
+                <if test="updateDt != null">`update_dt` = #{updateDt}</if>
+            </set>
+        WHERE
+            `id` = #{id}
+    </update>
+
+
+
+<!--删除管理员-->
     <delete id="delete">
         DELETE FROM `administration_admin` WHERE `id` = #{id}
     </delete>
