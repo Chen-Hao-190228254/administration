@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.File;
+import java.util.List;
 
 @Data
 @ApiModel("添加企业模型")
@@ -77,7 +77,8 @@ public class EnterpriseSaveVo {
      * 图片
      */
     @ApiModelProperty("图片")
-    private File image;
+    private List<FileSaveVo> fileSaveVos;
 
 
 }
+

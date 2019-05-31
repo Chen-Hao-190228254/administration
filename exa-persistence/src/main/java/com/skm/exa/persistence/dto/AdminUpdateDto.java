@@ -16,14 +16,15 @@ public class AdminUpdateDto {
 
 
     /**
-     * 更新后管理员账号名称
-     */
-    private String username;
-
-    /**
      * 更新后管理员名称
      */
     private String name;
+
+
+    /**
+     * 更新后的密码
+     */
+    private String password;
 
 
     /**
@@ -46,4 +47,17 @@ public class AdminUpdateDto {
      */
     private List<Long> roleId;
 
+
+    public AdminUpdateDto() {
+    }
+
+    public AdminUpdateDto(Long id,String password) {
+        this.id = id;
+        this.password = password;
+    }
+
+    public AdminUpdateDto(Long id,byte status) {
+        this.id = id;
+        this.status = status;
+    }
 }

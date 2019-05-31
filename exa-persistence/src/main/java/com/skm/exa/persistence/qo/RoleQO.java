@@ -38,4 +38,15 @@ public class RoleQO extends RoleBean implements DynamicSearchable, Sortable {
     private Sort sort;
 
 
+    public RoleQO() {
+    }
+
+    public RoleQO(String codeLike, String nameLike){
+        setNameLike(nameLike);
+        setCodeLike(codeLike);
+    }
+
+    public RoleQO(String code){
+        setCode(code);
+    }
 }

@@ -1,18 +1,17 @@
 package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.enums.Msg;
+import com.skm.exa.common.enums.StatusEnum;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
+import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.EnterpriseBean;
-import com.skm.exa.domain.bean.ImageBean;
+import com.skm.exa.domain.bean.FileBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dao.EnterpriseDao;
-import com.skm.exa.persistence.dto.EnterpriseDto;
-import com.skm.exa.persistence.dto.EnterpriseSaveDto;
-import com.skm.exa.persistence.dto.EnterpriseUpdateDto;
-import com.skm.exa.persistence.dto.ImageCorrelationDto;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.persistence.qo.EnterpriseQO;
 import com.skm.exa.service.BaseServiceImpl;
 import com.skm.exa.service.biz.CommonService;
@@ -20,18 +19,17 @@ import com.skm.exa.service.biz.EnterpriseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, EnterpriseDao> implements EnterpriseService {
 
 
 
+    String correlationTableName = "administration_enterprise"; //关联表名
 
     /**
      * 获取所有企业信息
@@ -39,9 +37,8 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      */
     @Override
     public List<EnterpriseDto> getEnterpriseList() {
-        List<EnterpriseBean> enterpriseBeans = dao.getEnterpriseList();
-        List<EnterpriseDto> enterpriseDtos = enterpriseImage(enterpriseBeans);
-        return enterpriseDtos;
+        List<EnterpriseBean> enterpriseBeans = dao.select(null);
+        return getEnterpriseImageMessage(enterpriseBeans);
     }
 
 
@@ -52,8 +49,10 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      */
     @Override
     public EnterpriseDto getEnterprise(Long id) {
-        EnterpriseBean enterpriseBean = dao.getEnterprise(id);
-        return enterpriseImage(enterpriseBean);
+        EnterpriseBean enterpriseBean = dao.get(id);
+        if(enterpriseBean == null)
+            return null;
+        return getEnterpriseImageMessage(enterpriseBean);
     }
 
     /**
@@ -63,9 +62,9 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      */
     @Override
     public Page<EnterpriseDto> getEnterprisePage(PageParam<EnterpriseQO> pageParam) {
-        Page<EnterpriseBean> enterpriseBeanPage = dao.getEnterprisePage(pageParam);
+        Page<EnterpriseBean> enterpriseBeanPage = dao.selectPage(pageParam);
         List<EnterpriseBean> enterpriseBeans = enterpriseBeanPage.getContent();
-        List<EnterpriseDto> enterpriseDtos = enterpriseImage(enterpriseBeans);
+        List<EnterpriseDto> enterpriseDtos = getEnterpriseImageMessage(enterpriseBeans);
         Page<EnterpriseDto> page = BeanMapper.map(enterpriseBeanPage,Page.class);
         page.setContent(enterpriseDtos);
         return page;
@@ -77,15 +76,18 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      */
     @Override
     @Transactional
-    public Result<EnterpriseDto> addEnterprise(EnterpriseSaveDto enterpriseSaveDto, UnifyAdmin unifyAdmin) {
+    public Boolean addEnterprise(EnterpriseSaveDto enterpriseSaveDto, UnifyAdmin unifyAdmin) {
         EnterpriseBean enterpriseBean = BeanMapper.map(enterpriseSaveDto,EnterpriseBean.class);
         if(enterpriseBean == null)
-            return Result.error(-1,"数据有误");
-        int is = dao.addEnterprise(enterpriseBean);
-        if(is<=0)
-            return Result.error(-1,"添加企业时失败");
-
-        return null;
+            return false;
+        enterpriseBean = new SetCommonElement().setAdd(enterpriseBean,unifyAdmin);
+        if(dao.insert(enterpriseBean)<=0)
+            return false;
+        if(enterpriseSaveDto.getFileSaveDtos() == null || enterpriseSaveDto.getFileSaveDtos().size() == 0)
+            return true;
+        //添加图片关联
+        boolean is = addImageMessage(enterpriseSaveDto.getFileSaveDtos(),enterpriseBean.getId());
+        return is;
     }
 
     /**
@@ -93,8 +95,18 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      * @return
      */
     @Override
-    public Result<EnterpriseDto> updateEnterprise(EnterpriseUpdateDto enterpriseUpdateDto, UnifyAdmin unifyAdmin) {
-        return null;
+    public Boolean updateEnterprise(EnterpriseUpdateDto enterpriseUpdateDto, UnifyAdmin unifyAdmin) {
+        EnterpriseBean enterpriseBean = BeanMapper.map(enterpriseUpdateDto,EnterpriseBean.class);
+        if(enterpriseBean == null)
+            return false;
+        enterpriseBean = new SetCommonElement().setupdate(enterpriseBean,unifyAdmin);
+        int is = dao.update(enterpriseBean);
+        if(is<=0)
+            return false;
+        if(enterpriseUpdateDto.getFileUpdateDtos() == null || enterpriseUpdateDto.getFileUpdateDtos().size() == 0)
+            return true;
+        boolean isUpdateImage = updateImageMessage(enterpriseUpdateDto.getFileUpdateDtos());
+        return isUpdateImage;
     }
 
     /**
@@ -104,25 +116,32 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
     @Override
     @Transactional
     public Boolean deleteEnterprise(Long id) {
-        List<Long> list = new ArrayList<>();
-        list.add(id);
-        boolean is = deleteImage(list);
+        //获取要删除的图片信息
+        EnterpriseDto enterpriseDto = getEnterprise(id);
+        if(enterpriseDto == null)
+            return true;
+        if(enterpriseDto.getImageBeans() == null && enterpriseDto.getImageBeans().size() == 0)
+            return true;
+        List<FileBean> fileBeans = enterpriseDto.getImageBeans();
+        //图片ID集合
+        List<Long> fileIds = new ArrayList<>();
+
+        //图片名称集合
+        List<String> filenames = new ArrayList<>();
+        for(FileBean fileBean:fileBeans){
+            fileIds.add(fileBean.getId());
+            filenames.add(fileBean.getName());
+        }
+        boolean is = deleteImageMessage(new FileDeleteDto(fileIds,filenames));
         if(!is)
             return false;
-        int i = dao.deleteEnterprise(id);
+        int i = dao.delete(id);
         if(i<=0)
             return false;
         return true;
     }
 
-    /**
-     * 更新企业状态
-     * @return
-     */
-    @Override
-    public EnterpriseDto setEnterpriseStatus(Long id) {
-        return null;
-    }
+
 
 
 //---------------------------------图片处理----------------------------------------------
@@ -136,15 +155,12 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      * @return
      */
      @Override
-     public EnterpriseDto enterpriseImage(EnterpriseBean enterpriseBean){
+     public EnterpriseDto getEnterpriseImageMessage(EnterpriseBean enterpriseBean){
         if(enterpriseBean == null)
             return null;
-        List<Long> longs = new ArrayList<>();
-        longs.add(enterpriseBean.getId());
-        List<ImageCorrelationDto> imageCorrelationDtos = commonService.getImageList(longs,"administration_enterprise");
-        List<ImageBean> imageBeans = BeanMapper.mapList(imageCorrelationDtos,ImageCorrelationDto.class,ImageBean.class);
+        List<FileBean> fileBeans = commonService.getFileList(new FileSelectDto(correlationTableName,new ArrayList<>(Collections.singleton(enterpriseBean.getId())) ));
         EnterpriseDto enterpriseDto = BeanMapper.map(enterpriseBean,EnterpriseDto.class);
-        enterpriseDto.setImageBeans(imageBeans);
+        enterpriseDto.setImageBeans(fileBeans);
         return enterpriseDto;
      }
 
@@ -155,31 +171,31 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      * @return
      */
     @Override
-    public List<EnterpriseDto> enterpriseImage(List<EnterpriseBean> enterpriseBeans ){
+    public List<EnterpriseDto> getEnterpriseImageMessage(List<EnterpriseBean> enterpriseBeans){
         if(enterpriseBeans == null || enterpriseBeans.size() == 0)
             return null;
-        List<Long> enterpriseId = new ArrayList<>();
+        List<Long> enterpriseIds = new ArrayList<>();
         Map<Long,EnterpriseDto> mapEnterprise = new HashMap<>();
         for(EnterpriseBean enterpriseBean:enterpriseBeans){
-            enterpriseId.add(enterpriseBean.getId());
+            enterpriseIds.add(enterpriseBean.getId());
             mapEnterprise.put(enterpriseBean.getId(), BeanMapper.map(enterpriseBean,EnterpriseDto.class));
         }
-        List<ImageCorrelationDto> imageBeans = commonService.getImageList(enterpriseId,"administration_enterprise");
-        if(imageBeans == null)
+        List<FileBean> fileBeans = commonService.getFileList(new FileSelectDto(correlationTableName,enterpriseIds));
+        if(fileBeans == null || fileBeans.size() == 0)
             return BeanMapper.mapList(enterpriseBeans,EnterpriseBean.class,EnterpriseDto.class);
-        Map<Long,List<ImageBean>> mapImage = new HashMap<>();
-        for(ImageCorrelationDto i:imageBeans){
-            if(mapImage.containsKey(i.getCorrelationId())){
-                mapImage.get(i.getCorrelationId()).add(BeanMapper.map(i,ImageBean.class));
+        Map<Long,List<FileBean>> mapFile = new HashMap<>();
+        for(FileBean fileBean:fileBeans){
+            if(mapFile.containsKey(fileBean.getCorrelationId())){
+                mapFile.get(fileBean.getCorrelationId()).add(fileBean);
             }else {
-                List<ImageBean> imageBeanList = new ArrayList<>();
-                imageBeanList.add(BeanMapper.map(i,ImageBean.class));
-                mapImage.put(i.getCorrelationId(),imageBeanList);
+                List<FileBean> imageBeanList = new ArrayList<>();
+                imageBeanList.add(fileBean);
+                mapFile.put(fileBean.getCorrelationId(),imageBeanList);
             }
         }
         for(Long key:mapEnterprise.keySet()){
-            if(mapImage.containsKey(key)){
-                mapEnterprise.get(key).setImageBeans(mapImage.get(key));
+            if(mapFile.containsKey(key)){
+                mapEnterprise.get(key).setImageBeans(mapFile.get(key));
             }
         }
         List<EnterpriseDto> enterpriseDtos = new ArrayList<>();
@@ -191,30 +207,81 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
 
 
     /**
-     * 添加图片
-     * @param enterpeiseId
-     * @param file
+     * 向数据库添加图片信息
+     * @param fileSaveDtos
      * @return
      */
-    public Result addImage(Long enterpeiseId, File file){
-        List<File> files = new ArrayList<>();
-        files.add(file);
-        Result result = commonService.addImage(enterpeiseId,files,"administration_enterprise");
-        return null;
+    @Validated
+    @Transactional
+    public Boolean addImageMessage(List<FileSaveDto> fileSaveDtos,Long enterpriseId){
+        for(FileSaveDto fileCorrelationSaveDto:fileSaveDtos){
+            fileCorrelationSaveDto.setCorrelationId(enterpriseId);
+            fileCorrelationSaveDto.setCorrelationTableName(correlationTableName);
+        }
+        return commonService.addFileMessage(fileSaveDtos);
     }
 
 
 
 
     /**
-     * 删除图片及关联
-     * @param list
+     * 删除图片
+     * @param fileDeleteDto
      * @return
      */
     @Override
-    public boolean deleteImage(List<Long> list){
-        return commonService.deleteImage(list,"administration_enterprise");
+    @Transactional
+    public Boolean deleteImageMessage(FileDeleteDto fileDeleteDto){
+        return commonService.deleteFileMessage(fileDeleteDto);
     }
+
+
+    /**
+     * 更新图片
+     * @param fileUpdateDtos
+     * @return
+     */
+    @Override
+    @Transactional
+    public Boolean updateImageMessage(List<FileUpdateDto> fileUpdateDtos){
+        if(fileUpdateDtos == null || fileUpdateDtos.size() == 0)
+            return true;
+        List<FileBean> fileBeans = getEnterprise(fileUpdateDtos.get(0).getCorrelationId()).getImageBeans();
+        for(int i = 0; i < fileBeans.size(); i++){
+            for(int j = 0; j < fileUpdateDtos.size(); j++){
+                if(fileUpdateDtos.get(j).getId() == fileBeans.get(i).getId()) {
+                    fileBeans.remove(i);
+                    fileUpdateDtos.remove(j);
+                }
+            }
+        }
+
+        //删除图片
+        if(fileBeans != null && fileBeans.size() != 0){
+            //图片ID集合
+            List<Long> fileIds = new ArrayList<>();
+
+            //图片名称集合
+            List<String> filenames = new ArrayList<>();
+            for(FileBean fileBean:fileBeans){
+                fileIds.add(fileBean.getId());
+                filenames.add(fileBean.getName());
+            }
+            boolean is = deleteImageMessage(new FileDeleteDto(fileIds,filenames));
+            if(!is)
+                return false;
+        }
+
+        //添加图片
+        if(fileUpdateDtos != null && fileUpdateDtos.size() != 0){
+            boolean is = addImageMessage(BeanMapper.mapList(fileUpdateDtos,FileUpdateDto.class,FileSaveDto.class),fileUpdateDtos.get(0).getCorrelationId());
+            if(!is)
+                return false;
+        }
+        return true;
+    }
+
+
 
 
 }

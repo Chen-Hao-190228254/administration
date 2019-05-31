@@ -1,8 +1,10 @@
 package com.skm.exa.webapi.controller;
 
+import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
+import com.skm.exa.domain.bean.AdminBean;
 import com.skm.exa.domain.bean.RoleBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
@@ -18,24 +20,27 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 
 @Api(tags = "管理员操作",description = "管理员操作")
 @RestController
 @RequestMapping("/web/v1/admin")
+@PreAuthorize("hasRole('ROLE_admin')")
 public class AdminController extends BaseController {
 
     @Autowired
     AdminService adminService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     /**
@@ -45,11 +50,10 @@ public class AdminController extends BaseController {
      */
     @ApiOperation(value = "根据ID获得管理员信息", notes = "根据ID获得管理员信息")
     @GetMapping("/getAdmin/id")
-    @PreAuthorize("hasRole('ROLE_admin')")
     public Result<AdminVo> getAdmin(@ApiParam("需要获取管理员的ID") @RequestParam("id") Long id){
         AdminDto adminDto = adminService.getAdmin(id);
         if(adminDto == null)
-            return Result.error(-1,"指定的ID不存在");
+            return Result.error(Msg.E40016);
         return Result.success(getAdminVo(adminDto));
     }
 
@@ -61,7 +65,7 @@ public class AdminController extends BaseController {
      */
     @ApiOperation(value = "获得所有管理员信息", notes = "获得所有管理员信息")
     @GetMapping("/getAdminList")
-    @PreAuthorize("hasAuthority('AT_SYSTEM')")
+//    @PreAuthorize("hasAuthority('AT_SYSTEM')")
     public Result<List<AdminVo>> getAdminList(){
         List<AdminDto> adminDtos = adminService.getAdminList();
         return Result.success(getAdminVoList(adminDtos));
@@ -76,17 +80,28 @@ public class AdminController extends BaseController {
     @ApiOperation(value = "分页查询管理员", notes = "分页查询管理员")
     @PostMapping("/getAdminPage")
     public Result<Page<AdminVo>> getAdminPage(@ApiParam("分页及条件信息") @RequestBody PageParam<QueryVo> pageParam){
-        AdminQO adminQO = new AdminQO();
-        adminQO.setUsernameLike(pageParam.getCondition().getKey());
-        adminQO.setNameLike(pageParam.getCondition().getKey());
-        PageParam<AdminQO> param = new PageParam<>(pageParam.getPage(),pageParam.getSize());
-        param.setCondition(adminQO);
+        AdminQO adminQO = new AdminQO(pageParam.getCondition().getKey(),pageParam.getCondition().getKey());
+        PageParam<AdminQO> param = new PageParam<>(pageParam.getPage(),pageParam.getSize(),adminQO);
         Page<AdminDto> adminDtoPage = adminService.getAdminPage(param);
         Page<AdminVo> page = BeanMapper.map(adminDtoPage,Page.class);
-        List<AdminVo> adminVos = getAdminVoList(adminDtoPage.getContent());
-        page.setContent(adminVos);
+        page.setContent(getAdminVoList(adminDtoPage.getContent()));
         return Result.success(page);
     }
+
+
+    /**
+     * 根据账号判读该账号是否已经存在
+     * @param username
+     * @return
+     */
+    @ApiOperation(value = "根据账号判读该账号是否已经存在", notes = "根据账号判读该账号是否已经存在")
+    @GetMapping("/getAdminUsername/username")
+    public Result getAdminUsername(@ApiParam("需要按账号查找的账号") @RequestParam("username") String username){
+        boolean is = adminService.getAdminUsername(username);
+        return Result.success(is);
+    }
+
+
 
 
     /**
@@ -96,16 +111,13 @@ public class AdminController extends BaseController {
      */
     @ApiOperation(value = "添加管理员", notes = "添加管理员")
     @PostMapping("/addAdmin")
-    public Result<AdminVo> addAdmin(@ApiParam("需要添加管理员的信息") @RequestBody AdminSaveVo adminSaveVo){
-        UnifyAdmin unifyAdmin = getCurrentAdmin();
+    public Result addAdmin(@ApiParam("需要添加管理员的信息") @RequestBody AdminSaveVo adminSaveVo){
+        if(adminService.getAdminUsername(adminSaveVo.getUsername()))
+            return Result.error(Msg.E40018);
         AdminSaveDto adminSaveDto = BeanMapper.map(adminSaveVo, AdminSaveDto.class);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         adminSaveDto.setPassword(passwordEncoder.encode(adminSaveVo.getPassword()));
-        Result<AdminDto> adminDtoResult = adminService.addAdmin(adminSaveDto, unifyAdmin);
-        AdminVo adminVo = getAdminVo(adminDtoResult.getContent());
-        Result<AdminVo> adminVoResult = BeanMapper.map(adminDtoResult,Result.class);
-        adminVoResult.setContent(adminVo);
-        return adminVoResult;
+        boolean is = adminService.addAdmin(adminSaveDto, getCurrentAdmin());
+        return is? Result.success():Result.error(Msg.E40019);
     }
 
 
@@ -116,14 +128,10 @@ public class AdminController extends BaseController {
      */
     @ApiOperation(value = "更新管理员", notes = "更新管理员")
     @PutMapping("/updateAdmin")
-    public Result<AdminVo> updateAdmin(@ApiParam("需要更新的管理员的信息") @RequestBody AdminUpdateVo adminUpdateVo){
-        UnifyAdmin unifyAdmin = getCurrentAdmin();
+    public Result updateAdmin(@ApiParam("需要更新的管理员的信息") @RequestBody AdminUpdateVo adminUpdateVo){
         AdminUpdateDto adminUpdateDto = BeanMapper.map(adminUpdateVo,AdminUpdateDto.class);
-        Result<AdminDto> adminDtoResult = adminService.updateAdmin(adminUpdateDto,unifyAdmin);
-        AdminVo adminVo = getAdminVo(adminDtoResult.getContent());
-        Result<AdminVo> result = BeanMapper.map(adminDtoResult,Result.class);
-        result.setContent(adminVo);
-        return result;
+        boolean is = adminService.updateAdmin(adminUpdateDto,getCurrentAdmin());
+        return is? Result.success():Result.error(Msg.E40023);
     }
 
 
@@ -134,33 +142,26 @@ public class AdminController extends BaseController {
      */
     @ApiOperation(value = "更改管理员密码", notes = "更改管理员密码")
     @PutMapping("/updatePassword")
-    public Result<Boolean> updatePassword(@ApiParam("需要更新的管理员的信息") @RequestBody PasswordUpdateVo password){
-        boolean i = password.getPassword().matches("^[\\w_.@]{5,20}$");
-        if(i){
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            return adminService.updatePassword(passwordEncoder.encode(password.getPassword()),password.getId());
-        }else {
-            Result<Boolean> result = new Result<>(-1,"密码格式有误");
-            result.setContent(false);
-            return result;
-        }
+    public Result updatePassword(@Validated @ApiParam("需要更新的管理员的信息") @RequestBody PasswordUpdateVo password){
+        if(!password.getPassword1().equals(password.getPassword2()))
+            return Result.error(Msg.E40014);
+        password.setPassword1(passwordEncoder.encode(password.getPassword2()));
+        boolean is = adminService.updateAdmin(new AdminUpdateDto(password.getId(),password.getPassword1()),getCurrentAdmin());
+        return is ? Result.success(): Result.error(Msg.E40016);
     }
 
 
 
     /**
-     * 更改管理员密码
-     * @param id
+     * 更改管理员状态
+     * @param setStatusVo
      * @return
      */
     @ApiOperation(value = "更改管理员状态", notes = "更改管理员状态")
-    @PutMapping("/updateStatus/id")
-    public Result<AdminVo> updateStatus(@ApiParam("需要更新的管理员ID") @RequestParam("id") Long id){
-        Result<AdminDto> adminDto = adminService.updateStatus(id);
-        AdminVo adminVo = getAdminVo(adminDto.getContent());
-        Result<AdminVo> result = BeanMapper.map(adminDto,Result.class);
-        result.setContent(adminVo);
-        return result;
+    @PutMapping("/updateStatus")
+    public Result<AdminVo> updateStatus(@ApiParam("需要更新的管理员ID") @RequestBody SetStatusVo setStatusVo){
+        boolean is = adminService.updateAdmin(new AdminUpdateDto(setStatusVo.getId(),setStatusVo.getStatus()),getCurrentAdmin());
+        return is ? Result.success(): Result.error(Msg.E40016);
     }
 
 
@@ -176,15 +177,7 @@ public class AdminController extends BaseController {
     @DeleteMapping("/deleteAdmin/id")
     public Result<Boolean> deleteAdmin(@ApiParam("需要删除管理员的ID") @RequestParam("id") Long id){
         boolean is = adminService.deleteAdmin(id);
-        if(is){
-            Result<Boolean> result = new Result<>(1,"删除成功");
-            result.setContent(is);
-            return result;
-        }else {
-            Result<Boolean> result = new Result<>(-1,"删除失败");
-            result.setContent(is);
-            return result;
-        }
+        return is ? Result.success() : Result.error(Msg.E40000);
     }
 
 

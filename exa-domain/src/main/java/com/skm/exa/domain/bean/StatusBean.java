@@ -18,4 +18,11 @@ public class StatusBean {
     private String name;
 
 
+    public StatusBean() {
+    }
+
+    public StatusBean(Byte code, String name) {
+        this.code = code;
+        this.name = name;
+    }
 }

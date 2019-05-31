@@ -36,5 +36,15 @@ public class AdminQO extends AdminBean implements DynamicSearchable, Sortable {
      */
     private Sort sort;
 
+    public AdminQO() {
+    }
 
+    public AdminQO(String usernameLike, String nameLike) {
+        this.usernameLike = usernameLike;
+        this.nameLike = nameLike;
+    }
+
+    public AdminQO(String code) {
+        setUsername(code);
+    }
 }

@@ -4,33 +4,4 @@
 <mapper namespace="com.skm.exa.persistence.dao.AuthorityDao">
 
 
-
-    <sql id="pageCondition">
-        <where>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codeLike)">OR `code` LIKE "%"#{codeLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">OR `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
-        </where>
-    </sql>
-
-
-    <select id="getAuthorityList" resultMap="RM">
-        SELECT * FROM `administration_authority`
-    </select>
-
-
-    <select id="getAuthorityPage" resultMap="RM">
-        SELECT * FROM `administration_authority` <include refid="pageCondition"/>
-    </select>
-
-
-
-    <update id="setStatus">
-        UPDATE `administration_authority`
-        SET
-            `status` = #{status}
-            WHERE
-            `id` = #{id}
-    </update>
-
-
 </mapper>
