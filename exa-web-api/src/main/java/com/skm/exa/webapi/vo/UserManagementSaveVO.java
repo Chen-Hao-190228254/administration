@@ -1,6 +1,7 @@
 package com.skm.exa.webapi.vo;
 
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ import java.util.Date;
  * 用户管理Vo
  */
 @Data
+@ApiModel(value = "角色管理添加数据VO")
 public class UserManagementSaveVO {
 
     /*用户账号*/

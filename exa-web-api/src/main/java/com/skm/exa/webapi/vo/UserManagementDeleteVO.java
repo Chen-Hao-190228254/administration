@@ -1,11 +1,13 @@
 package com.skm.exa.webapi.vo;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@ApiModel(value = "角色管理删除数据")
 public class UserManagementDeleteVO {
     /*用户id*/
     @ApiModelProperty(value = "用户id")

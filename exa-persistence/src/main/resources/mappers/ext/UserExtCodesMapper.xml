@@ -88,9 +88,6 @@
             `codes`= #{codes},
             `code_name` = #{codeName},
             `status` = #{status},
-            `entry_id`= #{entryId},
-            `entry_name`= #{entryName},
-            `entry_dt`= #{entryDt},
             `update_id`= #{updateId},
             `update_name`= #{updateName},
             `update_dt`= #{updateDt}
@@ -100,6 +97,7 @@
     <delete id="deleteCodes">
         DELETE FROM  `administration_codes`WHERE id = #{id}
     </delete>
+
     <!--更改状态-->
     <update id="updateStatus" parameterType="com.skm.exa.domain.bean.UserCodesBean">
         UPDATE `administration_codes`

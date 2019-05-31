@@ -1,9 +1,11 @@
 package com.skm.exa.webapi.vo;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@ApiModel(value = "代码管理修改VO")
 public class UserCodesUpdateVO {
     @ApiModelProperty(value = "id")
     private Long id ; //id

@@ -56,17 +56,7 @@
         <result property="correlationId" column="correlation_id"/>
         <result property="applyTo" column="apply_to"/>
     </resultMap>
-
-<!--获取文件-->
-    <sql id="getFileListCondition">
-        <where>
-            <if test="fileIds != null">AND `id` IN <include refid="foreachId"/> </if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(correlationTableName)">AND `correlation_table_name` = #{correlationTableName} </if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(correlationIds)">AND `correlation_id` IN <include refid="foreachCorrelationId"/> </if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(applyTos)">AND `apply_to` IN <include refid="foreachApplyTo"/></if>
-        </where>
-    </sql>
-    <select id="getFileListMessage" resultMap="file">
+    <select id="getImageList" resultMap="image">
         SELECT
         *
         FROM
@@ -103,7 +93,7 @@
             </foreach>
     </insert>
 
-    
+
 
 <!--删除文件-->
     <delete id="deleteFileMessage">

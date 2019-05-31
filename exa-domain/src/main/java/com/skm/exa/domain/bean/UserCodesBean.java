@@ -1,11 +1,13 @@
 package com.skm.exa.domain.bean;
 
 import com.skm.exa.domain.BaseBean;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 @Data
+@ApiModel
 public class UserCodesBean extends BaseBean {
-    @ApiModelProperty(value ="id")
+    @ApiModelProperty(value = "id")
     private Long id ; //id
     @ApiModelProperty(value = "代码")
     private String codes;  // 代码

@@ -1,13 +1,19 @@
 package com.skm.exa.service.biz;
 
-import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
+import com.skm.exa.domain.bean.OptionCodesBean;
+import com.skm.exa.domain.bean.TechnologicalTypeBean;
 import com.skm.exa.domain.bean.QuestionBankBean;
+import com.skm.exa.domain.bean.QuestionTypeBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dto.QuestionBankDto;
+import com.skm.exa.persistence.dto.QuestionQueryDto;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
+import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
 import com.skm.exa.service.BaseService;
+
+import java.util.List;
 
 public interface QuestionBankService extends BaseService<QuestionBankBean> {
     /**
@@ -18,6 +24,12 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
     Page<QuestionBankDto> page(PageParam<QuestionBankLikeQO> qoPageParam);
 
     /**
+     * 按条件搜索数据
+     * @param qoPageParam
+     * @return
+     */
+    Page<QuestionQueryDto> selectPage(PageParam<QuestionQueryLikeQO> qoPageParam);
+    /**
      * 添加题库
      * @param questionBankBean
      * @param unifyAdmin
@@ -27,27 +39,94 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
 
     /**
      * 题目详情
+     * @param
      * @param questionBankBean
-     * @param id
      * @return
      */
-    QuestionBankBean questionDetails(QuestionBankBean questionBankBean , Long id);
+    QuestionBankBean questionDetails( QuestionBankBean questionBankBean);
 
     /**
-     * 获取所有数据
-     * @param questionBankBean
-     * @param id
+     * 通过id所有数据
+     * @param
+     * @param
      * @return
      */
-    QuestionBankBean details(QuestionBankBean questionBankBean ,Long id);
+    QuestionBankBean details( QuestionBankBean questionBankBean  );
 
     /**
      * 通过id更改状态
      * @param questionBankBean
-     * @param id
+     * @param questionBankBean
      * @return
      */
-    QuestionBankBean updateStatus(QuestionBankBean questionBankBean ,Long id);
+    QuestionBankBean updateStatus(QuestionBankBean questionBankBean);
 
-    Result<Integer> delete(Long id);
+    /**
+     * 输入id删除数据
+     * @param questionBankBean
+     * @return
+     */
+    boolean delete(QuestionBankBean  questionBankBean );
+
+    /**
+     * 更新数据
+     * @param questionBankBean
+     * @param unifyAdmin
+     * @return
+     */
+   QuestionBankBean updateQuestion(QuestionBankBean questionBankBean,UnifyAdmin unifyAdmin);
+
+    /**
+     * 获取所有技术类型
+     * @param technologicalTypeBean
+     * @return
+     */
+    List<TechnologicalTypeBean> selectBankType(TechnologicalTypeBean technologicalTypeBean);
+
+    /**
+     * 通过id获取技术类型
+     * @param technologicalTypeBean
+     * @param
+     * @return
+     */
+    List<TechnologicalTypeBean> selectBank(TechnologicalTypeBean technologicalTypeBean, QuestionBankBean questionBankBean);
+
+    /**
+     * 获取所有问题类型
+     * @param questionTypeBean
+     * @return
+     */
+    List<QuestionTypeBean> selectQuestionType(QuestionTypeBean questionTypeBean);
+
+    /**
+     * 通过id获取问题类型
+     * @param questionTypeBean
+     * @param
+     * @return
+     */
+    List<QuestionTypeBean> selectTopicType(QuestionTypeBean questionTypeBean,QuestionBankBean questionBankBean);
+
+    /**
+     * 选择题，单选题，添加选项
+     * @param optionCodesBean
+     * @param questionBankBean
+     * @param unifyAdmin
+     * @return
+     */
+    OptionCodesBean addBankOption (OptionCodesBean optionCodesBean ,QuestionBankBean questionBankBean, UnifyAdmin unifyAdmin);
+
+    /**
+     * 删除选项
+     * @param optionCodesBean
+     * @param questionBankBean
+     * @return
+     */
+    boolean deleteBankOption(OptionCodesBean optionCodesBean ,QuestionBankBean questionBankBean);
+
+    /**
+     * 查询选项
+     * @param optionCodesBean
+     * @return
+     */
+    List<OptionCodesBean> selectBankOption(OptionCodesBean optionCodesBean);
 }

@@ -18,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "用户管理" ,description = "用户管理接口")
@@ -65,7 +66,8 @@ public class UserManagementController extends BaseController {
      * @param userManagementSaveVO
      * @return
      */
-    @PostMapping("add")
+    @Transactional
+    @PostMapping("/add")
     @ApiOperation(notes = "添加用户",value = "添加用户")
     public Result<UserManagementBean> add (@ApiParam("添加用户")@RequestBody UserManagementSaveVO userManagementSaveVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
@@ -79,7 +81,8 @@ public class UserManagementController extends BaseController {
      * @param userManagementUpdateVO
      * @return
      */
-    @PostMapping("updateManagement")
+    @Transactional
+    @PostMapping("/updateManagement")
     @ApiOperation(notes = "更新用户",value = "更新用户")
     public Result<UserManagementBean> update(@ApiParam("更新用户")@RequestBody UserManagementUpdateVO userManagementUpdateVO){
        UnifyAdmin unifyAdmin = getCurrentAdmin();
@@ -93,15 +96,14 @@ public class UserManagementController extends BaseController {
      * @param id
      * @return
      */
-    @PostMapping("deleteManagement")
+    @Transactional
+    @PostMapping("/deleteManagement")
     @ApiOperation(notes = "通过id删除用户",value = "通过id删除用户")
     public Result<UserManagementDeleteVO> delete (@ApiParam("通过id删除用户")@RequestParam ("id") Long id){
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
-        Integer delete = userManagementService.delete(userManagementBean,id );
-        System.out.println("到达这里");
+        boolean delete = userManagementService.delete(userManagementBean);
         UserManagementDeleteVO userManagementDeleteVO = BeanMapper.map(delete,UserManagementDeleteVO.class );
-
         return Result.success(userManagementDeleteVO);
     }
 
@@ -110,13 +112,13 @@ public class UserManagementController extends BaseController {
      * @param id
      * @return
      */
-    @PostMapping("details")
+    @PostMapping("/details")
     @ApiOperation(notes = "通过id查询",value = "通过id查询")
     public Result details(@ApiParam("通过id查询")@RequestParam ("id") Long id){
-        UserManagementBean userManagementBean = new UserManagementBean();
-        userManagementBean.setId(id);
-        UserManagementBean details = userManagementService.details(userManagementBean ,id);
-        UserManagementVO userManagementVO = BeanMapper.map(details,UserManagementVO.class );
+        UserManagementBean bean = new UserManagementBean();
+        bean.setId(id);
+        UserManagementBean userManagementBean = userManagementService.details(bean);
+        UserManagementVO userManagementVO = BeanMapper.map(userManagementBean,UserManagementVO.class );
         return Result.success(userManagementVO) ;
     }
 
@@ -125,7 +127,7 @@ public class UserManagementController extends BaseController {
      * @param statusVO
      * @return
      */
-    @PostMapping("status")
+    @PostMapping("/status")
     @ApiOperation(notes = "更改状态",value = "更改状态")
     public Result<UserManagementBean> updateStatus(@ApiParam("更改状态")@RequestBody UserManagementStatusVO statusVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
@@ -139,7 +141,7 @@ public class UserManagementController extends BaseController {
      * @param updatePasswordVO
      * @return
      */
-    @PostMapping("updatePassword")
+    @PostMapping("/updatePassword")
     @ApiOperation(notes = "更改密码",value = "更改密码")
     public Result<UserManagementBean> updatePassword(@ApiParam("更改密码")@RequestBody UserManagementUpdatePasswordVO updatePasswordVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();

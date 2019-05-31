@@ -3,8 +3,8 @@ package com.skm.exa.mybatis.enums;
 import java.util.stream.Stream;
 
 public enum UserManagementStatusEnum {
-    NORMAL(0),   /*正常*/
-    FORBIDDEN(1),    /*禁用*/
+    FORBIDDEN(0),    /*禁用*/
+    NORMAL(1),   /*正常*/
     VOID (2);       /*无效*/
     private int value;
 

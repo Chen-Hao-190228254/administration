@@ -8,6 +8,7 @@ import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.BaseDao;
 import com.skm.exa.persistence.dto.UserManagementDto;
 import com.skm.exa.persistence.qo.UserManagementLikeQO;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 
 
@@ -35,19 +36,19 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
 
    /**
     * 通过id删除用户
-    * @param userManagementBeanClass
-    * @param id
+    * @param
+    * @param userManagementBean
     * @return
     */
-   Integer deleteManagement(UserManagementBean userManagementBeanClass,@Param("id") Long id);
+   Integer deleteManagement(UserManagementBean userManagementBean);
 
    /**
     * 通过id 查询
     * @param
-    * @param id
+    * @param
     * @return
     */
-   UserManagementBean detailsManagement(@Param("id") Long id );
+   UserManagementBean detailsManagement(UserManagementBean userManagementBean  );
    /**
     * 通过id 更改角色状态
     * @param userManagementBean
