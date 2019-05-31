@@ -16,7 +16,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Api(tags = "企业管理",description = "企业管理")
@@ -24,10 +23,8 @@ import java.util.List;
 @RequestMapping("/web/v1/enterprise")
 public class EnterpriseController extends BaseController {
 
-
     @Autowired
     EnterpriseService enterpriseService;
-
 
     /**
      * 获得企业
@@ -40,7 +37,6 @@ public class EnterpriseController extends BaseController {
         List<EnterpriseVo> enterpriseVos = BeanMapper.mapList(list,EnterpriseDto.class,EnterpriseVo.class);
         return Result.success(enterpriseVos);
     }
-
 
     /**
      * 获得企业
@@ -55,8 +51,6 @@ public class EnterpriseController extends BaseController {
         EnterpriseVo enterpriseVo = BeanMapper.map(enterpriseDto,EnterpriseVo.class);
         return Result.success(enterpriseVo);
     }
-
-
 
     /**
      * 分页获得企业
@@ -75,7 +69,6 @@ public class EnterpriseController extends BaseController {
         return Result.success(enterpriseVoPage);
     }
 
-
     @ApiOperation("添加企业")
     @PostMapping("/addEnterprise")
     public Result addEnterprise(@ApiParam("需要添加的企业信息") @RequestBody EnterpriseSaveVo enterpriseSaveVo){
@@ -84,8 +77,6 @@ public class EnterpriseController extends BaseController {
         boolean is = enterpriseService.addEnterprise(enterpriseSaveDto,getCurrentAdmin());
         return is? Result.success():Result.error(Msg.E40019);
     }
-
-
 
     @ApiOperation("更新企业")
     @PutMapping("/updateEnterprise")
@@ -96,9 +87,6 @@ public class EnterpriseController extends BaseController {
         boolean is = enterpriseService.updateEnterprise(enterpriseUpdateDto, unifyAdmin);
         return is? Result.success():Result.error(Msg.E40023);
     }
-
-
-
 
     /**
      * 删除企业
@@ -112,7 +100,6 @@ public class EnterpriseController extends BaseController {
         return i? Result.success():Result.error(Msg.E40022);
     }
 
-
     /**
      * 更改企业状态
      * @param setStatusVo
@@ -124,6 +111,5 @@ public class EnterpriseController extends BaseController {
         boolean is = enterpriseService.updateEnterprise(new EnterpriseUpdateDto(setStatusVo.getId(),setStatusVo.getStatus()),getCurrentAdmin());
         return is? Result.success():Result.error(Msg.E40023);
     }
-
 
 }

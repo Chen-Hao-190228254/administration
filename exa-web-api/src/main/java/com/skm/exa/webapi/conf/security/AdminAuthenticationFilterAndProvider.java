@@ -1,7 +1,9 @@
 package com.skm.exa.webapi.conf.security;
 
-import com.skm.exa.common.object.UnifyUser;
-import com.skm.exa.common.service.UnifyUserService;
+import com.skm.exa.common.object.UnifyAdmin;
+import com.skm.exa.common.object.UnifyAuthority;
+import com.skm.exa.common.object.UnifyRole;
+import com.skm.exa.common.service.UnifyAdminService;
 import com.skm.exa.common.utils.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
@@ -37,7 +39,9 @@ public class AdminAuthenticationFilterAndProvider extends AbstractAuthentication
 
     private UnifyAdminService unifyAdminService;
 
-    AdminAuthenticationFilterAndProvider(UnifyUserService unifyUserService, String loginUrl) {
+    private UnifyAdmin unifyAdmin;
+
+    AdminAuthenticationFilterAndProvider(UnifyAdminService unifyAdminService, String loginUrl) {
         super(new AntPathRequestMatcher(loginUrl, HttpMethod.POST.name()));
         this.unifyAdminService = unifyAdminService;
     }
@@ -70,8 +74,8 @@ public class AdminAuthenticationFilterAndProvider extends AbstractAuthentication
         String username = token.getPrincipal().toString();
         String password = token.getCredentials().toString();
 
-        UnifyUser user = unifyUserService.loadUserByUsername(username);
-        if (user == null) {
+        unifyAdmin = unifyAdminService.loadAdminByUsername(username);
+        if (unifyAdmin == null) {
             throw new UsernameNotFoundException(username);
         }
 

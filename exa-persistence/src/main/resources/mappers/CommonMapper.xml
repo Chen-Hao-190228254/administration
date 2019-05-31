@@ -10,7 +10,7 @@
         <result property="parentCode" column="parent_code"/>
     </resultMap>
 
-<!--获取地址-->
+    <!--获取地址-->
     <select id="getAreaParentCode" resultMap="area">
         SELECT * FROM `administration_area` WHERE `parent_code` = #{code}
     </select>
@@ -44,65 +44,74 @@
 
 
 
-<!--结果映射-->
+    <!--结果映射-->
     <resultMap id="file" type="com.skm.exa.domain.bean.FileBean">
         <id property="id" column="id"/>
         <result property="correlationId" column="correlation_id"/>
         <result property="name" column="name"/>
-        <result property="imageId" column="image_id"/>
         <result property="size" column="size"/>
         <result property="md5" column="md5"/>
         <result property="correlationTableName" column="correlation_table_name"/>
         <result property="correlationId" column="correlation_id"/>
         <result property="applyTo" column="apply_to"/>
     </resultMap>
-    <select id="getImageList" resultMap="image">
+
+    <!--获取文件-->
+    <sql id="getFileListCondition">
+        <where>
+            <if test="fileIds != null">AND `id` IN <include refid="foreachId"/> </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(correlationTableName)">AND `correlation_table_name` = #{correlationTableName} </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(correlationIds)">AND `correlation_id` IN <include refid="foreachCorrelationId"/> </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(applyTos)">AND `apply_to` IN <include refid="foreachApplyTo"/></if>
+        </where>
+    </sql>
+    <select id="getFileListMessage" resultMap="file">
         SELECT
         *
         FROM
-            `administration_file`
+        `administration_file`
         <include refid="getFileListCondition"/>
     </select>
 
 
 
-<!--添加文件信息-->
+    <!--添加文件信息-->
     <insert id="addFileMessage">
         INSERT INTO
-            `administration_file`
-                (
-                `name`,
-                `url`,
-                `size`,
-                `md5`,
-                `correlation_table_name`,
-                `correlation_id`,
-                `apply_to`
-                )
+        `administration_file`
+        (
+        `name`,
+        `url`,
+        `size`,
+        `md5`,
+        `correlation_table_name`,
+        `correlation_id`,
+        `apply_to`
+        )
         VALUES
-            <foreach collection="fileSaveDtos" item="fileSaveDto" separator=",">
-                (
-                #{fileSaveDto.name},
-                #{fileSaveDto.url},
-                #{fileSaveDto.size},
-                #{fileSaveDto.md5},
-                #{fileSaveDto.correlationTableName},
-                #{fileSaveDto.correlationId},
-                #{fileSaveDto.applyTo}
-                )
-            </foreach>
+        <foreach collection="fileSaveDtos" item="fileSaveDto" separator=",">
+            (
+            #{fileSaveDto.name},
+            #{fileSaveDto.url},
+            #{fileSaveDto.size},
+            #{fileSaveDto.md5},
+            #{fileSaveDto.correlationTableName},
+            #{fileSaveDto.correlationId},
+            #{fileSaveDto.applyTo}
+            )
+        </foreach>
     </insert>
 
 
 
-<!--删除文件-->
+    <!--删除文件-->
     <delete id="deleteFileMessage">
         DELETE FROM
-            `administration_file`
+        `administration_file`
         WHERE `id` IN(
-            <foreach collection="fileIds" item="fileId" separator=",">
-                #{fileId}
-            </foreach>
+        <foreach collection="fileIds" item="fileId" separator=",">
+            #{fileId}
+        </foreach>
         )
     </delete>
 

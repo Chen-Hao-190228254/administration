@@ -1,8 +1,5 @@
 package com.skm.exa.service.biz.impl;
 
-import com.skm.exa.common.enums.Msg;
-import com.skm.exa.common.enums.StatusEnum;
-import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
 import com.skm.exa.common.utils.SetCommonElement;
@@ -20,13 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.io.File;
 import java.util.*;
 
 @Service
 public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, EnterpriseDao> implements EnterpriseService {
-
 
 
     String correlationTableName = "administration_enterprise"; //关联表名
@@ -205,7 +199,6 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
         return enterpriseDtos;
     }
 
-
     /**
      * 向数据库添加图片信息
      * @param fileSaveDtos
@@ -220,9 +213,6 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
         }
         return commonService.addFileMessage(fileSaveDtos);
     }
-
-
-
 
     /**
      * 删除图片

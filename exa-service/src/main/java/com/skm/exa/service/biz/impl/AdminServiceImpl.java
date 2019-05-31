@@ -44,8 +44,7 @@ public class AdminServiceImpl extends BaseServiceImpl<AdminBean , AdminDao> impl
      */
     @Override
     public UnifyAdmin loadAdminByUsername(String username) {
-        AdminQO adminQO = new AdminQO();
-        adminQO.setUsername(username);
+        AdminQO adminQO = new AdminQO(username);
         AdminBean adminBean = super.find(adminQO);
         if(adminBean == null) return null;
 
