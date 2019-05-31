@@ -303,6 +303,5 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
     @Override
     public List<OptionCodesBean> selectBankOption(OptionCodesBean optionCodesBean) {
             return  dao.selectOptionCodes(optionCodesBean);
-
     }
 }
