@@ -288,7 +288,6 @@ public class AliyunOSSClientUtil {
         Random random = new Random();
         int rannum = (int) (random.nextDouble() * (99999 - 10000 + 1)) + 10000;// 获取5位随机数
         String r = str + rannum;
-        System.out.println(filename);
         String name = r+filename.substring(filename.lastIndexOf("."));
         return name;
     }
