@@ -2,9 +2,7 @@ package com.skm.exa.webapi.controller;
 
 import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
-import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
-import com.skm.exa.domain.bean.AdminBean;
 import com.skm.exa.domain.bean.RoleBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
@@ -41,7 +39,6 @@ public class AdminController extends BaseController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
 
     /**
      * 根据ID获得指定的管理员

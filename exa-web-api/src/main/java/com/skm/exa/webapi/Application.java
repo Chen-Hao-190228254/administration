@@ -7,12 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.servlet.MultipartConfigElement;
+import java.io.File;
 import java.util.Arrays;
 
 /**
@@ -36,5 +39,19 @@ public class Application {
         AppContext.context = SpringApplication.run(Application.class, args);
         String[] activeProfiles = AppContext.context.getEnvironment().getActiveProfiles();
         LOG.info("active profile: {}", Arrays.toString(activeProfiles));
+    }
+
+
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement(){
+        MultipartConfigFactory multipartConfigFactory = new MultipartConfigFactory();
+        String location = System.getProperty("user.dir") + "/data/tmp";
+        File file = new File(location);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        multipartConfigFactory.setLocation(location);
+        return multipartConfigFactory.createMultipartConfig();
     }
 }
