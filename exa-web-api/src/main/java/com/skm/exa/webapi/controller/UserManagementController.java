@@ -1,6 +1,7 @@
 package com.skm.exa.webapi.controller;
 
 
+import com.skm.exa.common.enums.Msg;
 import com.skm.exa.common.object.Result;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
@@ -8,7 +9,8 @@ import com.skm.exa.domain.bean.UserManagementBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.mybatis.SearchConditionGroup;
-import com.skm.exa.persistence.dto.UserManagementDto;
+import com.skm.exa.persistence.dao.UserManagementDao;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.persistence.qo.UserManagementLikeQO;
 import com.skm.exa.service.biz.UserManagementService;
 import com.skm.exa.webapi.BaseController;
@@ -69,12 +71,12 @@ public class UserManagementController extends BaseController {
     @Transactional
     @PostMapping("/add")
     @ApiOperation(notes = "添加用户",value = "添加用户")
-    public Result<UserManagementBean> add (@ApiParam("添加用户")@RequestBody UserManagementSaveVO userManagementSaveVO){
+    public Result add (@ApiParam("添加用户")@RequestBody UserManagementSaveVO userManagementSaveVO){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
-        UserManagementBean userManagementBean = BeanMapper.map(userManagementSaveVO, UserManagementBean.class);
-        userManagementBean = userManagementService.add(userManagementBean, unifyAdmin);
-        System.out.println(userManagementBean.toString());
-        return Result.success(userManagementBean);
+        UserManagementAddDto userManagementAddDto = BeanMapper.map(userManagementSaveVO, UserManagementAddDto.class);
+        userManagementAddDto.setFileSaveDtos(BeanMapper.mapList(userManagementSaveVO.getFileSaveVos(), FileSaveVo.class, FileSaveDto.class));
+        boolean is = userManagementService.add(userManagementAddDto, unifyAdmin);
+        return is? Result.success():Result.error(Msg.E40019);
     }
     /**
      *  更新用户
@@ -84,11 +86,12 @@ public class UserManagementController extends BaseController {
     @Transactional
     @PostMapping("/updateManagement")
     @ApiOperation(notes = "更新用户",value = "更新用户")
-    public Result<UserManagementBean> update(@ApiParam("更新用户")@RequestBody UserManagementUpdateVO userManagementUpdateVO){
+    public Result update(@ApiParam("更新用户")@RequestBody UserManagementUpdateVO userManagementUpdateVO){
        UnifyAdmin unifyAdmin = getCurrentAdmin();
-       UserManagementBean userManagementBean = BeanMapper.map(userManagementUpdateVO,UserManagementBean.class );
-       userManagementBean = userManagementService.update(userManagementBean,unifyAdmin );
-        return Result.success(userManagementBean);
+       UserManagementUpdateDto userManagementUpdateDto = BeanMapper.map(userManagementUpdateVO,UserManagementUpdateDto.class );
+        userManagementUpdateDto.setFileUpdateDtos(BeanMapper.mapList(userManagementUpdateVO.getFileUpdateVos(), FileUpdateVo.class, FileUpdateDto.class));
+       boolean is = userManagementService.update(userManagementUpdateDto,unifyAdmin );
+        return is? Result.success():Result.error(Msg.E40023);
     }
 
     /**
@@ -99,12 +102,11 @@ public class UserManagementController extends BaseController {
     @Transactional
     @PostMapping("/deleteManagement")
     @ApiOperation(notes = "通过id删除用户",value = "通过id删除用户")
-    public Result<UserManagementDeleteVO> delete (@ApiParam("通过id删除用户")@RequestParam ("id") Long id){
+    public Result delete (@ApiParam("通过id删除用户")@RequestParam ("id") Long id){
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
         boolean delete = userManagementService.delete(userManagementBean);
-        UserManagementDeleteVO userManagementDeleteVO = BeanMapper.map(delete,UserManagementDeleteVO.class );
-        return Result.success(userManagementDeleteVO);
+        return Result.success(delete);
     }
 
     /**
@@ -117,8 +119,8 @@ public class UserManagementController extends BaseController {
     public Result details(@ApiParam("通过id查询")@RequestParam ("id") Long id){
         UserManagementBean bean = new UserManagementBean();
         bean.setId(id);
-        UserManagementBean userManagementBean = userManagementService.details(bean);
-        UserManagementVO userManagementVO = BeanMapper.map(userManagementBean,UserManagementVO.class );
+        UserManagementDto userManagementDto = userManagementService.details(bean);
+        UserManagementVO userManagementVO = BeanMapper.map(userManagementDto,UserManagementVO.class );
         return Result.success(userManagementVO) ;
     }
 
@@ -149,4 +151,5 @@ public class UserManagementController extends BaseController {
         userManagementBean = userManagementService.updatePassword(userManagementBean,unifyAdmin );
         return Result.success(userManagementBean);
     }
+
 }

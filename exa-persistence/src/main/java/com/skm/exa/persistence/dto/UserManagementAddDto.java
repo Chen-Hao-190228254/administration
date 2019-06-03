@@ -1,19 +1,12 @@
-package com.skm.exa.domain.bean;
+package com.skm.exa.persistence.dto;
 
 
-import com.skm.exa.domain.BaseBean;
 import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
-
-/**
- * 用户管理
- */
 @Data
-public class UserManagementBean extends BaseBean {
-    /*用户id*/
-    private Long id;
+public class UserManagementAddDto {
     /*用户账号*/
     private String accountNumber;
     /*用户登录密码*/
@@ -39,5 +32,5 @@ public class UserManagementBean extends BaseBean {
     /*用户状态*/
     private Long status;
 
+    private List<FileSaveDto> fileSaveDtos;
 }
-

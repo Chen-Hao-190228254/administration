@@ -43,7 +43,12 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      */
     @Override
     public Page<QuestionQueryDto> selectPage(PageParam<QuestionQueryLikeQO> qoPageParam) {
-
+        //如果不传参数那么将设置题目类型 和 技术类型为1
+        if (qoPageParam.getCondition().getTechnologicalTypeLike() == null || qoPageParam.getCondition().getTopicTypeLike() == null){
+            qoPageParam.getCondition().setTechnologicalTypeLike((long)1);
+            qoPageParam.getCondition().setTopicTypeLike((long) 1);
+            return dao.selectQuestionPage(qoPageParam);
+        }
         return dao.selectQuestionPage(qoPageParam);
     }
 

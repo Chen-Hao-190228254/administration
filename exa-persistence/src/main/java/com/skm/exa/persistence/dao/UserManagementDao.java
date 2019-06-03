@@ -18,7 +18,7 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
     * @param userManagementLikeQoPageParam
     * @return
     */
-   Page<UserManagementDto> getManagementDtoPage(PageParam<UserManagementLikeQO> userManagementLikeQoPageParam);
+   Page<UserManagementBean> getManagementDtoPage(PageParam<UserManagementLikeQO> userManagementLikeQoPageParam);
 
    /**
     *  添加用户
@@ -40,7 +40,7 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
     * @param userManagementBean
     * @return
     */
-   Integer deleteManagement(UserManagementBean userManagementBean);
+   int deleteManagement(UserManagementBean userManagementBean);
 
    /**
     * 通过id 查询
