@@ -119,6 +119,8 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
         EnterpriseDto enterpriseDto = getEnterprise(id);
         if(enterpriseDto == null)
             return true;
+        if(dao.delete(id)<=0)
+            return false;
         if(enterpriseDto.getImageBeans() == null && enterpriseDto.getImageBeans().size() == 0)
             return true;
         List<FileBean> fileBeans = enterpriseDto.getImageBeans();
@@ -131,13 +133,7 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
             fileIds.add(fileBean.getId());
             filenames.add(fileBean.getName());
         }
-        boolean is = deleteImageMessage(new FileDeleteDto(fileIds,filenames));
-        if(!is)
-            return false;
-        int i = dao.delete(id);
-        if(i<=0)
-            return false;
-        return true;
+        return deleteImageMessage(new FileDeleteDto(fileIds,filenames));
     }
 
 
