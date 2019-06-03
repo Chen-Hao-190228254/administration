@@ -5,10 +5,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
+
 @Data
 @ApiModel(value = "角色管理修改VO")
 public class UserManagementUpdateVO {
-
     /*用户id*/
     @ApiModelProperty(value = "用户id")
     private Long id;
@@ -21,18 +22,9 @@ public class UserManagementUpdateVO {
     /*用户姓名*/
     @ApiModelProperty(value = "用户姓名")
     private String name;
-    /*用户头像*/
-    @ApiModelProperty(value = "用户头像")
-    private Long photoId;
     /*用户身份证*/
     @ApiModelProperty(value = "用户身份证")
     private String card;
-    /*用户身份证正面照面id*/
-    @ApiModelProperty(value = "用户身份证正面照片")
-    private Long cardPhotoFrontId;
-    /*用户身份证反面照片id*/
-    @ApiModelProperty(value = "用户身份证反面照片")
-    private Long cardPhotoReverseId;
     /*用户手机号*/
     @ApiModelProperty(value = "用户手机号")
     private String phone;
@@ -57,4 +49,6 @@ public class UserManagementUpdateVO {
     /*用户状态*/
     @ApiModelProperty(value = "用户状态")
     private Long status;
+    @ApiModelProperty("更新图片的信息")
+    private List<FileUpdateVo> fileUpdateVos;
 }

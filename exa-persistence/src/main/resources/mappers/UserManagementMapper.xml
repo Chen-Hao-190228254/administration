@@ -7,10 +7,7 @@
         `account_number`,
         `password`,
         `name`,
-        `photo_id`,
         `card`,
-        `card_photo_front_id`,
-        `card_photo_reverse_id`,
         `phone`,
         `native_place`,
         `email`,
@@ -32,10 +29,7 @@
         <result property="accountNumber" column="account_number"/>
         <result property="password" column="password"/>
         <result property="name" column="name"/>
-        <result property="photoId" column="photo_id"/>
         <result property="card" column="card"/>
-        <result property="cardPhotoFrontId" column="card_photo_front_id"/>
-        <result property="cardPhotoReverseId" column="card_photo_reverse_id"/>
         <result property="phone" column="phone"/>
         <result property="nativePlace" column="native_place"/>
         <result property="email" column="email"/>
@@ -51,34 +45,4 @@
         <result property="updateName" column="update_name"/>
         <result property="updateDt" column="update_dt"/>
     </resultMap>
-
-  <!--  &lt;!&ndash;模糊搜索&ndash;&gt;
-    <sql id="SearchPage">
-        <where>
-            <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nameLike)">AND `name` LIKE "%"#{nameLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(cardLike)">AND `card` LIKE "%"#{cardLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(phoneLike)">AND `phone` LIKE "%"#{phoneLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(nativePlaceLike)">AND `native_place` LIKE "%"#{nativePlaceLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(emailLike)">AND `email` LIKE "%"#{emailLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(qqLike)">AND `qq` LIKE "%"#{qqLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(skillLike)">AND `skill` LIKE "%"#{skillLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(accountNumberLike)">AND `account_number` LIKE "%"#{accountNumberLike, jdbcType=VARCHAR}"%"</if>
-        </where>
-    </sql>-->
-   <!-- &lt;!&ndash;模糊查询&ndash;&gt;
-    <select id="select" resultMap="RM">
-        SELECT
-        <include refid="columns"/>
-        FROM `administration_users_management`
-        <include refid="SearchPage"/>
-    </select>
-    &lt;!&ndash;分页查询&ndash;&gt;
-    <select id="selectPage" resultMap="RM">
-        SELECT
-        <include refid="columns"/>
-        FROM `administration_users_management`
-        <include refid="SearchPage"/>
-    </select>
-  -->
 </mapper>

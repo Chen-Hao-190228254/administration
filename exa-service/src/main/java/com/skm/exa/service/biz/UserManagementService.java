@@ -4,7 +4,9 @@ import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.domain.bean.UserManagementBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
+import com.skm.exa.persistence.dto.UserManagementAddDto;
 import com.skm.exa.persistence.dto.UserManagementDto;
+import com.skm.exa.persistence.dto.UserManagementUpdateDto;
 import com.skm.exa.persistence.qo.UserManagementLikeQO;
 import com.skm.exa.service.BaseService;
 
@@ -20,19 +22,19 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
 
     /***
      *  添加用户
-     * @param userManagementBean
+     * @param userManagementAddDto
      * @param
      * @return
      */
-    UserManagementBean add (UserManagementBean userManagementBean, UnifyAdmin unifyAdmin);
+    Boolean add (UserManagementAddDto userManagementAddDto, UnifyAdmin unifyAdmin);
 
     /**
      *  更新用户
-     * @param userManagementBean
+     * @param userManagementUpdateDto
      * @param unifyAdmin
      * @return
      */
-    UserManagementBean update(UserManagementBean userManagementBean ,UnifyAdmin unifyAdmin);
+    Boolean update(UserManagementUpdateDto userManagementUpdateDto , UnifyAdmin unifyAdmin);
 
     /**
      *  通过id删除用户
@@ -48,7 +50,7 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
      * @param userManagementBean
      * @return
      */
-    UserManagementBean details( UserManagementBean userManagementBean );
+    UserManagementDto details( UserManagementBean userManagementBean );
     /**
      * 更改用户状态
      * @param userManagementBean
@@ -64,4 +66,6 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
      * @return
      */
     UserManagementBean updatePassword(UserManagementBean userManagementBean ,UnifyAdmin unifyAdmin);
+
+
 }

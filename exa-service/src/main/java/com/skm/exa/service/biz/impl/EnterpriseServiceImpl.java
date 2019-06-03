@@ -223,7 +223,6 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
                 }
             }
         }
-
         //删除图片
         if(fileBeans != null && fileBeans.size() != 0){
             //图片ID集合
