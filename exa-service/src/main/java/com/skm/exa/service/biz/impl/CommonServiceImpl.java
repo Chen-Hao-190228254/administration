@@ -2,13 +2,14 @@ package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.enums.StatusEnum;
 import com.skm.exa.common.utils.AliyunOSSClientUtil;
+import com.skm.exa.common.utils.BeanMapper;
+import com.skm.exa.domain.BaseBean;
 import com.skm.exa.domain.bean.AreaBean;
+import com.skm.exa.domain.bean.EnterpriseBean;
 import com.skm.exa.domain.bean.FileBean;
 import com.skm.exa.domain.bean.StatusBean;
 import com.skm.exa.persistence.dao.CommonDao;
-import com.skm.exa.persistence.dto.FileDeleteDto;
-import com.skm.exa.persistence.dto.FileSaveDto;
-import com.skm.exa.persistence.dto.FileSelectDto;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.service.biz.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -145,6 +147,10 @@ public class CommonServiceImpl implements CommonService {
         }
         return true;
     }
+
+
+
+
 
 
 //    /**

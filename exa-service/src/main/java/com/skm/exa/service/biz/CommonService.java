@@ -71,5 +71,4 @@ public interface CommonService {
     Boolean deleteFileMessage(FileDeleteDto fileDeleteDto);
 
 
-
 }
