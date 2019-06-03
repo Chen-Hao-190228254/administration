@@ -1,6 +1,7 @@
 package com.skm.exa.webapi;
 
 import com.skm.exa.common.context.AppContext;
+import com.skm.exa.common.utils.FileTidyingUtil;
 import com.skm.exa.mybatis.MybatisConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -33,6 +34,11 @@ public class Application {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public FileTidyingUtil fileTidyingUtil(){
+        return new FileTidyingUtil();
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
@@ -54,4 +60,6 @@ public class Application {
         multipartConfigFactory.setLocation(location);
         return multipartConfigFactory.createMultipartConfig();
     }
+
+
 }

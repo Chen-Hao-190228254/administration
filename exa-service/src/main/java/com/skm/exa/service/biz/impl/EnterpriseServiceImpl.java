@@ -2,6 +2,7 @@ package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
+import com.skm.exa.common.utils.FileTidyingUtil;
 import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.EnterpriseBean;
 import com.skm.exa.domain.bean.FileBean;
@@ -24,6 +25,10 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
 
 
     String correlationTableName = "administration_enterprise"; //关联表名
+
+
+    @Autowired
+    FileTidyingUtil fileTidyingUtil;
 
     /**
      * 获取所有企业信息
@@ -153,8 +158,7 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
         if(enterpriseBean == null)
             return null;
         List<FileBean> fileBeans = commonService.getFileList(new FileSelectDto(correlationTableName,new ArrayList<>(Collections.singleton(enterpriseBean.getId())) ));
-        EnterpriseDto enterpriseDto = BeanMapper.map(enterpriseBean,EnterpriseDto.class);
-        enterpriseDto.setImageBeans(fileBeans);
+        EnterpriseDto enterpriseDto = fileTidyingUtil.get(fileBeans,enterpriseBean,EnterpriseDto.class);
         return enterpriseDto;
      }
 
@@ -166,36 +170,14 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      */
     @Override
     public List<EnterpriseDto> getEnterpriseImageMessage(List<EnterpriseBean> enterpriseBeans){
-        if(enterpriseBeans == null || enterpriseBeans.size() == 0)
+        if(enterpriseBeans == null)
             return null;
-        List<Long> enterpriseIds = new ArrayList<>();
-        Map<Long,EnterpriseDto> mapEnterprise = new HashMap<>();
+        List<Long> correlationIds = new ArrayList<>();
         for(EnterpriseBean enterpriseBean:enterpriseBeans){
-            enterpriseIds.add(enterpriseBean.getId());
-            mapEnterprise.put(enterpriseBean.getId(), BeanMapper.map(enterpriseBean,EnterpriseDto.class));
+            correlationIds.add(enterpriseBean.getId());
         }
-        List<FileBean> fileBeans = commonService.getFileList(new FileSelectDto(correlationTableName,enterpriseIds));
-        if(fileBeans == null || fileBeans.size() == 0)
-            return BeanMapper.mapList(enterpriseBeans,EnterpriseBean.class,EnterpriseDto.class);
-        Map<Long,List<FileBean>> mapFile = new HashMap<>();
-        for(FileBean fileBean:fileBeans){
-            if(mapFile.containsKey(fileBean.getCorrelationId())){
-                mapFile.get(fileBean.getCorrelationId()).add(fileBean);
-            }else {
-                List<FileBean> imageBeanList = new ArrayList<>();
-                imageBeanList.add(fileBean);
-                mapFile.put(fileBean.getCorrelationId(),imageBeanList);
-            }
-        }
-        for(Long key:mapEnterprise.keySet()){
-            if(mapFile.containsKey(key)){
-                mapEnterprise.get(key).setImageBeans(mapFile.get(key));
-            }
-        }
-        List<EnterpriseDto> enterpriseDtos = new ArrayList<>();
-        for(Long key:mapEnterprise.keySet()){
-            enterpriseDtos.add(mapEnterprise.get(key));
-        }
+        List<FileBean> fileBeans = commonService.getFileList(new FileSelectDto(correlationTableName,correlationIds));
+        List<EnterpriseDto> enterpriseDtos = fileTidyingUtil.getList(fileBeans,enterpriseBeans,EnterpriseBean.class,EnterpriseDto.class);
         return enterpriseDtos;
     }
 
