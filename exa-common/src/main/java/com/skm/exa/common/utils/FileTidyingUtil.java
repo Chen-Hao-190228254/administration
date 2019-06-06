@@ -19,10 +19,11 @@ public class FileTidyingUtil {
      * @return
      */
     public <S extends BaseBean,D extends FileBeanListDto> D get(List<FileBean> fileBeans,S bean, Class<D> returnClass){
-        if(bean == null || fileBeans == null || fileBeans.size() == 0)
+        if(bean == null)
             return null;
         D r = BeanMapper.map(bean,returnClass);
-        r.setFile(fileBeans);
+        if(fileBeans != null || fileBeans.size() != 0)
+            r.setFile(fileBeans);
         return r;
     }
 

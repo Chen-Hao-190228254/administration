@@ -121,7 +121,7 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
             return true;
         if(dao.delete(id)<=0)
             return false;
-        if(enterpriseDto.getImageBeans() == null && enterpriseDto.getImageBeans().size() == 0)
+        if(enterpriseDto.getImageBeans() == null || enterpriseDto.getImageBeans().size() == 0)
             return true;
         List<FileBean> fileBeans = enterpriseDto.getImageBeans();
         //图片ID集合

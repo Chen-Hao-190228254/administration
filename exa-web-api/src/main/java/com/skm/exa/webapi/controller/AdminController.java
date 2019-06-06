@@ -140,10 +140,10 @@ public class AdminController extends BaseController {
     @ApiOperation(value = "更改管理员密码", notes = "更改管理员密码")
     @PutMapping("/updatePassword")
     public Result updatePassword(@Validated @ApiParam("需要更新的管理员的信息") @RequestBody PasswordUpdateVo password){
-        if(!password.getPassword1().equals(password.getPassword2()))
-            return Result.error(Msg.E40014);
-        password.setPassword1(passwordEncoder.encode(password.getPassword2()));
-        boolean is = adminService.updateAdmin(new AdminUpdateDto(password.getId(),password.getPassword1()),getCurrentAdmin());
+        if(password.getNewPassword() == null)
+            return Result.error(Msg.E40021);
+        password.setNewPassword(passwordEncoder.encode(password.getNewPassword()));
+        boolean is = adminService.updateAdmin(new AdminUpdateDto(password.getId(),password.getNewPassword()),getCurrentAdmin());
         return is ? Result.success(): Result.error(Msg.E40016);
     }
 
