@@ -2,6 +2,7 @@ package com.skm.exa.persistence.dto;
 
 import lombok.Data;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.List;
 
@@ -70,6 +71,10 @@ public class EnterpriseUpdateDto {
      */
     private List<FileUpdateDto> fileUpdateDtos;
 
+    /**
+     * 标签ID
+     */
+    private List<Long> labelIds;
 
     public EnterpriseUpdateDto() {
     }

@@ -86,4 +86,11 @@ public class EnterpriseUpdateVo {
     @ApiModelProperty("图片")
     private List<FileUpdateVo> fileUpdateVos;
 
+
+    /**
+     * 标签ID
+     */
+    @ApiModelProperty("标签ID")
+    private List<Long> labelIds;
+
 }

@@ -2,6 +2,7 @@ package com.skm.exa.service.biz;
 
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.domain.bean.EnterpriseBean;
+import com.skm.exa.domain.bean.LabelBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dto.*;
@@ -55,15 +56,15 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
 
 
 
-//------------------------图片获取--------------------------------------
+//------------------------图片及标签获取--------------------------------------
 
 
     /**
-     * 获取图片
+     * 获取图片及标签
      * @param enterpriseBean 需要获取图片的Bean
      * @return
      */
-    EnterpriseDto getEnterpriseImageMessage(EnterpriseBean enterpriseBean);
+    EnterpriseDto getEnterpriseImageMessageAndLabel(EnterpriseBean enterpriseBean);
 
 
     /**
@@ -71,32 +72,32 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
      * @param enterpriseBeans 需要获取图片的List<Bean>
      * @return
      */
-    List<EnterpriseDto> getEnterpriseImageMessage(List<EnterpriseBean> enterpriseBeans );
+    List<EnterpriseDto> getEnterpriseImageMessageAndLabel(List<EnterpriseBean> enterpriseBeans );
 
 
     /**
-     * 向数据库添加图片信息
+     * 向数据库添加图片信息及标签
      * @param fileSaveDtos
      * @return
      */
-    Boolean addImageMessage(List<FileSaveDto> fileSaveDtos, Long enterpriseId);
+    Boolean addImageMessageAndLabel(List<FileSaveDto> fileSaveDtos,List<Long> labelIds, Long enterpriseId);
 
 
 
 
     /**
-     * 删除照片及关联
+     * 删除照片及标签
      * @param fileDeleteDto
      * @return
      */
-    Boolean deleteImageMessage(FileDeleteDto fileDeleteDto);
+    Boolean deleteImageMessageAndLabel(FileDeleteDto fileDeleteDto, List<Long> labelIds);
 
 
     /**
-     * 更新图片
+     * 更新图片及标签
      * @param fileUpdateDtos
      * @return
      */
-    Boolean updateImageMessage(List<FileUpdateDto> fileUpdateDtos);
+    Boolean updateImageMessage(List<FileUpdateDto> fileUpdateDtos,List<Long> labelIds,Long enterpriseId);
 
 }

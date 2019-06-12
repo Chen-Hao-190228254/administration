@@ -2,12 +2,7 @@ package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.enums.StatusEnum;
 import com.skm.exa.common.utils.AliyunOSSClientUtil;
-import com.skm.exa.common.utils.BeanMapper;
-import com.skm.exa.domain.BaseBean;
-import com.skm.exa.domain.bean.AreaBean;
-import com.skm.exa.domain.bean.EnterpriseBean;
-import com.skm.exa.domain.bean.FileBean;
-import com.skm.exa.domain.bean.StatusBean;
+import com.skm.exa.domain.bean.*;
 import com.skm.exa.persistence.dao.CommonDao;
 import com.skm.exa.persistence.dto.*;
 import com.skm.exa.service.biz.CommonService;
@@ -17,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +47,61 @@ public class CommonServiceImpl implements CommonService {
     public List<AreaBean> getAreaParentCode(Long parentCode) {
         return commonDao.getAreaParentCode(parentCode);
     }
+
+    /**
+     * 获得标签
+     * @return
+     */
+    @Override
+    public List<LabelBean> getLabel(List<Long> labelIds) {
+        return commonDao.getLabel(labelIds);
+    }
+
+    /**
+     * 添加标签
+     * @param name
+     * @return
+     */
+    @Override
+    public Boolean addLabel(String name) {
+        return commonDao.addLabel(name)>0;
+    }
+
+    /**
+     * 通过关联的ID和关联的表名获得标签
+     * @param correlationIds
+     * @param correlationTableName
+     * @return
+     */
+    @Override
+    public List<CorrelationLabelBean> getCorrelationLabel(List<Long> correlationIds,String correlationTableName){
+        return commonDao.getCorrelationLabel(correlationIds,correlationTableName);
+    }
+
+    /**
+     * 添加标签关联
+     * @param labelIds
+     * @param correlationId
+     * @param correlationTableName
+     * @return
+     */
+    @Override
+    @Transactional
+    public Boolean addLabelCorrelation(List<Long> labelIds,Long correlationId, String correlationTableName){
+        return commonDao.addLabelCorrelation(labelIds,correlationId,correlationTableName) == labelIds.size();
+    }
+
+    /**
+     * 删除标签关联信息
+     * @param labelIds
+     * @return
+     */
+    @Override
+    @Transactional
+    public Boolean deleteLabelCorrelation(List<Long> labelIds){
+        return commonDao.deleteLabelCorrelation(labelIds) == labelIds.size();
+    }
+
 
 
     /**

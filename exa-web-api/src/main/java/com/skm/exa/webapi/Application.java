@@ -1,7 +1,7 @@
 package com.skm.exa.webapi;
 
 import com.skm.exa.common.context.AppContext;
-import com.skm.exa.common.utils.FileTidyingUtil;
+import com.skm.exa.common.utils.FileAndLabelTidyingUtil;
 import com.skm.exa.mybatis.MybatisConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -35,8 +35,8 @@ public class Application {
     }
 
     @Bean
-    public FileTidyingUtil fileTidyingUtil(){
-        return new FileTidyingUtil();
+    public FileAndLabelTidyingUtil fileTidyingUtil(){
+        return new FileAndLabelTidyingUtil();
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);

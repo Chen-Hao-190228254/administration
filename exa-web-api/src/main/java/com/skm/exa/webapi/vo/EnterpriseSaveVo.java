@@ -79,6 +79,12 @@ public class EnterpriseSaveVo {
     @ApiModelProperty("图片")
     private List<FileSaveVo> fileSaveVos;
 
+    /**
+     * 标签ID
+     */
+    @ApiModelProperty("标签ID")
+    private List<Long> labelIds;
+
 
 }
 

@@ -6,9 +6,11 @@ import com.skm.exa.common.object.Result;
 import com.skm.exa.common.utils.BeanMapper;
 import com.skm.exa.domain.bean.AreaBean;
 import com.skm.exa.domain.bean.FileBean;
+import com.skm.exa.domain.bean.LabelBean;
 import com.skm.exa.domain.bean.StatusBean;
 import com.skm.exa.service.biz.CommonService;
 import com.skm.exa.webapi.vo.AreaVo;
+import com.skm.exa.webapi.vo.LabelVo;
 import com.skm.exa.webapi.vo.StatusVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +33,10 @@ public class CommonController {
     CommonService commonService;
 
 
-
+    /**
+     * 状态获取
+     * @return
+     */
     @ApiOperation(value = "获得所有状态", notes = "获得所有状态，便于下拉框是选用")
     @GetMapping("/getAdmin")
     public Result getStatus(){
@@ -39,7 +44,11 @@ public class CommonController {
         return Result.success(statusVos);
     }
 
-
+    /**
+     * 地址获取
+     * @param code
+     * @return
+     */
     @ApiOperation(value = "根据父地址的CODE获得下一级的所有地址、省级ParentCode为0", notes = "根据父地址的CODE获得下一级的所有地址，便于下拉框是选用")
     @GetMapping("/getAreaParentCode/code")
     public Result getAreaParentCode(@RequestParam("code") Long code){
@@ -48,6 +57,37 @@ public class CommonController {
     }
 
 
+    /**
+     * 获得标签
+     * @return
+     */
+    @ApiOperation("获取标签")
+    @GetMapping("/getLabel")
+    public Result<List<LabelVo>> getLabel(){
+        List<LabelVo> labelVos = BeanMapper.mapList(commonService.getLabel(null), LabelBean.class,LabelVo.class);
+        return Result.success(labelVos);
+    }
+
+
+    /**
+     * 添加标签
+     * @return
+     */
+    @ApiOperation("添加标签")
+    @GetMapping("/addLabel/name")
+    private Result addLabel(@ApiParam("标签名称") @RequestParam("name") String name){
+        boolean is = commonService.addLabel(name);
+        return is? Result.success():Result.error(Msg.E40019);
+    }
+
+
+
+
+    /**
+     * 图片上传
+     * @param files
+     * @return
+     */
     @ApiOperation(value = "多文件上传文件、图片", notes = "多文件上传文件、图片")
     @PostMapping("/uploadFiles")
     public Result<List<FileBean>> uploadFiles(@ApiParam("需要上传的文件") @RequestBody MultipartFile[] files){
@@ -57,7 +97,11 @@ public class CommonController {
         return Result.success(fileBeans);
     }
 
-
+    /**
+     * 图片上传
+     * @param file
+     * @return
+     */
     @ApiOperation(value = "上传文件、图片", notes = "上传文件、图片")
     @PostMapping("/uploadFile")
     public Result<FileBean> uploadFile(@ApiParam("需要上传的文件") MultipartFile file){
@@ -68,6 +112,9 @@ public class CommonController {
             return Result.error(Msg.E40020);
         return Result.success(result);
     }
+
+
+
 
 
 }
