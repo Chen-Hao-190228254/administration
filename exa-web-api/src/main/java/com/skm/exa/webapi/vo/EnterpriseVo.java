@@ -1,6 +1,7 @@
 package com.skm.exa.webapi.vo;
 
 import com.skm.exa.domain.bean.FileBean;
+import com.skm.exa.domain.bean.LabelBean;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -86,6 +87,7 @@ public class EnterpriseVo implements Serializable {
     @ApiModelProperty(value = "公司logo")
     private List<FileBean> imageBeans;
 
+
     /**
      * 添加人ID
      */
@@ -121,5 +123,11 @@ public class EnterpriseVo implements Serializable {
      */
     @ApiModelProperty(value = "更新时间")
     private Date updateDt;
+
+    /**
+     * 标签
+     */
+    @ApiModelProperty(value = "标签")
+    private List<LabelBean> labelBeans;
 
 }

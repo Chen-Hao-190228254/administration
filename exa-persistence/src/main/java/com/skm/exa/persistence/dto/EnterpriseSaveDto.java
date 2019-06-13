@@ -67,4 +67,9 @@ public class EnterpriseSaveDto {
      */
     private List<FileSaveDto> fileSaveDtos;
 
+    /**
+     * 标签ID集合
+     */
+    private List<Long> labelIds;
+
 }

@@ -26,13 +26,7 @@ public class PasswordUpdateVo {
     @ApiModelProperty("需要更新的管理员密码")
     @NotBlank
     @Pattern(regexp = "^[\\w_.@]{5,20}$")
-    private String password1;
+    private String newPassword;
 
-    /**
-     * 管理员账号密码
-     */
-    @ApiModelProperty("需要更新的管理员密码")
-    @NotBlank
-    @Pattern(regexp = "^[\\w_.@]{5,20}$")
-    private String password2;
+
 }

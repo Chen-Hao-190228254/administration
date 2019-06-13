@@ -2,7 +2,7 @@ package com.skm.exa.service.biz.impl;
 
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
-import com.skm.exa.common.utils.FileTidyingUtil;
+import com.skm.exa.common.utils.FileAndLabelTidyingUtil;
 import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.FileBean;
 import com.skm.exa.domain.bean.UserManagementBean;
@@ -33,7 +33,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
 
 
     @Autowired
-    FileTidyingUtil fileTidyingUtil;
+    FileAndLabelTidyingUtil fileAndLabelTidyingUti;
     /**
      *  UserManagement 分页查询
      * @param userManagementLikeQoPage  //分页
@@ -230,7 +230,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
             ids.add(userManagementBean.getId());
         }
         List<FileBean> fileBeans = commonService.getFileList(new FileSelectDto(correlationTableName,ids));
-        List<UserManagementDto> userManagementDtos = fileTidyingUtil.getList(fileBeans, userManagementBeans, UserManagementBean.class, UserManagementDto.class);
+        List<UserManagementDto> userManagementDtos = fileAndLabelTidyingUti.getList(fileBeans, userManagementBeans, UserManagementBean.class, UserManagementDto.class);
         return userManagementDtos;
     }
     public boolean addImages(List<FileSaveDto> fileSaveDtos ,Long id){

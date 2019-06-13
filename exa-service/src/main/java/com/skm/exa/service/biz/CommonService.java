@@ -1,8 +1,6 @@
 package com.skm.exa.service.biz;
 
-import com.skm.exa.domain.bean.AreaBean;
-import com.skm.exa.domain.bean.FileBean;
-import com.skm.exa.domain.bean.StatusBean;
+import com.skm.exa.domain.bean.*;
 import com.skm.exa.persistence.dto.FileDeleteDto;
 import com.skm.exa.persistence.dto.FileSaveDto;
 import com.skm.exa.persistence.dto.FileSelectDto;
@@ -24,6 +22,47 @@ public interface CommonService {
      * @return
      */
     List<AreaBean> getAreaParentCode(Long parentCode);
+
+
+    /**
+     * 获得标签
+     * @return
+     */
+    List<LabelBean> getLabel(List<Long> labelIds);
+
+
+    /**
+     * 添加标签
+     * @param name
+     * @return
+     */
+    LabelBean addLabel(String name);
+
+
+    /**
+     * 通过关联的ID和关联的表名获得标签
+     * @param correlationIds
+     * @param correlationTableName
+     * @return
+     */
+    List<CorrelationLabelBean> getCorrelationLabel(List<Long> correlationIds, String correlationTableName);
+
+
+    /**
+     * 添加标签关联信息
+     * @param labelIds
+     * @param correlationId
+     * @param correlationTableName
+     * @return
+     */
+    Boolean addLabelCorrelation(List<Long> labelIds,Long correlationId, String correlationTableName);
+
+    /**
+     * 删除标签关联信息
+     * @param labelIds
+     * @return
+     */
+    Boolean deleteLabelCorrelation(List<Long> labelIds);
 
 
     /**

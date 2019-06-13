@@ -17,6 +17,80 @@
 
 
 
+
+<!--。。。。。。。。。。。。。标签处理。。。。。。。。。。。。-->
+
+    <resultMap id="labelBean" type="com.skm.exa.domain.bean.LabelBean">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+<!--获取所有标签-->
+    <select id="getLabel" resultMap="labelBean">
+        SELECT * FROM `administration_label`
+    </select>
+
+<!--添加标签-->
+    <insert id="addLabel" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `administration_label`(`name`) VALUES (#{name})
+    </insert>
+
+
+<!--获取带关联的ID标签-->
+    <resultMap id="c" type="com.skm.exa.domain.bean.CorrelationLabelBean">
+        <id property="id" column="id"/>
+        <result property="cid" column="cid"/>
+        <result property="name" column="name"/>
+        <result property="correlationId" column="correlation_id"/>
+    </resultMap>
+    <select id="getCorrelationLabel" resultMap="c">
+        SELECT
+          alc.`id` as cid,
+          al.`id`,
+          al.`name`,
+          alc.`correlation_id`
+        FROM
+          `administration_label` AS al,
+          `administration_label_correlation` AS alc
+        WHERE al.`id` = alc.`label_id`
+          AND alc.`correlation_table` = #{correlationTableName}
+          AND alc.`correlation_id` IN (
+                <foreach collection="correlationIds" item="id" separator=",">
+                    #{id}
+                </foreach>
+              )
+    </select>
+
+<!--添加标签关联-->
+    <insert id="addLabelCorrelation">
+        insert into
+            `administration_label_correlation`
+                (
+                `label_id`,
+                `correlation_id`,
+                `correlation_table`
+                )
+        VALUES
+            <foreach collection="labelIds" item="id" separator=",">
+                (
+                #{id},
+                #{correlationId},
+                #{correlationTableName}
+                )
+            </foreach>
+    </insert>
+
+    <delete id="deleteLabelCorrelation">
+        DELETE FROM
+        `administration_label_correlation`
+        WHERE `id` IN(
+        <foreach collection="labelIds" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+
+
 <!--。。。。。。。。。。。。。文件处理。。。。。。。。。。。。-->
 
 <!--循环处理-->
