@@ -141,4 +141,11 @@ public class UserCodesController extends BaseController {
         UserCodesUpdateEditStatusVo userCodesVO = BeanMapper.map(bean,UserCodesUpdateEditStatusVo.class );
         return Result.success(userCodesVO);
     }
+
+    @PostMapping("/judgeUnique")
+    @ApiOperation(value = "查询code唯一值" ,notes = "true:数据库有数据 ，false:表示没数据")
+    public Result judgeUnique(@RequestParam("code") String code){
+        Boolean is = userCodesService.judgeUnique(code);
+        return  Result.success(is);
+    }
 }

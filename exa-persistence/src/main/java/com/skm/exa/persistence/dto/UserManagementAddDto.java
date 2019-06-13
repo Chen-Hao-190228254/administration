@@ -10,7 +10,7 @@ public class UserManagementAddDto {
     /*用户账号*/
     private String accountNumber;
     /*用户登录密码*/
-    private String password;
+    private Long password;
     /*用户姓名*/
     private String name;
     /*用户身份证*/

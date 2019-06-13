@@ -1,14 +1,10 @@
-package com.skm.exa.webapi.vo;
+package com.skm.exa.persistence.dto;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
-
 @Data
-@ApiModel(value = "角色管理修改密码")
-public class UserManagementUpdatePasswordVO {
+public class UserManagementUpdatePasswordDto {
     @ApiModelProperty(value = "id")
     private Long id;
     @ApiModelProperty(value = "密码")

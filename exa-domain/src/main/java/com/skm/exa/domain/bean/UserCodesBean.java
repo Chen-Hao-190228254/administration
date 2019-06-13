@@ -17,4 +17,9 @@ public class UserCodesBean extends BaseBean {
     private Long status;        //状态
     @ApiModelProperty(value = "是否可编辑状态")
     private Long editStatus;     //是否可编辑状态
+    public UserCodesBean(){
+    }
+    public UserCodesBean(String codes){
+        this.codes = codes ;
+    }
 }

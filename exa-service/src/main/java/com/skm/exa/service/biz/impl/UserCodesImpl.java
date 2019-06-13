@@ -3,6 +3,7 @@ package com.skm.exa.service.biz.impl;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.UserCodesBean;
+import com.skm.exa.domain.bean.UserManagementBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.mybatis.enums.UserCodesEditStatusEnum;
@@ -13,6 +14,8 @@ import com.skm.exa.persistence.qo.UserCodesLikeQO;
 import com.skm.exa.service.BaseServiceImpl;
 import com.skm.exa.service.biz.UserCodesService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao> implements UserCodesService {
@@ -111,5 +114,10 @@ public class UserCodesImpl extends BaseServiceImpl<UserCodesBean , UserCodesDao>
     public UserCodesBean updateEditStatus(UserCodesBean userCodesBean) {
         dao.updateEditStatus(userCodesBean);
         return userCodesBean;
+    }
+    @Override
+    public Boolean judgeUnique(String codes) {
+        List<UserCodesBean> userCodesBeans = dao.select(new UserCodesBean(codes) );
+        return userCodesBeans != null && userCodesBeans.size() > 0;
     }
 }

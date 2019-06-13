@@ -24,8 +24,6 @@
         `update_dt`
     </sql>
 
-
-
     <!--分页查询-->
     <select id="getManagementDtoPage" resultMap="RM">
         SELECT
@@ -120,14 +118,8 @@
 
     <!--通过id获取数据-->
     <select id="detailsManagement" resultMap="RM">
-    SELECT
-    <include refid="dtoManagementColumns"/>
-    FROM `administration_users_management`
-    <where>
-        <if test="id != null">AND `id` = #{id, jdbcType=BIGINT}</if>
-    </where>
-</select>
-
+        SELECT * FROM `administration_users_management` WHERE `id` = #{id}
+    </select>
     <!--通过 id 更改状态-->
     <update id="updateStatus" parameterType="com.skm.exa.domain.bean.UserManagementBean">
         UPDATE `administration_users_management`
@@ -135,11 +127,31 @@
         `status`= #{status}
         WHERE `id` = #{id}
     </update>
+
+    <!--<resultMap id="RE" type="com.skm.exa.persistence.dto.UserManagementUpdatePasswordDto">
+        <id property="id" column="id"/>
+        <result property="password" column="password"/>
+        <result property="newPassword" column="password"/>
+    </resultMap>-->
     <!--更改密码-->
-    <update id="updatePassword" parameterType="com.skm.exa.domain.bean.UserManagementBean">
+    <update id="updatePassword">
         UPDATE `administration_users_management`
         SET
-        `password`= #{password}
+        `password` = #{newPassword}
         WHERE `id` = #{id}
     </update>
+
+    <!--获取所有数据-->
+    <select id="selectManagement" resultType="com.skm.exa.domain.bean.UserManagementBean">
+        SELECT * FROM `administration_users_management`
+    </select>
+
+    <!--获取所有数据判断唯一值-->
+    <select id="select" resultType="com.skm.exa.domain.bean.UserManagementBean">
+        SELECT * FROM  `administration_users_management`
+        <where>
+          <if test="id != null">AND = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(accountNumber)">AND `account_number` = #{accountNumber, jdbcType=VARCHAR}</if>
+    </where>
+    </select>
 </mapper>

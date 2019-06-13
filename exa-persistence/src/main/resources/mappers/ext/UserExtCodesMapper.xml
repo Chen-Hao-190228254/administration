@@ -113,4 +113,13 @@
         `edit_status` = #{editStatus}
         WHERE `id` = #{id}
     </update>
+
+    <!--获取所有数据-->
+    <select id="select" resultType="com.skm.exa.domain.bean.UserManagementBean">
+        SELECT * FROM  `administration_codes`
+        <where>
+            <if test="id != null">AND = #{id, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(codes)">AND `codes` = #{codes, jdbcType=VARCHAR}</if>
+        </where>
+    </select>
 </mapper>

@@ -11,6 +11,7 @@ import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.mybatis.enums.UserManagementStatusEnum;
 import com.skm.exa.persistence.dao.UserManagementDao;
 import com.skm.exa.persistence.dto.*;
+import com.skm.exa.persistence.qo.RoleQO;
 import com.skm.exa.persistence.qo.UserManagementLikeQO;
 import com.skm.exa.service.BaseServiceImpl;
 import com.skm.exa.service.biz.CommonService;
@@ -59,7 +60,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     public Boolean add(UserManagementAddDto userManagementAddDto, UnifyAdmin unifyAdmin) {
         UserManagementBean userManagementBean = BeanMapper.map(userManagementAddDto, UserManagementBean.class);
         userManagementBean = new SetCommonElement().setAdd(userManagementBean,unifyAdmin );
-        if(dao.addManagement(userManagementBean) <=0)
+        if(dao.addManagement(userManagementBean) <= 0)
             return false;
         if(userManagementAddDto.getFileSaveDtos() == null || userManagementAddDto.getFileSaveDtos().size() == 0)
             return true;
@@ -77,7 +78,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     @Transactional
     public Boolean update(UserManagementUpdateDto userManagementUpdateDto, UnifyAdmin unifyAdmin) {
         UserManagementBean userManagementBean = BeanMapper.map(userManagementUpdateDto, UserManagementBean.class);
-        UserManagementBean  beans = dao.detailsManagement(userManagementBean);
+        UserManagementBean  beans = dao.detailsManagement(userManagementBean.getId());
         if (beans.getStatus() != UserManagementStatusEnum.NORMAL.getValue())
             return false;
         SetCommonElement setCommonElement = new SetCommonElement() ;
@@ -96,12 +97,12 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
      */
     @Override
     public boolean  delete(UserManagementBean userManagementBean ) {
-        if(dao.detailsManagement(userManagementBean).getStatus() != UserManagementStatusEnum.NORMAL.getValue())
+        if(dao.detailsManagement(userManagementBean.getId()).getStatus() != UserManagementStatusEnum.NORMAL.getValue())
             return false;
-        UserManagementDto userManagementDto = details(userManagementBean);
+        UserManagementDto userManagementDto = details(userManagementBean.getId());
         if(userManagementDto == null)
             return true;
-        boolean is = dao.deleteManagement(userManagementBean)>0;
+        boolean is = dao.deleteManagement(userManagementBean) > 0;
         if(is){
             if(userManagementDto.getFileBeans() == null || userManagementDto.getFileBeans().size() == 0)
                 return true;
@@ -125,15 +126,15 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     /**
      * 通过id获取数据
      * @param
-     * @param userManagementBean
+     * @param id
      * @return
      */
     @Override
-    public UserManagementDto details(UserManagementBean userManagementBean ) {
-        UserManagementBean userManagementBean1 = dao.detailsManagement(userManagementBean);
-        if(userManagementBean1 == null)
+    public UserManagementDto details(Long id ) {
+        UserManagementBean bean = dao.detailsManagement(id);
+        if(bean == null)
             return null;
-        return getImagesMessage(userManagementBean1);
+        return getImagesMessage(bean);
     }
 
 
@@ -162,21 +163,46 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
 
     /**
      * 更改密码
-     * @param userManagementBean
+     * @param updatePasswordDto
      * @param unifyAdmin
      * @return
      */
     @Override
-    public UserManagementBean updatePassword(UserManagementBean userManagementBean, UnifyAdmin unifyAdmin) {
-        UserManagementBean bean = dao.detailsManagement(userManagementBean);
-        if (bean .getStatus() == UserManagementStatusEnum.NORMAL.getValue()){
-            dao.updatePassword(userManagementBean);
-            return userManagementBean;
+    public int updatePassword(UserManagementUpdatePasswordDto updatePasswordDto, UnifyAdmin unifyAdmin) {
+        UserManagementBean bean = dao.detailsManagement(updatePasswordDto.getId());
+        if (bean .getStatus() != UserManagementStatusEnum.NORMAL.getValue())
+            return 0 ;
+        if (bean.getPassword() == updatePasswordDto.getOldPassword() || updatePasswordDto.getOldPassword() == null) {
+            if (bean.getPassword() != updatePasswordDto.getNewPassword()) {
+                return dao.updatePassword(updatePasswordDto);
+            }
         }
-            return null ;
+            return 0 ;
     }
 
-/*----------------------图片操作---------------------------------*/
+    /**
+     * 获取所有数据
+     * @param userManagementBean
+     * @return
+     */
+    @Override
+    public List<UserManagementBean> selectManagement(UserManagementBean userManagementBean) {
+        return dao.selectManagement(userManagementBean);
+    }
+
+    /**
+     * 判断唯一值
+     * @param accountNumber
+     * @return
+     */
+    @Override
+    public Boolean judgeUnique(String accountNumber) {
+        List<UserManagementBean> managementBean = dao.select(new UserManagementBean(accountNumber) );
+        return managementBean != null && managementBean.size() > 0;
+    }
+
+
+    /*----------------------图片操作---------------------------------*/
 
     @Autowired
     CommonService commonService;
@@ -237,7 +263,7 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
             return true;
         UserManagementBean userManagementBean = new UserManagementBean();
         userManagementBean.setId(id);
-        List<FileBean> fileBeans = details(userManagementBean).getFileBeans();
+        List<FileBean> fileBeans = details(id).getFileBeans();
         for(int i = 0; i < fileBeans.size(); i++){
             for(int j = 0; j < fileUpdateDtos.size(); j++){
                 if(fileUpdateDtos.get(j).getId() == fileBeans.get(i).getId()) {
