@@ -63,4 +63,6 @@ public interface UserCodesService extends BaseService<UserCodesBean> {
      * @return
      */
     UserCodesBean updateEditStatus(UserCodesBean userCodesBean);
+
+    Boolean judgeUnique(String accountNumber);
 }

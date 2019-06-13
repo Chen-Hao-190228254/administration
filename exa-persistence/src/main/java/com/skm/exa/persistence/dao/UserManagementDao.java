@@ -7,9 +7,12 @@ import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.BaseDao;
 import com.skm.exa.persistence.dto.UserManagementDto;
+import com.skm.exa.persistence.dto.UserManagementUpdatePasswordDto;
 import com.skm.exa.persistence.qo.UserManagementLikeQO;
 import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 
 public interface UserManagementDao extends BaseDao<UserManagementBean> {
@@ -42,13 +45,12 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
     */
    int deleteManagement(UserManagementBean userManagementBean);
 
-   /**
+   /***
     * 通过id 查询
-    * @param
-    * @param
+    * @param id
     * @return
     */
-   UserManagementBean detailsManagement(UserManagementBean userManagementBean  );
+   UserManagementBean detailsManagement(long id );
    /**
     * 通过id 更改角色状态
     * @param userManagementBean
@@ -57,9 +59,16 @@ public interface UserManagementDao extends BaseDao<UserManagementBean> {
    int updateStatus(UserManagementBean userManagementBean);
 
    /**
-    *  更改密码
+    * 获取所有数据
     * @param userManagementBean
     * @return
     */
-   int updatePassword(UserManagementBean userManagementBean);
+   List<UserManagementBean> selectManagement(UserManagementBean userManagementBean);
+   /**
+    *  更改密码
+    * @param updatePasswordDto
+    * @return
+    */
+   int updatePassword(UserManagementUpdatePasswordDto updatePasswordDto);
+
 }

@@ -15,7 +15,7 @@ public class UserManagementUpdateQO {
     private String accountNumber;
     /*用户登录密码*/
     @ApiModelProperty(value = "用户登录密码")
-    private String password;
+    private Long password;
     /*用户姓名*/
     @ApiModelProperty(value = "用户姓名")
     private String name;

@@ -18,15 +18,13 @@ import com.skm.exa.service.biz.QuestionBankService;
 import com.skm.exa.webapi.BaseController;
 import com.skm.exa.webapi.vo.*;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import sun.util.resources.cldr.mg.LocaleNames_mg;
+
 
 import java.util.List;
 
@@ -151,7 +149,7 @@ public class QuestionBankController extends BaseController {
      * @return
      */
     @Transactional
-    @ApiOperation(value = "通过id删除数据" ,notes = "输入id删除数据")
+    @ApiOperation(value = "通过id删除数据" ,notes = "输入id删除数据,如果状态码为0则无法删除，状态码为1则删除")
     @PostMapping("/delete")
     public Result  delete(@ApiParam("id")@RequestParam("getID") Long id){
         QuestionBankBean bean = new QuestionBankBean();

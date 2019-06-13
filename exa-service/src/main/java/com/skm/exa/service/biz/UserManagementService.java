@@ -7,9 +7,12 @@ import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dto.UserManagementAddDto;
 import com.skm.exa.persistence.dto.UserManagementDto;
 import com.skm.exa.persistence.dto.UserManagementUpdateDto;
+import com.skm.exa.persistence.dto.UserManagementUpdatePasswordDto;
 import com.skm.exa.persistence.qo.UserManagementLikeQO;
 import com.skm.exa.service.BaseService;
+import org.omg.CORBA.LongHolder;
 
+import java.util.List;
 
 
 public interface UserManagementService extends BaseService<UserManagementBean> {
@@ -47,10 +50,10 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
     /**
      * 通过id获取数据
      * @param
-     * @param userManagementBean
+     * @param
      * @return
      */
-    UserManagementDto details( UserManagementBean userManagementBean );
+    UserManagementDto details(Long id );
     /**
      * 更改用户状态
      * @param userManagementBean
@@ -61,11 +64,23 @@ public interface UserManagementService extends BaseService<UserManagementBean> {
 
     /***
      * 更改用户密码
-     * @param userManagementBean
+     * @param updatePasswordDto
      * @param unifyAdmin
      * @return
      */
-    UserManagementBean updatePassword(UserManagementBean userManagementBean ,UnifyAdmin unifyAdmin);
+    int updatePassword(UserManagementUpdatePasswordDto updatePasswordDto , UnifyAdmin unifyAdmin);
 
+    /**
+     * 获取所有数据
+     * @param userManagementBean
+     * @return
+     */
+    List<UserManagementBean> selectManagement (UserManagementBean userManagementBean);
 
+    /**
+     * 判断唯一值
+     * @param accountNumber
+     * @return
+     */
+    Boolean judgeUnique(String accountNumber);
 }

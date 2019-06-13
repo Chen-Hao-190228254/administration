@@ -4,6 +4,7 @@ package com.skm.exa.webapi.vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.util.Date;
 import java.util.List;
@@ -20,12 +21,13 @@ public class UserManagementSaveVO {
     private String accountNumber;
     /*用户登录密码*/
     @ApiModelProperty(value = "用户登录密码")
-    private String password;
+    private Long password;
     /*用户姓名*/
     @ApiModelProperty(value = "用户姓名")
     private String name;
     /*用户身份证*/
     @ApiModelProperty(value = "用户身份证")
+    @NonNull
     private String card;
     /*用户手机号*/
     @ApiModelProperty(value = "用户手机号")
