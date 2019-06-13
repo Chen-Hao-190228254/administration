@@ -75,9 +75,11 @@ public class CommonController {
      */
     @ApiOperation("添加标签")
     @GetMapping("/addLabel/name")
-    private Result addLabel(@ApiParam("标签名称") @RequestParam("name") String name){
-        boolean is = commonService.addLabel(name);
-        return is? Result.success():Result.error(Msg.E40019);
+    private Result<LabelVo> addLabel(@ApiParam("标签名称") @RequestParam("name") String name){
+        LabelBean labelBean = commonService.addLabel(name);
+        if(labelBean.getId() == null || labelBean.getId() == 0)
+            return Result.error(Msg.E40019);
+        return Result.success(BeanMapper.map(labelBean,LabelVo.class));
     }
 
 

@@ -31,7 +31,7 @@
     </select>
 
 <!--添加标签-->
-    <insert id="addLabel">
+    <insert id="addLabel" keyProperty="id" useGeneratedKeys="true">
         INSERT INTO `administration_label`(`name`) VALUES (#{name})
     </insert>
 

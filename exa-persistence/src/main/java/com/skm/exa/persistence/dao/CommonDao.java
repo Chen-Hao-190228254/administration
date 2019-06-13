@@ -39,10 +39,10 @@ public interface CommonDao{
 
     /**
      * 添加标签
-     * @param name
+     * @param labelBean
      * @return
      */
-    int addLabel(String name);
+    int addLabel(LabelBean labelBean);
 
 
     /**

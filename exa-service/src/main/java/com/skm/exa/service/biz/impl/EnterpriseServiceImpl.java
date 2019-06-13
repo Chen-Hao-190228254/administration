@@ -208,7 +208,6 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
             }
             result = commonService.addFileMessage(fileSaveDtos);
         }
-        System.out.println(labelIds.size());
         if (labelIds != null && labelIds.size() != 0) {
             result = commonService.addLabelCorrelation(labelIds,enterpriseId,correlationTableName);
         }

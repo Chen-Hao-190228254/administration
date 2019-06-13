@@ -63,8 +63,10 @@ public class CommonServiceImpl implements CommonService {
      * @return
      */
     @Override
-    public Boolean addLabel(String name) {
-        return commonDao.addLabel(name)>0;
+    public LabelBean addLabel(String name) {
+        LabelBean labelBean = new LabelBean(name);
+        commonDao.addLabel(labelBean);
+        return labelBean;
     }
 
     /**

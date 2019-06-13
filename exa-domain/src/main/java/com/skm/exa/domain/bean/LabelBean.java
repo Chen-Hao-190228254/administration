@@ -10,4 +10,10 @@ public class LabelBean {
 
     private String name;
 
+    public LabelBean() {
+    }
+
+    public LabelBean(String name) {
+        this.name = name;
+    }
 }

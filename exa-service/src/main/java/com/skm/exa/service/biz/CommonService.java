@@ -36,7 +36,7 @@ public interface CommonService {
      * @param name
      * @return
      */
-    Boolean addLabel(String name);
+    LabelBean addLabel(String name);
 
 
     /**
