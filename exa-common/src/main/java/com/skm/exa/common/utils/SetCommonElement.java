@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class SetCommonElement {
 
-    public <T extends BaseBean> T setAdd(T bean, UnifyAdmin unifyAdmin){
+    public static <T extends BaseBean> T setAdd(T bean, UnifyAdmin unifyAdmin){
         bean.setEntryId(unifyAdmin.getId());
         bean.setEntryName(unifyAdmin.getName());
         bean.setEntryDt(new Date());
@@ -17,7 +17,7 @@ public class SetCommonElement {
         return bean;
     }
 
-    public <T extends BaseBean> T setupdate(T bean, UnifyAdmin unifyAdmin){
+    public static <T extends BaseBean> T setupdate(T bean, UnifyAdmin unifyAdmin){
         bean.setUpdateId(unifyAdmin.getId());
         bean.setUpdateName(unifyAdmin.getName());
         bean.setUpdateDt(new Date());

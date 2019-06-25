@@ -1,26 +1,32 @@
 package com.skm.exa.service.biz.impl;
 
+import com.google.common.collect.Lists;
 import com.skm.exa.common.object.UnifyAdmin;
+import com.skm.exa.common.utils.BeanMapper;
 import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.OptionCodesBean;
 import com.skm.exa.domain.bean.TechnologicalTypeBean;
 import com.skm.exa.domain.bean.QuestionBankBean;
 import com.skm.exa.domain.bean.QuestionTypeBean;
+import com.skm.exa.mybatis.Ognl;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.mybatis.enums.QuestionStatusEnum;
 import com.skm.exa.mybatis.enums.QuestionTechnologicalTypeEnum;
 import com.skm.exa.persistence.dao.QuestionBankDao;
-import com.skm.exa.persistence.dto.QuestionBankDto;
-import com.skm.exa.persistence.dto.QuestionQueryDto;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
+import com.skm.exa.persistence.qo.QuestionOptionQO;
 import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
 import com.skm.exa.service.BaseServiceImpl;
 import com.skm.exa.service.biz.QuestionBankService;
+import org.springframework.cglib.beans.BeanMap;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -43,10 +49,8 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      */
     @Override
     public Page<QuestionQueryDto> selectPage(PageParam<QuestionQueryLikeQO> qoPageParam) {
-        //如果不传参数那么将设置题目类型 和 技术类型为1
+        //如果不传参数那么将设置技术类型为1
         if (qoPageParam.getCondition().getTechnologicalTypeLike() == null || qoPageParam.getCondition().getTopicTypeLike() == null){
-            qoPageParam.getCondition().setTechnologicalTypeLike((long)1);
-            qoPageParam.getCondition().setTopicTypeLike((long) 1);
             return dao.selectQuestionPage(qoPageParam);
         }
         return dao.selectQuestionPage(qoPageParam);
@@ -54,32 +58,30 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
 
     /**
      * 添加题库
-     * @param questionBankBean
+     * @param questionBankSaveDto
      * @param unifyAdmin
      * @return
      */
     @Override
-    public QuestionBankBean addQuestion(QuestionBankBean questionBankBean, UnifyAdmin unifyAdmin) {
-        if(questionBankBean.getTechnologicalType() > 0 && questionBankBean.getTechnologicalType() <= 4 ){   //判断技术类型
-            if (questionBankBean.getTopicType() > 0 && questionBankBean.getTopicType() <= 4 ){      // 判断题目类型
-                if (questionBankBean.getTopicType() == 2 || questionBankBean.getTopicType() == 3 ){  //判断是否是选择题
-                    System.out.print((int)((Math.random()*9+1)*100000));
-                    questionBankBean.setOptionCodes((long)((Math.random()*9+1)*100000));  //设置随机数
-                    SetCommonElement setCommonElement = new SetCommonElement();
-                    setCommonElement.setAdd(questionBankBean,unifyAdmin );
-                    dao.addQuestion(questionBankBean);
-                    return questionBankBean;
-                }
-                if (questionBankBean.getTopicType() != 2 || questionBankBean.getTopicType() != 3){
-                    SetCommonElement setCommonElement = new SetCommonElement();
-                    setCommonElement.setAdd(questionBankBean,unifyAdmin );
-                    questionBankBean.setOptionCodes((long) 0);
-                    dao.addQuestion(questionBankBean);
-                    return questionBankBean;
-                }
+    public QuestionBankDto addQuestion(QuestionBankSaveDto questionBankSaveDto,UnifyAdmin unifyAdmin) {
+        QuestionBankBean bean = BeanMapper.map(questionBankSaveDto, QuestionBankBean.class);
+        bean = new SetCommonElement().setAdd(bean,unifyAdmin );
+        double optionCode = (Math.random()*9+1)*100000;
+        bean.setOptionCodes((long) optionCode);
+        dao.addQuestion(bean);  //添加题库
+        List<OptionCodesBean> optionCodesBeans = new ArrayList<>();
+        if(bean.getTopicType() == 2 || bean.getTopicType() == 3){
+            List<OptionCodesDto> codesDtoList = questionBankSaveDto.getOptionCodesDtoList();
+            for (OptionCodesDto codesDto: codesDtoList) {
+                codesDto.setCode((long) optionCode);
+                OptionCodesDto optionCodesDto = new SetCommonElement().setAdd(codesDto,unifyAdmin );
+                optionCodesBeans.add(BeanMapper.map(optionCodesDto, OptionCodesBean.class));
             }
+            dao.addOptionCodes(optionCodesBeans); //添加选项
         }
-        return null;
+        QuestionBankDto questionBankDto = BeanMapper.map(bean, QuestionBankDto.class);
+        questionBankDto.setOptionCodesBeans(optionCodesBeans);
+        return questionBankDto;
     }
 
     /**
@@ -101,8 +103,14 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      * @return
      */
     @Override
-    public QuestionBankBean details(QuestionBankBean questionBankBean) {
-        return dao.details(questionBankBean);
+    public QuestionBankDto details(QuestionBankBeanDetailsDto questionBankBeanDetailsDto) {
+        QuestionBankBean dto =  BeanMapper.map(questionBankBeanDetailsDto,QuestionBankBean.class );
+        QuestionBankBean bankBean = dao.details(dto);
+        QuestionBankDto bankDto = BeanMapper.map(bankBean,QuestionBankDto.class );
+        if (bankBean.getTopicType() == 2 || bankBean.getTopicType() == 3){
+            bankDto.setOptionCodesBeans(dao.selectOptionCodes(new ArrayList<>(Collections.singleton(bankBean.getOptionCodes()))));
+        }
+        return bankDto;
     }
 
     /**
@@ -119,14 +127,18 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
 
     /**
      * 输入id删除数据
-     * @param questionBankBean
+     * @param
      * @return
      */
     @Override
-    public boolean delete(QuestionBankBean questionBankBean) {
+    public boolean deleteQuestion(QuestionBankBeanDetailsDto questionBankBeanDetailsDto) {
+        QuestionBankBean questionBankBean = BeanMapper.map(questionBankBeanDetailsDto,QuestionBankBean.class );
         QuestionBankBean bankBean  = dao.details(questionBankBean);
-        if (bankBean.getStatus() == QuestionStatusEnum.NORMAL.getValue()){
-            dao.delete(bankBean.getId());
+        if (bankBean.getStatus() == QuestionStatusEnum.NORMAL.getValue()){   //判断状态
+            dao.deleteQuestion(questionBankBean);
+            if (bankBean.getTopicType() == 2 || bankBean.getTopicType() == 3){ // 判断题目类型
+                 dao.deleteOptionCodes(bankBean.getOptionCodes());
+            }
             return true ;
         }else if (bankBean.getStatus() == QuestionStatusEnum.FORBIDDEN.getValue()){
             return false;
@@ -136,36 +148,53 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
 
     /**
      * 更新数据
-     * @param questionBankBean
+     * @param
      * @param unifyAdmin
      * @return
      */
     @Override
-    public QuestionBankBean updateQuestion(QuestionBankBean questionBankBean ,UnifyAdmin unifyAdmin) {
-        QuestionBankBean bean = dao.details(questionBankBean);
-        if (bean.getStatus() == QuestionStatusEnum.NORMAL.getValue()){   //判断数据状态
-            if (questionBankBean.getTechnologicalType() > 0 && questionBankBean.getTechnologicalType() <= 4 ){
-                if (questionBankBean.getTopicType() > 0 && questionBankBean.getTopicType() <= 4){
-                    if (questionBankBean.getTopicType() == 2 || questionBankBean.getTopicType() == 3 ){  //判断是否是选择题
-                        questionBankBean.setOptionCodes((long)((Math.random()*9+1)*100000));  //设置随机数
-                        SetCommonElement setCommonElement = new SetCommonElement();
-                        setCommonElement.setupdate(questionBankBean,unifyAdmin );
-                        System.out.println(questionBankBean.getEnterpriseName());
-                        dao.updateQuestion(questionBankBean);
-                        return questionBankBean;
+    public QuestionBankDto updateQuestion(QuestionBankUpdateDto updateDto ,UnifyAdmin unifyAdmin) {
+        QuestionBankBean bean = BeanMapper.map(updateDto,QuestionBankBean.class );
+        QuestionBankBean bankBean = dao.details(bean);  //查询数据
+        bean  = new SetCommonElement().setupdate(bean ,unifyAdmin );
+        dao.updateQuestion(bean);  //更新题库
+        List<OptionCodesBean> updateBeans = new ArrayList<>();  //更新list
+        List<OptionCodesBean> addBeans = new ArrayList<>();   // 添加list
+        if(bean.getTopicType() == 2 || bean.getTopicType() == 3){  //判断是否为选择题
+            List<OptionCodesUpdateDto> codesDtoList = updateDto.getOptionCodesUpdateDtoList();  //取得选项
+            List<OptionCodesBean> oldDatas = dao.selectOptionCodes(   //查询所有选项，获取未更新时候的选项
+                    Lists.newArrayList(bankBean.getOptionCodes()));
+            Map<Long, OptionCodesBean> map = oldDatas.stream().collect(Collectors.toMap(OptionCodesBean::getId, b->b));
+            for (OptionCodesUpdateDto codesDto: codesDtoList) {
+                if (map.get(codesDto.getId()) != null ){   //判断如果传入id则更新选项 ，否者则添加选项
+                    if (bankBean.getOptionCodes().equals(map.get(codesDto.getId()).getCode()) ){
+                        codesDto.setCode(bankBean.getOptionCodes());
+                        SetCommonElement.setupdate(codesDto, unifyAdmin);
+                        updateBeans.add(BeanMapper.map(codesDto, OptionCodesBean.class));
                     }
-                    if (questionBankBean.getTopicType() != 2 || questionBankBean.getTopicType() != 3){
-                        questionBankBean.setOptionCodes((long)0);  //设置随机数
-                        SetCommonElement setCommonElement = new SetCommonElement();
-                        setCommonElement.setupdate(questionBankBean,unifyAdmin );
-                        dao.updateQuestion(questionBankBean);
-                        return questionBankBean;
-                    }
+                }else{
+                    codesDto.setCode(bankBean.getOptionCodes());
+                    SetCommonElement.setAdd(codesDto, unifyAdmin);
+                    addBeans.add(BeanMapper.map(codesDto, OptionCodesBean.class));
                 }
+                map.remove(codesDto.getId());
             }
-
+            if (Ognl.isNotEmpty(updateBeans)) {
+                dao.updateBank(updateBeans);  //更新选项
+            }
+            if (Ognl.isNotEmpty(addBeans)) {
+                dao.addOptionCodes(addBeans);  //添加选项
+            }
+        }else if(bean.getTopicType() != 2 || bean.getTopicType() != 3){  //如果改为不是选择题者删除所有选项
+            List<OptionCodesBean> beans = dao.selectOptionCodes(new ArrayList<>(Collections.singleton(bankBean.getOptionCodes())));
+            for (OptionCodesBean codesBean: beans){
+                codesBean.getCode();
+                dao.deleteOptionCodes(codesBean.getCode());
+            }
         }
-        return null;
+        QuestionBankDto questionBankDto = BeanMapper.map(updateDto, QuestionBankDto.class);
+        questionBankDto.setOptionCodesBeans(updateBeans);
+        return questionBankDto;
     }
 
     /**
@@ -185,6 +214,7 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      * @return
      */
     @Override
+    @Transactional
     public List<TechnologicalTypeBean> selectBank(TechnologicalTypeBean technologicalTypeBean, QuestionBankBean questionBankBean) {
         QuestionBankBean bean = dao.details(questionBankBean ); //查询当前id获取的数据
         List<TechnologicalTypeBean> technologicalTypeBeanList = dao.selectBankType(technologicalTypeBean);   //查询当前所有技术类型
@@ -262,42 +292,37 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
 
     /**
      * 选择题，单选题，添加选项
-     * @param optionCodesBean
-     * @param questionBankBean
-     * @param unifyAdmin
+     * @param
+     * @param
+     * @param
      * @return
      */
-    @Override
-    public OptionCodesBean addBankOption(OptionCodesBean optionCodesBean,QuestionBankBean questionBankBean, UnifyAdmin unifyAdmin) {
-        QuestionBankBean bankBean = dao.details(questionBankBean);
-        if (bankBean.getTopicType() == 2 || bankBean.getTopicType() == 3 ){
-            optionCodesBean.setCode(bankBean.getOptionCodes());
+ /*  // @Override
+    public Integer addBankOption(QuestionBankSaveDto questionBankSaveDto ,QuestionBankBean questionBankBean ,UnifyAdmin unifyAdmin) {
+        List<OptionCodesDto> codesDtoList = questionBankSaveDto.getOptionCodesDtoList();
+        for (OptionCodesDto optionCodesDto: codesDtoList){
+            optionCodesDto.setCode(questionBankBean.getOptionCodes());
+            dao.addOptionCodes(optionCodesDto);
             SetCommonElement setCommonElement = new SetCommonElement() ;
-            setCommonElement.setAdd(optionCodesBean,unifyAdmin );
-            dao.addOptionCodes(optionCodesBean);
-            return optionCodesBean ;
+            setCommonElement.setAdd(questionBankBean, unifyAdmin);
+            System.out.println(dao.addOptionCodes(optionCodesDto).toString());
+            return dao.addOptionCodes(optionCodesDto);
         }
-        return null;
-    }
+            return 0 ;
+        }*/
+
 
     /**
      * 删除选项
      * @param optionCodesBean
-     * @param questionBankBean
+     * @param
      * @return
      */
     @Override
-    public boolean deleteBankOption(OptionCodesBean optionCodesBean ,QuestionBankBean questionBankBean) {
-        QuestionBankBean bankBean = dao.details(questionBankBean);
-        optionCodesBean.setCode(bankBean.getOptionCodes());
-        optionCodesBean.getCode();
-        List<OptionCodesBean> bean = dao.selectOptionCodes(optionCodesBean);
-        for (OptionCodesBean codesBean : bean){
-            System.out.println(codesBean.getCode().toString());
-            dao.deleteOptionCodes(optionCodesBean);
+    public boolean deleteBankOption(OptionCodesBean optionCodesBean ) {
+            dao.deleteOption(optionCodesBean.getId());
             return true ;
-        }
-        return false;
+
     }
 
     /**
@@ -305,8 +330,9 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      * @param optionCodesBean
      * @return
      */
-    @Override
-    public List<OptionCodesBean> selectBankOption(OptionCodesBean optionCodesBean) {
-            return  dao.selectOptionCodes(optionCodesBean);
-    }
+    //@Override
+   /* public List<OptionCodesBean> selectBankOption(QuestionBankBeanDetailsDto questionBankBeanDetailsDto ,OptionCodesBean optionCodesBean) {
+
+            return  optionCodesDto ;
+    }*/
 }
