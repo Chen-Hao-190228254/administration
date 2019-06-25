@@ -16,6 +16,8 @@ public interface CommonService {
      */
     List<StatusBean> getStatus();
 
+
+//<-----------------------------------地址操作------------------------------------------------------------>
     /**
      * 通过父级code获取地址
      * @param parentCode
@@ -23,6 +25,22 @@ public interface CommonService {
      */
     List<AreaBean> getAreaParentCode(Long parentCode);
 
+    /**
+     * 通过code获取当前code的信息
+     * @param code
+     * @return
+     */
+    List<AreaBean> getAreaCode(Long code);
+
+    /**
+     * 根据code获取上一级地址
+     * @param code
+     * @return
+     */
+    AreaBean getByCodeParent(Long code);
+
+
+//<-----------------------------------标签操作------------------------------------------------------------>
 
     /**
      * 获得标签
@@ -65,6 +83,9 @@ public interface CommonService {
     Boolean deleteLabelCorrelation(List<Long> labelIds);
 
 
+
+//<-----------------------------------文件操作------------------------------------------------------------>
+
     /**
      * 获取文件
      * @param fileSelectDto 选填
@@ -72,6 +93,11 @@ public interface CommonService {
      */
     List<FileBean> getFileList(FileSelectDto fileSelectDto);
 
+    /**
+     * 获取所有文件信息
+     * @return
+     */
+    List<FileBean> getAllFileMessage();
 
     /**
      * 上传文件及往数据库添加上传后的文件详细
@@ -87,8 +113,6 @@ public interface CommonService {
      * @return
      */
     FileBean uploadFile(MultipartFile file);
-
-
 
 
 

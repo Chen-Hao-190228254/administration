@@ -44,7 +44,7 @@ public class EnterpriseSaveDto {
     /**
      * 所在地区
      */
-    private String areaId;
+    private String areaCode;
 
     /**
      * 经营范围

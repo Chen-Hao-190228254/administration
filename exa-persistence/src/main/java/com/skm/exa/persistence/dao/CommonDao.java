@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface CommonDao{
 
+//<-----------------------------------地址操作------------------------------------------------------------>
+
     /**
      * 根据父code，获得下一级的所有地址
      * @param code
@@ -20,6 +22,23 @@ public interface CommonDao{
      */
     List<AreaBean> getAreaParentCode(Long code);
 
+    /**
+     * 通过code获取当前code的信息
+     * @param code
+     * @return
+     */
+    List<AreaBean> getAreaCode(Long code);
+
+    /**
+     * 根据code获取上一级地址
+     * @param code
+     * @return
+     */
+    AreaBean getByCodeParent(Long code);
+
+
+
+//<-----------------------------------文件操作------------------------------------------------------------>
 
     /**
      * 获取文件
@@ -28,6 +47,28 @@ public interface CommonDao{
      */
     List<FileBean> getFileListMessage(FileSelectDto fileSelectDto);
 
+    /**
+     * 获取所有文件信息
+     * @return
+     */
+    List<FileBean> getAllFileMessage();
+
+    /**
+     * 添加文件关联
+     * @param fileSaveDtos
+     * @return
+     */
+    int addFileMessage(@Param("fileSaveDtos") List<FileSaveDto> fileSaveDtos);
+
+    /**
+     * 删除文件
+     * @param fileIds 文件ID集合
+     * @return
+     */
+    int deleteFileMessage(@Param("fileIds")List<Long> fileIds);
+
+
+//<-----------------------------------文件操作------------------------------------------------------------>
 
     /**
      * 获取标签
@@ -68,25 +109,6 @@ public interface CommonDao{
      * @return
      */
     int deleteLabelCorrelation(@Param("labelIds") List<Long> labelIds);
-
-
-
-
-
-    /**
-     * 添加文件关联
-     * @param fileSaveDtos
-     * @return
-     */
-    int addFileMessage(@Param("fileSaveDtos") List<FileSaveDto> fileSaveDtos);
-
-
-    /**
-     * 删除文件
-     * @param fileIds 文件ID集合
-     * @return
-     */
-    int deleteFileMessage(@Param("fileIds")List<Long> fileIds);
 
 
 }

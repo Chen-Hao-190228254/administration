@@ -1,23 +1,16 @@
 package com.skm.exa.common.utils;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 
 import com.aliyun.oss.OSSClient;
-import com.aliyun.oss.model.Bucket;
-import com.aliyun.oss.model.OSSObject;
-import com.aliyun.oss.model.ObjectMetadata;
-import com.aliyun.oss.model.PutObjectResult;
+import com.aliyun.oss.model.*;
 import org.springframework.web.multipart.MultipartFile;
 
 public class AliyunOSSClientUtil {
@@ -96,12 +89,35 @@ public class AliyunOSSClientUtil {
 
     /**
      * 根据key删除OSS服务器上的文件
-     * @param key Bucket下的文件的路径名+文件名 如："upload/cake.jpg"
+     * @param filename Bucket下的文件的路径名+文件名 如："upload/cake.jpg"
      */
-    public static void deleteFile(String key){
+    public static void deleteFile(String filename){
         OSSClient ossClient = getOSSClient();
-        ossClient.deleteObject(BACKET_NAME, FOLDER + key);
-//        System.out.println("删除" + BACKET_NAME + "下的文件" + FOLDER + key + "成功");
+        ossClient.deleteObject(BACKET_NAME, FOLDER + filename);
+    }
+
+    /**
+     * 文件批量删除
+     * @param filenames 需要删除的文件名称   Bucket下的文件的路径名+文件名 如："upload/cake.jpg"
+     */
+    public static Boolean deleteFile(List<String> filenames){
+        int index = 0;
+        int deleteSize = 0;
+        int forSize = filenames.size()/1000+1;
+        for (int i = 0; i < forSize; i++){
+            List<String> f = new ArrayList<>();
+            for(int j = index;j < filenames.size(); j++){
+                f.add(filenames.get(j));
+                index++;
+                if(j == filenames.size() || j == 1000){
+                    OSSClient ossClient = getOSSClient();
+                    deleteSize += ossClient.deleteObjects(new DeleteObjectsRequest(BACKET_NAME).withKeys(f)).getDeletedObjects().size();
+                    ossClient.shutdown();
+                    f = new ArrayList<>();
+                }
+            }
+        }
+        return deleteSize == filenames.size()? true:false;
     }
 
     /**
@@ -290,6 +306,30 @@ public class AliyunOSSClientUtil {
         String r = str + rannum;
         String name = r+filename.substring(filename.lastIndexOf("."));
         return name;
+    }
+
+
+    /**
+     * 获取所有文件
+     * @return
+     */
+    public static List<String> GetFileAllContent() {
+        OSSClient ossClient = getOSSClient();
+
+        final int maxKeys = 200;
+        String nextMarker = null;
+        ObjectListing objectListing;
+        List<String> list = new ArrayList<>();
+        do {
+            objectListing = ossClient.listObjects(new ListObjectsRequest(BACKET_NAME).withPrefix(FOLDER).withMarker(nextMarker).withMaxKeys(maxKeys));
+            List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
+            for (OSSObjectSummary s : sums) {
+                list.add(s.getKey());
+            }
+            nextMarker = objectListing.getNextMarker();
+        } while (objectListing.isTruncated());
+        ossClient.shutdown();
+        return list;
     }
 
 }

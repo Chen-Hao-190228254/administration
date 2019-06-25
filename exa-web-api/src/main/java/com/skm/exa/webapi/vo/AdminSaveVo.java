@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @ApiModel("添加管理员模型")
@@ -21,6 +23,8 @@ public class AdminSaveVo {
      * 管理员账号密码
      */
     @ApiModelProperty("管理员密码")
+    @NotBlank
+    @Pattern(regexp = "^[\\w_.@]{5,20}$")
     private String password;
 
     /**

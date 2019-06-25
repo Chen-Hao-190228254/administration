@@ -10,11 +10,55 @@
         <result property="parentCode" column="parent_code"/>
     </resultMap>
 
-    <!--获取地址-->
+<!--获取地址,更具code获得下一级地址-->
     <select id="getAreaParentCode" resultMap="area">
         SELECT * FROM `administration_area` WHERE `parent_code` = #{code}
     </select>
 
+<!--更具code获取当前code的信息-->
+    <select id="getAreaCode" resultMap="area">
+        SELECT
+          *
+        FROM
+          `administration_area` AS a
+        WHERE a.`code` IN (
+            #{code},
+            (SELECT
+              a.`parent_code`
+            FROM
+              `administration_area` AS a
+            WHERE a.`code` = #{code}),
+            (SELECT
+              a.`code`
+            FROM
+              `administration_area` AS a
+            WHERE a.`code` IN
+              (SELECT
+                a.`parent_code`
+              FROM
+                `administration_area` AS a
+              WHERE a.`code` =
+                (SELECT
+                  a.`parent_code`
+                FROM
+                  `administration_area` AS a
+                WHERE a.`code` = #{code})))
+          )
+    </select>
+
+<!--获取地址,更具code获得上一级地址-->
+    <select id="getByCodeParent" resultMap="area">
+        SELECT
+          *
+        FROM
+          `administration_area` AS a
+        WHERE `code` =
+          (SELECT
+            a.`parent_code`
+          FROM
+            `administration_area` AS a
+          WHERE `code` = #{code})
+    </select>
 
 
 
@@ -147,6 +191,12 @@
         <include refid="getFileListCondition"/>
     </select>
 
+    <select id="getAllFileMessage" resultMap="file">
+        SELECT
+        *
+        FROM
+        `administration_file`
+    </select>
 
 
     <!--添加文件信息-->

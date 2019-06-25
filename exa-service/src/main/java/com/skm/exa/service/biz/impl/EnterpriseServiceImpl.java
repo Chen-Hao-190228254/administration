@@ -1,13 +1,14 @@
 package com.skm.exa.service.biz.impl;
 
+import com.skm.exa.common.object.FileUpdateObject;
 import com.skm.exa.common.object.UnifyAdmin;
 import com.skm.exa.common.utils.BeanMapper;
 import com.skm.exa.common.utils.FileAndLabelTidyingUtil;
+import com.skm.exa.common.utils.InsertDeleteDifferentiateUtil;
 import com.skm.exa.common.utils.SetCommonElement;
 import com.skm.exa.domain.bean.CorrelationLabelBean;
 import com.skm.exa.domain.bean.EnterpriseBean;
 import com.skm.exa.domain.bean.FileBean;
-import com.skm.exa.domain.bean.LabelBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.dao.EnterpriseDao;
@@ -106,9 +107,7 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
         int is = dao.update(enterpriseBean);
         if(is<=0)
             return false;
-        if(enterpriseUpdateDto.getFileUpdateDtos() == null || enterpriseUpdateDto.getFileUpdateDtos().size() == 0)
-            return true;
-        boolean isUpdateImage = updateImageMessage(enterpriseUpdateDto.getFileUpdateDtos(),enterpriseUpdateDto.getLabelIds(),enterpriseUpdateDto.getId());
+        boolean isUpdateImage = updateImageMessageAndLabel(enterpriseUpdateDto.getFileUpdateDtos(),enterpriseUpdateDto.getLabelIds(),enterpriseUpdateDto.getId());
         return isUpdateImage;
     }
 
@@ -238,28 +237,20 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
      */
     @Override
     @Transactional
-    public Boolean updateImageMessage(List<FileUpdateDto> fileUpdateDtos,List<Long> labelIds,Long enterpriseId){
+    public Boolean updateImageMessageAndLabel(List<FileUpdateDto> fileUpdateDtos,List<Long> labelIds,Long enterpriseId){
         if((fileUpdateDtos == null || fileUpdateDtos.size() == 0) && (labelIds == null || labelIds.size() == 0))
             return true;
         List<FileBean> fileBeans = commonService.getFileList(new FileSelectDto(correlationTableName , new ArrayList<>(Collections.singleton(enterpriseId))));
-        for(int i = 0; i < fileBeans.size(); i++){
-            for(int j = 0; j < fileUpdateDtos.size(); j++){
-                if(fileUpdateDtos.get(j).getId() == fileBeans.get(i).getId()) {
-                    fileBeans.remove(i);
-                    fileUpdateDtos.remove(j);
-                }
-            }
+        if(fileBeans != null && fileBeans.size() !=0){
+            Map<String,Object> map = new InsertDeleteDifferentiateUtil().FileInsertDeleteDifferentiateUtil(fileBeans,BeanMapper.mapList(fileUpdateDtos, FileUpdateDto.class, FileUpdateObject.class));
+            fileUpdateDtos = BeanMapper.mapList((List<FileUpdateObject>) map.get("fileUpdateDtos"),FileUpdateObject.class,FileUpdateDto.class);
+            fileBeans = (List<FileBean>) map.get("fileBeans");
         }
         List<CorrelationLabelBean> correlationLabelBeans = commonService.getCorrelationLabel(new ArrayList<>(Collections.singleton(enterpriseId)),correlationTableName);
-        if(correlationLabelBeans != null && correlationLabelBeans.size() != 0){
-            for(int i = 0 ; i < correlationLabelBeans.size() ; i ++){
-                for(int j = 0 ; j < labelIds.size() ; j++){
-                    if(correlationLabelBeans.get(i).getId() == labelIds.get(j)){
-                        correlationLabelBeans.remove(i);
-                        labelIds.remove(j);
-                    }
-                }
-            }
+        if(correlationLabelBeans != null &&correlationLabelBeans.size() != 0){
+            Map<String,Object> map = new InsertDeleteDifferentiateUtil().LabelInsertDeleteDifferentiateUtil(correlationLabelBeans,labelIds);
+            correlationLabelBeans = (List<CorrelationLabelBean>) map.get("correlationLabelBeans");
+            labelIds = (List<Long>) map.get("labelIds");
         }
         //删除的图片ID集合
         List<Long> deleteFileIds = new ArrayList<>();
@@ -288,6 +279,8 @@ public class EnterpriseServiceImpl extends BaseServiceImpl<EnterpriseBean, Enter
             return false;
         return true;
     }
+
+
 
 
 

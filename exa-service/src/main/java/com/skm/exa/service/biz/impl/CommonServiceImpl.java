@@ -38,6 +38,10 @@ public class CommonServiceImpl implements CommonService {
     }
 
 
+
+
+//<-----------------------------------地址操作------------------------------------------------------------>
+
     /**
      * 通过父级code获取地址
      * @param parentCode
@@ -47,6 +51,31 @@ public class CommonServiceImpl implements CommonService {
     public List<AreaBean> getAreaParentCode(Long parentCode) {
         return commonDao.getAreaParentCode(parentCode);
     }
+
+    /**
+     * 通过code获取当前code的信息
+     * @param code
+     * @return
+     */
+    @Override
+    public List<AreaBean> getAreaCode(Long code){
+        return commonDao.getAreaCode(code);
+    }
+
+    /**
+     * 根据code获取上一级地址
+     * @param code
+     * @return
+     */
+    @Override
+    public AreaBean getByCodeParent(Long code) {
+        return commonDao.getByCodeParent(code);
+    }
+
+
+
+
+//<-----------------------------------标签操作------------------------------------------------------------>
 
     /**
      * 获得标签
@@ -106,6 +135,8 @@ public class CommonServiceImpl implements CommonService {
 
 
 
+//<-----------------------------------文件操作------------------------------------------------------------>
+
     /**
      * 获得文件
      * @param fileSelectDto 选填
@@ -114,6 +145,16 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public List<FileBean> getFileList(FileSelectDto fileSelectDto) {
         return commonDao.getFileListMessage(fileSelectDto);
+    }
+
+
+    /**
+     * 获取所有文件信息
+     * @return
+     */
+    @Override
+    public List<FileBean> getAllFileMessage() {
+        return commonDao.getAllFileMessage();
     }
 
 
