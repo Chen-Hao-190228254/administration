@@ -12,7 +12,7 @@
         <result property="phone" column="phone"/>
         <result property="url" column="url"/>
         <result property="technique" column="technique"/>
-        <result property="areaId" column="area_id"/>
+        <result property="areaCode" column="area_code"/>
         <result property="businessScope" column="business_scope"/>
         <result property="detail" column="detail"/>
         <result property="status" column="status"/>
@@ -70,7 +70,7 @@
             `phone`,
             `url`,
             `technique`,
-            `area_id`,
+            `area_code`,
             `business_scope`,
             `detail`,
             `status`,
@@ -87,7 +87,7 @@
             #{phone},
             #{url},
             #{technique},
-            #{areaId},
+            #{areaCode},
             #{businessScope},
             #{detail},
             #{status},
@@ -111,7 +111,7 @@
         <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(phone)"> `phone` = #{phone},</if>
         <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(url)"> `url` = #{url},</if>
         <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technique)"> `technique` = #{technique},</if>
-        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(areaId)"> `area_id` = #{areaId},</if>
+        <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(areaCode)"> `area_code` = #{areaCode},</if>
         <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(businessScope)"> `business_scope` = #{businessScope},</if>
         <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(detail)"> `detail` = #{detail},</if>
         <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(status)"> `status` = #{status},</if>

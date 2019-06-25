@@ -61,7 +61,7 @@ public class EnterpriseVo implements Serializable {
      * 所在地区
      */
     @ApiModelProperty(value = "所在地区")
-    private String areaId;
+    private String areaCode;
 
     /**
      * 经营范围

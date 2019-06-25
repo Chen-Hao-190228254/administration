@@ -27,8 +27,6 @@ import java.util.List;
 @RequestMapping("/web/v1/common")
 public class CommonController {
 
-
-
     @Autowired
     CommonService commonService;
 
@@ -49,13 +47,32 @@ public class CommonController {
      * @param code
      * @return
      */
-    @ApiOperation(value = "根据父地址的CODE获得下一级的所有地址、省级ParentCode为0", notes = "根据父地址的CODE获得下一级的所有地址，便于下拉框是选用")
-    @GetMapping("/getAreaParentCode/code")
+    @ApiOperation(value = "根据code获得下一级的所有地址、省级ParentCode为0", notes = "根据父地址的CODE获得下一级的所有地址，便于下拉框是选用")
+    @GetMapping("/getByAreaParentCode/code")
     public Result getAreaParentCode(@RequestParam("code") Long code){
         List<AreaVo> areaVos = BeanMapper.mapList(commonService.getAreaParentCode(code), AreaBean.class,AreaVo.class);
         return Result.success(areaVos);
     }
 
+    /**
+     * 地址获取
+     * @param code
+     * @return
+     */
+    @ApiOperation(value = "更具code获取当前code的地址信息", notes = "更具code获取当前code的地址信息")
+    @GetMapping("/getAreaCode/code")
+    public Result getAreaCode(@RequestParam("code") Long code){
+        List<AreaVo> areaVos = BeanMapper.mapList(commonService.getAreaCode(code),AreaBean.class, AreaVo.class);
+        return Result.success(areaVos);
+    }
+
+
+    @ApiOperation(value = "根据code获取上一级地址", notes = "根据code获取上一级地址")
+    @GetMapping("/getByCodeParent/code")
+    public Result getByCodeParent(@RequestParam("code") Long code){
+        AreaVo areaVo = BeanMapper.map(commonService.getByCodeParent(code), AreaVo.class);
+        return Result.success(areaVo);
+    }
 
     /**
      * 获得标签

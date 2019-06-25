@@ -27,7 +27,6 @@ public class UserManagementSaveVO {
     private String name;
     /*用户身份证*/
     @ApiModelProperty(value = "用户身份证")
-    @NonNull
     private String card;
     /*用户手机号*/
     @ApiModelProperty(value = "用户手机号")

@@ -98,6 +98,6 @@ public interface EnterpriseService extends BaseService<EnterpriseBean> {
      * @param fileUpdateDtos
      * @return
      */
-    Boolean updateImageMessage(List<FileUpdateDto> fileUpdateDtos,List<Long> labelIds,Long enterpriseId);
+    Boolean updateImageMessageAndLabel(List<FileUpdateDto> fileUpdateDtos,List<Long> labelIds,Long enterpriseId);
 
 }

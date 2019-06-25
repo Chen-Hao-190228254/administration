@@ -1,6 +1,13 @@
 package com.skm.exa.webapi;
 
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.ListObjectsRequest;
+import com.aliyun.oss.model.OSSObjectSummary;
+import com.aliyun.oss.model.ObjectListing;
+import com.skm.exa.common.object.FileUpdateObject;
 import com.skm.exa.common.utils.AliyunOSSClientUtil;
+import com.skm.exa.domain.bean.FileBean;
+import com.skm.exa.service.biz.CommonService;
 import com.skm.exa.service.biz.EnterpriseService;
 import com.skm.exa.service.biz.impl.EnterpriseServiceImpl;
 import org.apache.http.entity.ContentType;
@@ -20,6 +27,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -50,6 +60,8 @@ public class TestPassword {
 
 
     }
+
+
 
 
 //    //测试
@@ -90,6 +102,9 @@ public class TestPassword {
 //        }
 //
 //    }
+
+
+
 
 
 
