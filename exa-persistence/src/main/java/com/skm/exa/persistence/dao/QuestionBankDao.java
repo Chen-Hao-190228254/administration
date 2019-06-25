@@ -7,14 +7,13 @@ import com.skm.exa.domain.bean.QuestionTypeBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.persistence.BaseDao;
-import com.skm.exa.persistence.dto.QuestionBankDto;
-import com.skm.exa.persistence.dto.QuestionQueryDto;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
 import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
+import org.apache.ibatis.annotations.Param;
 
 
 import java.util.List;
-import java.util.ListResourceBundle;
 
 public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
     /**
@@ -50,7 +49,7 @@ public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
      * @param
      * @return
      */
-    QuestionBankBean details(QuestionBankBean questionBankBean);
+    QuestionBankDto details(QuestionBankBean questionBankBean);
 
     /**
      * 通过id更改状态
@@ -61,10 +60,10 @@ public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
 
     /**
      * 输入id删除数据
-     * @param id
+     * @param
      * @return
      */
-    Integer delete(Long id);
+    Integer deleteQuestion( QuestionBankBean questionBankBean);
 
     /**
      * 更新数据
@@ -103,22 +102,33 @@ public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
 
     /**
      * 选择题，单选题，添加选项
-     * @param optionCodesBean
+     * @param optionCodesBeans
      * @return
      */
-    Integer addOptionCodes(OptionCodesBean optionCodesBean);
+    Integer addOptionCodes(@Param("optionCodesBeans") List<OptionCodesBean> optionCodesBeans );
 
     /**
-     * 删除选项
-     * @param optionCodesBean
+     * 通过Code删除选项
+     * @param code
      * @return
      */
-    boolean deleteOptionCodes(OptionCodesBean optionCodesBean);
+    Integer deleteOptionCodes(Long code);
+    /**
+     * 通过id删除选项
+     * @param id
+     * @return
+     */
+    Integer deleteOption(Long id);
 
+    /**
+     *修改选项
+     */
+    Integer updateBank(@Param(value = "list") List<OptionCodesBean> optionCodesBeanList);
     /**
      * 查询选项
-     * @param optionCodesBean
+     * @param codes
      * @return
      */
-    List<OptionCodesBean> selectOptionCodes(OptionCodesBean optionCodesBean);
+    List<OptionCodesBean> selectOptionCodes(@Param("codes") List<Long> codes);
+
 }

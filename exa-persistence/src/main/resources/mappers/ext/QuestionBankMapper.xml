@@ -20,6 +20,17 @@
         `update_name`,
         `update_dt`
     </sql>
+    <sql id="option">
+        `code`,
+        `bank_option_codes`,
+        `content`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
+    </sql>
     <resultMap id="RM" type="com.skm.exa.domain.bean.QuestionBankBean">
         <id property="id" column="id"/>
         <result property="enterpriseId" column="enterprise_id"/>
@@ -102,12 +113,14 @@
         FROM `administration_question_bank`
         <where>
             <if test="id != null">OR `id` = #{id ,jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(titleLike)">AND `title` = #{title, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)">AND `enterprise_name` = #{enterpriseNameLike, jdbcType=VARCHAR}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technologicalTypeLike)">AND `technological_type` = #{technologicalTypeLike, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(topicTypeLike)">AND `topic_type` = #{topicTypeLike, jdbcType=BIGINT}</if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(startDtLike)">AND `entry_dt` = #{startDtLike, jdbcType=DATE}  </if>
+            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(endDtLike)">AND `entry_dt` = #{endDtLike, jdbcType=DATE}</if>
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(titleLike)">OR `title` LIKE "%"#{titleLike, jdbcType=VARCHAR}"%"</if>
             <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(enterpriseNameLike)">OR `enterprise_name` LIKE "%"#{enterpriseNameLike, jdbcType=VARCHAR}"%"</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(technologicalTypeLike)">OR `technological_type` = #{technologicalTypeLike, jdbcType=BIGINT}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(topicTypeLike)">OR `topic_type` = #{topicTypeLike, jdbcType=BIGINT}</if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(startDtLike)">OR `entry_dt` = #{startDtLike, jdbcType=DATE}  </if>
-            <if test="@com.skm.exa.mybatis.Ognl@isNotEmpty(endDtLike)">OR `entry_dt` = #{endDtLike, jdbcType=DATE}</if>
         </where>
     </select>
 
@@ -172,14 +185,30 @@
         </where>
     </select>
 
+    <resultMap id="RAP" type="com.skm.exa.persistence.dto.QuestionBankDto">
+        <id property="id" column="id"/>
+        <result property="enterpriseId" column="enterprise_id"/>
+        <result property="enterpriseName" column="enterprise_name"/>
+        <result property="title" column="title"/>
+        <result property="technologicalType" column="technological_type"/>
+        <result property="topicType" column="topic_type"/>
+        <result property="topicDetails" column="topic_details"/>
+        <result property="optionCodes" column="option_codes"/>
+        <result property="label" column="label"/>
+        <result property="answer" column="answer"/>
+        <result property="status" column="status"/>
+        <result property="entryId" column="entry_id"/>
+        <result property="entryName" column="entry_name"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateDt" column="update_dt"/>
+    </resultMap>
     <!--通过id获取所有数据-->
-    <select id="details" resultType="com.skm.exa.domain.bean.QuestionBankBean">
+    <select id="details" resultMap="RAP">
     SELECT
-    <include refid="data"/>
+        <include refid="data"/>
     FROM `administration_question_bank`
-        <where>
-            <if test="id != null">AND `id` = #{id ,jdbcType=BIGINT}</if>
-        </where>
+    WHERE  `id` = #{id}
     </select>
     <!--通过id更改状态-->
     <update id="updateStatus">
@@ -188,7 +217,7 @@
         WHERE `id` = #{id}
     </update>
     <!--输入id删除数据-->
-    <delete id="delete">
+    <delete id="deleteQuestion">
         DELETE FROM `administration_question_bank` WHERE `id` = #{id}
     </delete>
     <!--更新数据-->
@@ -201,7 +230,6 @@
             `technological_type` = #{technologicalType},
             `topic_type`= #{topicType},
             `topic_details` = #{topicDetails},
-            `option_codes` = #{optionCodes},
             `label`= #{label},
             `answer` = #{answer},
             `update_id`= #{updateId},
@@ -259,42 +287,73 @@
     </select>
 
     <!--多选或者单选时添加选项-->
-    <sql id="optionCodes">
+    <insert id="addOptionCodes" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `administration_question_bank_option`(
-            `code`,
-            `bank_option_codes`,
-            `content`,
-            `entry_id`,
-            `entry_name`,
-            `entry_dt`,
-            `update_id`,
-            `update_name`,
-            `update_dt`
-        )VALUE (
-            #{code},
-            #{bankOptionCodes},
-            #{content},
-            #{entryId},
-            #{entryName},
-            #{entryDt},
-            #{updateId},
-            #{updateName},
-            #{updateDt}
-        )<!--WHERE administration_question_bank.`option_codes` = administration_question_bank_option.`code`-->
-    </sql>
-    <insert id="addOptionCodes">
-          <include refid="optionCodes"/>
+        `code`,
+        `bank_option_codes`,
+        `content`,
+        `entry_id`,
+        `entry_name`,
+        `entry_dt`,
+        `update_id`,
+        `update_name`,
+        `update_dt`
+        )VALUE
+        <foreach collection="optionCodesBeans" item="optionCodesBean" separator=","> (
+        #{optionCodesBean.code},
+        #{optionCodesBean.bankOptionCodes},
+        #{optionCodesBean.content},
+        #{optionCodesBean.entryId},
+        #{optionCodesBean.entryName},
+        #{optionCodesBean.entryDt},
+        #{optionCodesBean.updateId},
+        #{optionCodesBean.updateName},
+        #{optionCodesBean.updateDt}
+        )
+        </foreach>
     </insert>
-    <!--删除选项-->
+    <!--修改选项-->
+    <update id="updateBank">
+        <foreach collection="list" item="optionCodesBean" separator=";">
+            UPDATE `administration_question_bank_option`
+               <set>
+                   `code` = #{optionCodesBean.code},
+                   `bank_option_codes`= #{optionCodesBean.bankOptionCodes},
+                   `content`= #{optionCodesBean.content},
+                   `update_id`= #{optionCodesBean.updateId},
+                   `update_name`= #{optionCodesBean.updateName},
+                   `update_dt`= #{optionCodesBean.updateDt}
+               </set>
+               <where>
+                   `id` = #{optionCodesBean.id}
+               </where>
+        </foreach>
+    </update>
+    <!--通过Code删除选项-->
     <delete id="deleteOptionCodes">
         DELETE FROM `administration_question_bank_option`
         WHERE
-         `code` = #{code} AND
-         `bank_option_codes` = #{bankOptionCodes}
-
+        `code` = #{code}
     </delete>
+    <!--通过id删除选项-->
+    <delete id="deleteOption">
+        DELETE FROM `administration_question_bank_option`
+        WHERE
+        `id` = #{id}
+    </delete>
+    <!--<delete id="deleteOption">
+        DELETE FROM `administration_question_bank_option`
+    </delete>-->
     <!--查询选项-->
     <select id="selectOptionCodes" resultType="com.skm.exa.domain.bean.OptionCodesBean">
-        SELECT * FROM `administration_question_bank_option` WHERE `code` = #{code}
+        SELECT
+        *
+        FROM
+        `administration_question_bank_option`
+        WHERE
+        `code` IN
+            <foreach collection="codes" item="code" separator=",">(
+                #{code}
+              )</foreach>
     </select>
 </mapper>

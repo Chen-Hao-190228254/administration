@@ -1,35 +1,33 @@
 package com.skm.exa.webapi.vo;
 
-import io.swagger.annotations.ApiModel;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
-
 @Data
-@ApiModel(value = "问题管理修改VO")
-public class QuestionBankUpdateVO {
-    @ApiModelProperty(value = "id")
+public class QuestionBankBeanDetailsVo {
     private Long id ;
-    @ApiModelProperty(value = "企业名称")
+    @ApiModelProperty(value = "企业id")
     private Long enterpriseId;
     @ApiModelProperty(value = "企业名称")
     private String enterpriseName;
     @ApiModelProperty(value = "标题")
     private String title;
-    @ApiModelProperty(value = "技术类型 1.编程 2.算法 3.数据库 4.优化")
-    @Range(min =  1, max = 4,message = "技术类型有误")
+    @ApiModelProperty(value = "技术类型")
     private Long technologicalType;
-    @ApiModelProperty(value = "题目类型 1.问答 2.单选 3.多选 4.编程")
-    @Range(min =  1, max = 4 ,message = "题目类型有误")
+    @ApiModelProperty(value = "题目类型")
     private Long topicType;
     @ApiModelProperty(value = "题目详情")
     private String topicDetails;
+    @ApiModelProperty(value = "选择")
+    private Long optionCodes;
     @ApiModelProperty(value = "标签")
     private String label;
     @ApiModelProperty(value = "问题解答")
     private String answer;
+    @ApiModelProperty(value = "状态")
+    private Long status;
 
-    private List<OptionCodesUpdateVo> optionCodesUpdateVoList ;
+    List<OptionCodesVo> optionCodesVoList;
 }

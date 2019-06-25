@@ -10,8 +10,7 @@ import com.skm.exa.domain.bean.QuestionTypeBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
 import com.skm.exa.mybatis.SearchConditionGroup;
-import com.skm.exa.persistence.dto.QuestionBankDto;
-import com.skm.exa.persistence.dto.QuestionQueryDto;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
 import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
 import com.skm.exa.service.biz.QuestionBankService;
@@ -23,9 +22,11 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Api(tags = "问题管理" ,description = "问题管理")
@@ -88,11 +89,12 @@ public class QuestionBankController extends BaseController {
     @Transactional
     @PostMapping("/addQuestion")
     @ApiOperation(value = "添加题库" , notes = "technologicalType 值只能取1-4 ，topicType值只能取1-4 ，其中2和3代表选择题，才可添加选项")
-    public Result addQuestion(@ApiParam("saveVO")@RequestBody QuestionBankSaveVO saveVO){
-        UnifyAdmin unifyAdmin = getCurrentAdmin();
-        QuestionBankBean  bean = BeanMapper.map(saveVO,QuestionBankBean.class );
-        QuestionBankBean beanResult = questionBankService.addQuestion(bean,unifyAdmin );
-        return Result.success(beanResult);
+    public Result addQuestion(@Valid @ApiParam("saveVO")@RequestBody QuestionBankSaveVO saveVO){
+        QuestionBankSaveDto saveDto = BeanMapper.map(saveVO, QuestionBankSaveDto.class);
+        saveDto.setOptionCodesDtoList(BeanMapper.mapList(saveVO.getOptionCodesVoList(),OptionCodesVo.class , OptionCodesDto.class));
+        QuestionBankBean beanResult = questionBankService.addQuestion(saveDto,getCurrentAdmin());
+        QuestionBankVO questionBankVO = BeanMapper.map(beanResult, QuestionBankVO.class);
+        return Result.success(questionBankVO);
     }
 
     /**
@@ -119,11 +121,8 @@ public class QuestionBankController extends BaseController {
     @PostMapping("/details")
     @ApiOperation(value = "通过id获取所有数据" , notes = "输入id获取数据库所有数据")
     public Result details (@ApiParam("通过id获取所有数据")@RequestParam ("getId") Long id){
-        QuestionBankBean bean = new QuestionBankBean();
-        bean.setId(id);
-        QuestionBankBean bankBean = questionBankService.details(bean);
+        QuestionBankBean bankBean = questionBankService.details(new QuestionBankBeanDetailsDto(id));
         QuestionBankVO vo = BeanMapper.map(bankBean,QuestionBankVO.class );
-        System.out.println(vo.toString());
         return Result.success(vo);
     }
 
@@ -152,9 +151,7 @@ public class QuestionBankController extends BaseController {
     @ApiOperation(value = "通过id删除数据" ,notes = "输入id删除数据,如果状态码为0则无法删除，状态码为1则删除")
     @PostMapping("/delete")
     public Result  delete(@ApiParam("id")@RequestParam("getID") Long id){
-        QuestionBankBean bean = new QuestionBankBean();
-        bean.setId(id);
-        boolean bankBean = questionBankService.delete(bean);
+        boolean bankBean = questionBankService.deleteQuestion(new QuestionBankBeanDetailsDto(id));
         return Result.success(bankBean);
     }
 
@@ -164,13 +161,13 @@ public class QuestionBankController extends BaseController {
      * @return
      */
     @Transactional
-    @ApiOperation(value = "更新数据" ,notes = "更新数据")
+    @ApiOperation(value = "更新数据" ,notes = "更新数据如果不传选择题id则为添加选项，如果传id则为修改选项")
     @PostMapping("/updateQuestion")
-    public Result updateQuestion(@ApiParam("updateVO")@RequestBody QuestionBankUpdateVO updateVO){
-        UnifyAdmin unifyAdmin = getCurrentAdmin();
-        QuestionBankBean bankVO = BeanMapper.map(updateVO, QuestionBankBean.class);
-        QuestionBankBean result = questionBankService.updateQuestion( bankVO ,unifyAdmin);
-        QuestionBankUpdateVO vo = BeanMapper.map(result,QuestionBankUpdateVO.class );
+    public Result updateQuestion(@Valid @ApiParam("updateVO")@RequestBody QuestionBankUpdateVO updateVO){
+        QuestionBankUpdateDto dto = BeanMapper.map(updateVO, QuestionBankUpdateDto.class);
+        dto.setOptionCodesUpdateDtoList(BeanMapper.mapList(updateVO.getOptionCodesUpdateVoList(), OptionCodesUpdateVo.class,OptionCodesUpdateDto.class ));
+        QuestionBankBean result = questionBankService.updateQuestion( dto ,getCurrentAdmin());
+        QuestionBankVO vo = BeanMapper.map(result,QuestionBankVO.class );
         return Result.success(vo);
     }
 
@@ -231,39 +228,37 @@ public class QuestionBankController extends BaseController {
         return Result.success(typeBean);
     }
 
-    /**
+   /* *//**
      * 选择题，单选题，添加选项
      * @param codesVo
      * @return
-     */
+     *//*
     @Transactional
     @ApiOperation(value = "选择题添加选项" , notes = "输入id获取当前题目类型，如果是选择题，则可添加选项" )
     @PostMapping("/addBankOption")
-    public Result addBankOption(@RequestParam("getId") Long id  ,@RequestBody OptionCodesVo codesVo){
+    public Result addBankOption(*//*@RequestParam("getId") Long id  ,*//*@RequestBody OptionCodesVo codesVo){
         UnifyAdmin unifyAdmin = getCurrentAdmin();
         QuestionBankBean questionBankBean = new QuestionBankBean() ;
-        questionBankBean.setId(id);
+        *//*questionBankBean.setId(id);*//*
+        *//*questionBankBean.getId();*//*
         OptionCodesBean optionCodesBean  = BeanMapper.map(codesVo,OptionCodesBean.class );
         OptionCodesBean vo = questionBankService.addBankOption(optionCodesBean,questionBankBean, unifyAdmin );
         return Result.success(vo);
-    }
+    }*/
 
     /**
      * 删除选项
+     * @param
      * @param id
-     * @param bankOptionCodes
      * @return
      */
-    @ApiOperation(value = "删除选项" ,notes = "输入id获取要删除的选择题，输入选项，获取要删除的选项")
+    @ApiOperation(value = "删除选项" ,notes = "输入选项id，获取要删除的选项")
     @PostMapping("/deleteBankOption")
     @Transactional
-    public Result deleteBankOption(@ApiParam("输入id获取要删除的选择题选项")
-                                       @RequestParam ("getId") Long id , @RequestParam("选项") String bankOptionCodes){
+    public Result deleteBankOption(@ApiParam("输入id获取要删除的选择题选项")@RequestParam("选项id") Long id){
         OptionCodesBean codesBean = new OptionCodesBean();
-        QuestionBankBean questionBankBean = new QuestionBankBean() ;
-        questionBankBean.setId(id);
-        codesBean.setBankOptionCodes(bankOptionCodes);
-        boolean bankOption = questionBankService.deleteBankOption(codesBean,questionBankBean);
+        codesBean.setId(id);
+        boolean bankOption = questionBankService.deleteBankOption(codesBean);
         return Result.success(bankOption);
     }
 
@@ -272,7 +267,7 @@ public class QuestionBankController extends BaseController {
      * @param code
      * @return
      */
-    @ApiOperation(value = "通过code获取选项", notes = "通过code获取选项")
+   /* @ApiOperation(value = "通过code获取选项", notes = "通过code获取选项")
     @PostMapping("/selectBankOption")
     @Transactional
     public Result selectBankOption(@RequestParam("code") Long code){
@@ -280,5 +275,5 @@ public class QuestionBankController extends BaseController {
         codesBean.setCode(code);
         List<OptionCodesBean> bean = questionBankService.selectBankOption(codesBean);
         return Result.success(bean) ;
-    }
+    }*/
 }
