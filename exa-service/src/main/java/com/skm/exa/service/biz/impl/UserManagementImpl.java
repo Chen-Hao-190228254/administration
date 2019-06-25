@@ -21,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -261,22 +259,39 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
     public Boolean updateImages(List<FileUpdateDto> fileUpdateDtos, Long id){
         if(fileUpdateDtos == null || fileUpdateDtos.size() == 0)
             return true;
-        UserManagementBean userManagementBean = new UserManagementBean();
-        userManagementBean.setId(id);
         List<FileBean> fileBeans = details(id).getFileBeans();
-        for(int i = 0; i < fileBeans.size(); i++){
-            for(int j = 0; j < fileUpdateDtos.size(); j++){
-                if(fileUpdateDtos.get(j).getId() == fileBeans.get(i).getId()) {
-                    fileBeans.remove(i);
-                    fileUpdateDtos.remove(j);
+        //新增和删除分类
+        if(fileBeans != null && fileBeans.size() != 0){
+            Map<Long,FileBean> fileBeanMap =  new HashMap<>();
+            Map<Long,FileUpdateDto> fileUpdateDtoMap = new HashMap<>();
+            for(FileBean fileBean:fileBeans){
+                fileBeanMap.put(fileBean.getId(), fileBean);
+            }
+            for (FileUpdateDto fileUpdateDto:fileUpdateDtos){
+                fileUpdateDtoMap.put(fileUpdateDto.getId(), fileUpdateDto);
+                if (fileBeanMap.containsKey(fileUpdateDto.getId())) {
+                    fileBeanMap.remove(fileUpdateDto.getId());
                 }
             }
+            for(FileBean fileBean:fileBeans){
+                if (fileUpdateDtoMap.containsKey(fileBean.getId())) {
+                    fileUpdateDtoMap.remove(fileBean.getId());
+                }
+            }
+            fileBeans = new ArrayList<>();
+            for(Long key:fileBeanMap.keySet()){
+                fileBeans.add(fileBeanMap.get(key));
+            }
+            fileUpdateDtos = new ArrayList<>();
+            for(Long key:fileUpdateDtoMap.keySet()){
+                fileUpdateDtos.add(fileUpdateDtoMap.get(key));
+            }
         }
+        System.out.println(fileBeans.size()+" -- "+fileUpdateDtos.size());
         //删除图片
         if(fileBeans != null && fileBeans.size() != 0){
             //图片ID集合
             List<Long> fileIds = new ArrayList<>();
-
             //图片名称集合
             List<String> filenames = new ArrayList<>();
             for(FileBean fileBean:fileBeans){
@@ -287,10 +302,9 @@ public class UserManagementImpl extends BaseServiceImpl<UserManagementBean , Use
             if(!is)
                 return false;
         }
-
         //添加图片
         if(fileUpdateDtos != null && fileUpdateDtos.size() != 0){
-            boolean is = addImages(BeanMapper.mapList(fileUpdateDtos,FileUpdateDto.class,FileSaveDto.class),fileUpdateDtos.get(0).getCorrelationId());
+            boolean is = addImages(BeanMapper.mapList(fileUpdateDtos,FileUpdateDto.class,FileSaveDto.class),id);
             if(!is)
                 return false;
         }

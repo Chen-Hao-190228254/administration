@@ -7,8 +7,7 @@ import com.skm.exa.domain.bean.QuestionBankBean;
 import com.skm.exa.domain.bean.QuestionTypeBean;
 import com.skm.exa.mybatis.Page;
 import com.skm.exa.mybatis.PageParam;
-import com.skm.exa.persistence.dto.QuestionBankDto;
-import com.skm.exa.persistence.dto.QuestionQueryDto;
+import com.skm.exa.persistence.dto.*;
 import com.skm.exa.persistence.qo.QuestionBankLikeQO;
 import com.skm.exa.persistence.qo.QuestionQueryLikeQO;
 import com.skm.exa.service.BaseService;
@@ -31,11 +30,11 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
     Page<QuestionQueryDto> selectPage(PageParam<QuestionQueryLikeQO> qoPageParam);
     /**
      * 添加题库
-     * @param questionBankBean
+     * @param
      * @param unifyAdmin
      * @return
      */
-    QuestionBankBean addQuestion(QuestionBankBean questionBankBean, UnifyAdmin unifyAdmin);
+    QuestionBankDto  addQuestion(QuestionBankSaveDto questionBankSaveDto, UnifyAdmin unifyAdmin);
 
     /**
      * 题目详情
@@ -51,7 +50,7 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
      * @param
      * @return
      */
-    QuestionBankBean details( QuestionBankBean questionBankBean  );
+    QuestionBankDto details(QuestionBankBeanDetailsDto questionBankBeanDetailsDto  );
 
     /**
      * 通过id更改状态
@@ -63,18 +62,18 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
 
     /**
      * 输入id删除数据
-     * @param questionBankBean
+     * @param questionBankBeanDetailsDto
      * @return
      */
-    boolean delete(QuestionBankBean  questionBankBean );
+    boolean deleteQuestion(QuestionBankBeanDetailsDto  questionBankBeanDetailsDto );
 
     /**
      * 更新数据
-     * @param questionBankBean
+     * @param
      * @param unifyAdmin
      * @return
      */
-   QuestionBankBean updateQuestion(QuestionBankBean questionBankBean,UnifyAdmin unifyAdmin);
+    QuestionBankDto updateQuestion(QuestionBankUpdateDto questionBankUpdateDto,UnifyAdmin unifyAdmin);
 
     /**
      * 获取所有技术类型
@@ -113,20 +112,20 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
      * @param unifyAdmin
      * @return
      */
-    OptionCodesBean addBankOption (OptionCodesBean optionCodesBean ,QuestionBankBean questionBankBean, UnifyAdmin unifyAdmin);
+   // OptionCodesBean addBankOption (OptionCodesBean optionCodesBean ,QuestionBankBean questionBankBean, UnifyAdmin unifyAdmin);
 
     /**
      * 删除选项
      * @param optionCodesBean
-     * @param questionBankBean
+     * @param
      * @return
      */
-    boolean deleteBankOption(OptionCodesBean optionCodesBean ,QuestionBankBean questionBankBean);
+    boolean deleteBankOption(OptionCodesBean optionCodesBean);
 
     /**
      * 查询选项
      * @param optionCodesBean
      * @return
      */
-    List<OptionCodesBean> selectBankOption(OptionCodesBean optionCodesBean);
+  //  List<OptionCodesBean> selectBankOption(OptionCodesBean optionCodesBean);
 }
