@@ -87,13 +87,20 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
     /**
      * 题目详情
      * @param
-     * @param questionBankBean
+     * @param
      * @return
      */
     @Override
-    public QuestionBankBean questionDetails( QuestionBankBean questionBankBean ) {
-        QuestionBankBean bankBean = dao.questionDetails(questionBankBean);
-        return bankBean ;
+    public QuestionBankDto questionDetails( QuestionBankDetailsDto questionBankDetailsDto ) {
+        QuestionBankBean dto =  BeanMapper.map(questionBankDetailsDto,QuestionBankBean.class );
+        QuestionBankDetailsDto bankBean = dao.questionDetails(dto);
+        QuestionBankDto bankDto = BeanMapper.map(bankBean,QuestionBankDto.class );
+        if (bankBean.getTopicType() == 2 || bankBean.getTopicType() == 3){
+            bankDto.setOptionCodesBeans(dao.selectOptionCodes(new ArrayList<>(Collections.singleton(bankBean.getOptionCodes()))));
+            System.out.println("bankDto"+bankDto.toString());
+        }
+
+        return bankDto ;
     }
 
     /**
@@ -320,6 +327,9 @@ public class QuestionBankImpl extends BaseServiceImpl<QuestionBankBean , Questio
      */
     @Override
     public boolean deleteBankOption(OptionCodesBean optionCodesBean ) {
+        if(optionCodesBean.getId() == null){
+            return false ;
+        }
             dao.deleteOption(optionCodesBean.getId());
             return true ;
 

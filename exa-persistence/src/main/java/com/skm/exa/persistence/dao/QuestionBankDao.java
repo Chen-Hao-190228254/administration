@@ -42,7 +42,7 @@ public interface QuestionBankDao extends BaseDao<QuestionBankBean> {
      * @param questionBankBean
      * @return
      */
-    QuestionBankBean questionDetails(QuestionBankBean questionBankBean);
+    QuestionBankDetailsDto questionDetails(QuestionBankBean questionBankBean);
 
     /**
      * 通过id获取所有数据
