@@ -171,12 +171,13 @@
         `topic_type`,
         `title`,
         `label`,
+        `option_codes`,
         `enterprise_name`,
         `topic_details`,
         `answer`
     </sql>
     <!--题目详情-->
-    <select id="questionDetails" resultType="com.skm.exa.domain.bean.QuestionBankBean">
+    <select id="questionDetails" resultType="com.skm.exa.persistence.dto.QuestionBankDetailsDto">
         SELECT
         <include refid="details"/>
         FROM `administration_question_bank`

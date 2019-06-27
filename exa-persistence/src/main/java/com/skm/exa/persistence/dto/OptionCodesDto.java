@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 @Data
 @ApiModel(value = "选择题选项")
-public class  OptionCodesDto extends OptionCodesBean {
+public class OptionCodesDto extends OptionCodesBean {
     private Long code ;
     @ApiModelProperty(value = "选择题选项框")
     private String bankOptionCodes;  // 选项

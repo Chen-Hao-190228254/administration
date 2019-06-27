@@ -39,10 +39,10 @@ public interface QuestionBankService extends BaseService<QuestionBankBean> {
     /**
      * 题目详情
      * @param
-     * @param questionBankBean
+     * @param
      * @return
      */
-    QuestionBankBean questionDetails( QuestionBankBean questionBankBean);
+    QuestionBankDto questionDetails( QuestionBankDetailsDto questionBankDetailsDto);
 
     /**
      * 通过id所有数据
