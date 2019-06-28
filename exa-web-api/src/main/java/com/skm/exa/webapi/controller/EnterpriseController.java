@@ -106,7 +106,7 @@ public class EnterpriseController extends BaseController {
      * @return
      */
     @ApiOperation(value = "更改企业状态", notes = "更改企业状态/只能在禁用与启用的状态中切换")
-    @PutMapping("/deleteEnterprise")
+    @PutMapping("/setEnterpriseStatus")
     public Result setEnterpriseStatus(@ApiParam("需要更改状态的企业的ID") @RequestBody SetStatusVo setStatusVo){
         boolean is = enterpriseService.updateEnterprise(new EnterpriseUpdateDto(setStatusVo.getId(),setStatusVo.getStatus()),getCurrentAdmin());
         return is? Result.success():Result.error(Msg.E40023);
