@@ -1,8 +1,11 @@
 package com.skm.exa.webapi.vo;
 
+import com.skm.exa.domain.bean.OptionCodesBean;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @ApiModel(value = "问题管理详情VO")
@@ -21,4 +24,7 @@ public class QuestionBankDetailsVO {
     private String topicDetails;
     @ApiModelProperty(value = "问题解答")
     private String answer;
+    private Long optionCodes;
+    @ApiModelProperty(value = "选择题选项")
+    List<OptionCodesBean> optionCodesBeans;
 }
