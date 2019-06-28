@@ -105,10 +105,9 @@ public class QuestionBankController extends BaseController {
     @PostMapping("/questionDetails")
     @ApiOperation(value = "题目详情" ,notes = "获取题目详情")
     public Result questionDetails(@ApiParam("题目详情")@RequestParam("getId") Long id){
-        QuestionBankBean bankBean = new QuestionBankBean();
-        bankBean.setId(id);
-        QuestionBankBean questionBankBean = questionBankService.questionDetails(bankBean);
-        QuestionBankDetailsVO detailsVO = BeanMapper.map(questionBankBean,QuestionBankDetailsVO.class );
+        QuestionBankBean questionBankBean = questionBankService.questionDetails(new QuestionBankDetailsDto(id));
+        QuestionBankVO vo = BeanMapper.map(questionBankBean,QuestionBankVO.class );
+        QuestionBankDetailsVO detailsVO = BeanMapper.map(vo,QuestionBankDetailsVO.class );
         return Result.success(detailsVO);
     }
 
@@ -255,7 +254,7 @@ public class QuestionBankController extends BaseController {
     @ApiOperation(value = "删除选项" ,notes = "输入选项id，获取要删除的选项")
     @PostMapping("/deleteBankOption")
     @Transactional
-    public Result deleteBankOption(@ApiParam("输入id获取要删除的选择题选项")@RequestParam("选项id") Long id){
+    public Result deleteBankOption(@ApiParam("输入id获取要删除的选择题选项")@RequestParam("id") Long id){
         OptionCodesBean codesBean = new OptionCodesBean();
         codesBean.setId(id);
         boolean bankOption = questionBankService.deleteBankOption(codesBean);
